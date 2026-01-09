@@ -34,6 +34,7 @@ export default defineConfig(() => {
     build: {
       outDir: 'dist-docs',
       emptyOutDir: true,
+      sourcemap: false,
       rollupOptions: {
         input: {
           main: fileURLToPath(new URL('./index.html', import.meta.url)),

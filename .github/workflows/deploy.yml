@@ -5,6 +5,9 @@ on:
     branches:
       - main # Or your default branch name
 
+permissions:
+  contents: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -15,7 +18,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9 # Adjust based on your local version
+          version: 9
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -27,10 +30,13 @@ jobs:
         run: pnpm install
 
       - name: Build Documentation
-        run: npm run build:docs
+        run: pnpm build:docs
+
+      - name: Check build output
+        run: ls -la dist-docs
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist-docs
+          publish_dir: dist-docs
