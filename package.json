@@ -1,0 +1,56 @@
+{
+  "name": "@vc-com/portal",
+  "version": "0.0.0",
+  "description": "portal组件",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && pnpm build:types",
+    "build:types": "tsmc -p tsconfig.build.json",
+    "preview": "vite preview",
+    "commit": "git add . && lefthook run pre-commit && git add . && czg --no-verify"
+  },
+  "dependencies": {
+    "es-toolkit": "^1.43.0",
+    "vue": "^3.6.0-beta.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
+    "@eslint/js": "^9.39.2",
+    "@ts-macro/tsc": "^0.3.6",
+    "@types/node": "^24.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.51.0",
+    "@typescript-eslint/parser": "^8.51.0",
+    "@typescript/native-preview": "7.0.0-dev.20260109.1",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/tsconfig": "^0.8.1",
+    "czg": "^1.12.0",
+    "eslint": "^9.39.2",
+    "eslint-plugin-unused-imports": "^4.3.0",
+    "eslint-plugin-vue": "^10.6.2",
+    "globals": "^17.0.0",
+    "lefthook": "^2.0.13",
+    "oxfmt": "^0.21.0",
+    "oxlint": "^1.36.0",
+    "prettier": "^3.7.4",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.51.0",
+    "vite": "^8.0.0-beta.7",
+    "vitepress": "2.0.0-alpha.15",
+    "vue-eslint-parser": "^10.2.0",
+    "vue-jsx-vapor": "^3.1.10",
+    "vue-tsc": "^3.2.2"
+  }
+}
