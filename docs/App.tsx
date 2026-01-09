@@ -7,7 +7,8 @@ const exampleModules = import.meta.glob('./examples/*.vue', { eager: true });
 const rawExampleModules = import.meta.glob('./examples/*.vue', { eager: true, as: 'raw' });
 
 // Robust ID generation supporting Chinese
-export const slugify = (text: string) => {
+export const slugify = (text: any) => {
+  if (!text) return '';
   return text
     .toString()
     .toLowerCase()
@@ -25,6 +26,14 @@ const App = defineComponent(() => {
   const isSearchFocused = ref(false);
   const searchSelectedIndex = ref(0);
 
+  const getRawContent = (path: string) => {
+    const raw = rawExampleModules[path];
+    if (typeof raw === 'string') return raw;
+    if (raw && typeof (raw as any).default === 'string') return (raw as any).default;
+    // Fallback if it's somehow a module object but not raw
+    return '';
+  };
+
   const menuItems = computed(() => {
     const keys = Object.keys(exampleModules).map(path => {
       const name = path.split('/').pop()?.replace('.vue', '') || '';
@@ -40,7 +49,7 @@ const App = defineComponent(() => {
 
   const parsedDocs = computed(() => {
     const path = `./examples/${activeKey.value}.vue`;
-    const rawContent = rawExampleModules[path] as string || '';
+    const rawContent = getRawContent(path);
     const docsMatch = rawContent.match(/<docs lang="md">([\s\S]*?)<\/docs>/);
 
     // @ts-ignore
@@ -64,7 +73,7 @@ const App = defineComponent(() => {
   const ActiveComponent = currentDemo;
   const activeCode = computed(() => {
     const path = `./examples/${activeKey.value}.vue`;
-    const rawContent = rawExampleModules[path] as string || '';
+    const rawContent = getRawContent(path);
     return rawContent.replace(/<docs[\s\S]*?<\/docs>/, '').trim();
   });
 
@@ -115,11 +124,16 @@ const App = defineComponent(() => {
       // 1. Index Component
       index.push({ type: 'component', key: componentKey, label: componentKey });
 
-      const raw = content as string;
+      const raw = typeof content === 'string' ? content : (content as any).default || '';
+      if (typeof raw !== 'string') return; // Defensive check
+
       const docsMatch = raw.match(/<docs lang="md">([\s\S]*?)<\/docs>/);
       const docsContent = docsMatch ? docsMatch[1] : '';
 
-      // 2. Index Demos (Variants)
+      // CI Fixes:
+      // [x] 创建自动化部署配置文件 (`deploy.yml`) (已修复权限与路径)
+      // [x] 配置文档站点专属构建脚本
+      // [x] 修复全站白屏 TypeError (防自建数据异常)
       const variantRegex = /<Variant\s+title=["']([^"']+)["'][^>]*>/g;
       let vMatch;
       while ((vMatch = variantRegex.exec(raw)) !== null) {
