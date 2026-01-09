@@ -14,6 +14,7 @@ const vueDocsPlugin = () => ({
 
 export default defineConfig(() => {
   return {
+    base: './', // Use relative paths for GitHub Pages or custom domains
     plugins: [
       vue(),
       vueDocsPlugin(),
@@ -30,22 +31,12 @@ export default defineConfig(() => {
         '@vc-com/portal': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
       },
     },
-    server: {
-      host: true,
-      port: 1231,
-    },
     build: {
-      minify: false,
-      lib: {
-        entry: 'src/index.ts',
-        formats: ['es', 'cjs'],
-        fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`,
-      },
-      rolldownOptions: {
-        external: ['vue'],
-        output: {
-          assetFileNames: 'style.[ext]',
-          exports: 'named',
+      outDir: 'dist-docs',
+      emptyOutDir: true,
+      rollupOptions: {
+        input: {
+          main: fileURLToPath(new URL('./index.html', import.meta.url)),
         },
       },
     },

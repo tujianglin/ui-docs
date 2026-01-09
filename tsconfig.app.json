@@ -15,10 +15,13 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@vc-com/portal": ["src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "playground/App.tsx", "playground/main.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "docs/**/*.tsx", "docs/**/*.ts", "docs/**/*.vue"]
 }

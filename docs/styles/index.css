@@ -1,0 +1,111 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@theme {
+  --color-primary: #2563eb;
+}
+
+body {
+  @apply antialiased;
+}
+
+/* Markdown Styles */
+.markdown-body {
+  @apply leading-relaxed text-gray-700;
+}
+
+.markdown-body h1 {
+  @apply mt-8 mb-4 border-b border-gray-100 pb-2 text-3xl font-bold text-gray-900;
+}
+
+.markdown-body h2 {
+  @apply mt-8 mb-4 text-2xl font-semibold text-gray-800;
+}
+
+.markdown-body h3 {
+  @apply mt-6 mb-3 text-xl font-medium text-gray-800;
+}
+
+.markdown-body p {
+  @apply mb-4;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  @apply mb-4 list-disc pl-6;
+}
+
+.markdown-body blockquote {
+  @apply mb-4 border-l-4 border-gray-200 pl-4 text-gray-600 italic;
+}
+
+.markdown-body table {
+  @apply mb-8 w-full border-collapse;
+}
+
+.markdown-body th,
+.markdown-body td {
+  @apply border border-gray-200 px-4 py-2 text-left;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-300;
+}
+
+/* Dark Scrollbar */
+.custom-scrollbar-dark::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-gray-700;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
+}
+
+.markdown-body th {
+  @apply bg-gray-50 font-semibold;
+}
+
+.markdown-body code {
+  @apply rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm text-pink-600;
+}
+
+.markdown-body pre {
+  @apply mb-8;
+}
+
+.markdown-body pre code {
+  @apply block bg-transparent p-0 text-gray-800;
+}
+
+/* Shiki Overrides */
+.shiki-container pre {
+  @apply m-0! bg-transparent! p-0!;
+}
+
+.shiki-container .shiki {
+  @apply bg-transparent!;
+}
+
+.markdown-body p {
+  @apply leading-relaxed text-gray-500;
+}
+
+.markdown-body h1 {
+  @apply mt-0 mb-4 border-none text-3xl font-bold text-gray-900;
+}
+
+.markdown-body h2 {
+  @apply mt-6 mb-3 border-none text-xl font-bold text-gray-800;
+}
+
+.markdown-body h3 {
+  @apply mt-4 mb-2 border-none text-lg font-semibold text-gray-800;
+}
