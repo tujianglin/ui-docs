@@ -4,7 +4,7 @@ import Markdown from './components/Markdown';
 
 // Scan for stories and raw files recursively
 const exampleModules = import.meta.glob('./**/*.story.vue', { eager: true });
-const rawExampleModules = import.meta.glob('./**/*.vue', { eager: true, as: 'raw' });
+const rawExampleModules = import.meta.glob('./**/*.vue', { eager: true, query: '?raw', import: 'default' });
 
 // Robust ID generation supporting Chinese
 export const slugify = (text: any) => {
