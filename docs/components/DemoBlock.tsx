@@ -89,10 +89,20 @@ export default defineComponent({
       if (timer) clearTimeout(timer);
     });
 
-    // @ts-ignore
+    const descRef = ref<HTMLElement | null>(null);
+    const codeRef = ref<HTMLElement | null>(null);
+
     const renderedMiniDescription = computed(() => {
       return props.description ? md.render(props.description) : '';
     });
+
+    watch([renderedMiniDescription, descRef], ([html, el]) => {
+        if (el && html) (el as HTMLElement).innerHTML = html as string;
+    }, { immediate: true });
+
+    watch([highlightedCode, codeRef], ([html, el]) => {
+        if (el && html) (el as HTMLElement).innerHTML = html as string;
+    }, { immediate: true });
 
     return () => (
       <div class="demo-block mb-12 animate-in fade-in duration-500">
@@ -100,7 +110,7 @@ export default defineComponent({
             {(props.title || props.description) && (
                 <div class="mb-4">
                     {props.title && <h4 class="text-base font-semibold text-gray-900 mb-1">{props.title}</h4>}
-                    {props.description && <div class="text-[13px] text-gray-500 leading-relaxed markdown-style" innerHTML={renderedMiniDescription.value} />}
+                    {props.description && <div ref={descRef} class="text-[13px] text-gray-500 leading-relaxed markdown-style" />}
                 </div>
             )}
 
@@ -153,7 +163,7 @@ export default defineComponent({
                     ]}
                 >
                     <div class="relative">
-                        <div class="shiki-container p-6 text-[13px] font-mono leading-relaxed overflow-auto custom-scrollbar bg-[#fafafa]" innerHTML={highlightedCode.value} />
+                        <div ref={codeRef} class="shiki-container p-6 text-[13px] font-mono leading-relaxed overflow-auto custom-scrollbar bg-[#fafafa]" />
                         <button
                             onClick={() => showCode.value = false}
                             class="w-full h-11 border-t border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors bg-white group/collapse"
