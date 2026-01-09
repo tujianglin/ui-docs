@@ -1,17 +1,30 @@
 import { defineComponent, ref, onUnmounted, watch, computed } from 'vue';
 import PreviewIframe from './PreviewIframe';
 import MarkdownIt from 'markdown-it';
-import Prism from 'prismjs';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-markup'; // For HTML/Vue
-import 'prismjs/themes/prism.css'; // Basic theme
+import { createHighlighter } from 'shiki';
 
 const md = new MarkdownIt({
   html: true,
   linkify: true,
   typographer: true,
 });
+
+// Singleton highlighter to avoid re-creation
+let shikiHighlighter: any = null;
+
+const getHighlighter = async () => {
+  if (shikiHighlighter) return shikiHighlighter;
+  try {
+    shikiHighlighter = await createHighlighter({
+      themes: ['github-light'],
+      langs: ['vue', 'typescript', 'javascript'],
+    });
+    return shikiHighlighter;
+  } catch (e) {
+    console.error('Failed to init shiki:', e);
+    return null;
+  }
+};
 
 export default defineComponent({
   name: 'DemoBlock',
@@ -33,19 +46,25 @@ export default defineComponent({
     const highlightedCode = ref('');
     let timer: any = null;
 
-    const highlight = () => {
+    const highlight = async () => {
       if (!props.code) {
         highlightedCode.value = '';
         return;
       }
+      const highlighter = await getHighlighter();
+      if (!highlighter) {
+        // Fallback to plain text if shiki fails
+        highlightedCode.value = props.code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return;
+      }
+
       try {
-        highlightedCode.value = Prism.highlight(
-          props.code,
-          Prism.languages.markup,
-          'markup'
-        );
+        highlightedCode.value = highlighter.codeToHtml(props.code, {
+          lang: 'vue',
+          theme: 'github-light',
+        });
       } catch (err) {
-        console.error('Prism highlight failed:', err);
+        console.error('Shiki highlight failed:', err);
         highlightedCode.value = props.code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       }
     };
@@ -81,7 +100,7 @@ export default defineComponent({
             {(props.title || props.description) && (
                 <div class="mb-4">
                     {props.title && <h4 class="text-base font-semibold text-gray-900 mb-1">{props.title}</h4>}
-                    {props.description && <div class="text-[13px] text-gray-500 leading-relaxed markdown-style" v-html={renderedMiniDescription.value} />}
+                    {props.description && <div class="text-[13px] text-gray-500 leading-relaxed markdown-style" innerHTML={renderedMiniDescription.value} />}
                 </div>
             )}
 
@@ -134,9 +153,7 @@ export default defineComponent({
                     ]}
                 >
                     <div class="relative">
-                        <pre class="shiki-container p-6 text-[13px] font-mono leading-relaxed overflow-auto custom-scrollbar bg-[#fafafa]">
-                            <code class="language-markup" v-html={highlightedCode.value} />
-                        </pre>
+                        <div class="shiki-container p-6 text-[13px] font-mono leading-relaxed overflow-auto custom-scrollbar bg-[#fafafa]" innerHTML={highlightedCode.value} />
                         <button
                             onClick={() => showCode.value = false}
                             class="w-full h-11 border-t border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors bg-white group/collapse"
