@@ -1,10 +1,10 @@
-import { defineComponent, ref, computed, provide, watch, onMounted, onUnmounted } from 'vue';
+import { defineComponent, ref, computed, provide, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import Sidebar from './components/Sidebar';
 import Markdown from './components/Markdown';
 
-// Scan for examples (compiled)
-const exampleModules = import.meta.glob('./examples/*.vue', { eager: true });
-const rawExampleModules = import.meta.glob('./examples/*.vue', { eager: true, as: 'raw' });
+// Scan for stories and raw files recursively
+const exampleModules = import.meta.glob('./**/*.story.vue', { eager: true });
+const rawExampleModules = import.meta.glob('./**/*.vue', { eager: true, as: 'raw' });
 
 // Robust ID generation supporting Chinese
 export const slugify = (text: any) => {
@@ -20,7 +20,7 @@ export const slugify = (text: any) => {
 };
 
 const App = defineComponent(() => {
-  const activeKey = ref('Basic');
+  const activeKey = ref('./examples/Basic.story.vue'); // Initialize with a full path
   const activeMainTab = ref('demo'); // 'demo' | 'docs'
   const searchQuery = ref('');
   const isSearchFocused = ref(false);
@@ -35,27 +35,30 @@ const App = defineComponent(() => {
   };
 
   const menuItems = computed(() => {
-    const keys = Object.keys(exampleModules).map(path => {
-      const name = path.split('/').pop()?.replace('.vue', '') || '';
-      return { key: name, label: name };
+    return Object.keys(exampleModules).map(path => {
+      // Extract filename from path and remove .story.vue extension
+      const fileName = path.split('/').pop() || '';
+      const name = fileName.replace(/\.story\.vue$/, '');
+      return { key: path, label: name };
     });
-    return keys;
   });
 
   const currentDemo = computed(() => {
-    const path = `./examples/${activeKey.value}.vue`;
-    return (exampleModules[path] as any)?.default;
+    return (exampleModules[activeKey.value] as any)?.default;
   });
 
   const parsedDocs = computed(() => {
-    const path = `./examples/${activeKey.value}.vue`;
-    const rawContent = getRawContent(path);
+    const rawContent = getRawContent(activeKey.value);
     const docsMatch = rawContent.match(/<docs lang="md">([\s\S]*?)<\/docs>/);
 
     // @ts-ignore
     const content = docsMatch ? docsMatch[1].trim() : '';
     const titleMatch = content.match(/^#\s+(.*)/m);
-    const title = titleMatch ? titleMatch[1] : activeKey.value;
+
+    // Clean default title: only the word before .story.vue
+    const fileName = activeKey.value.split('/').pop() || '';
+    const nameFromPath = fileName.replace(/\.story\.vue$/, '');
+    const title = titleMatch ? titleMatch[1] : nameFromPath;
 
     // Extract subtitle: find the first paragraph after the title
     const body = content.replace(/^#\s+.*\n?/, '').trim();
@@ -71,20 +74,43 @@ const App = defineComponent(() => {
 
   const activeDocs = parsedDocs;
   const ActiveComponent = currentDemo;
-  const activeCode = computed(() => {
-    const path = `./examples/${activeKey.value}.vue`;
-    const rawContent = getRawContent(path);
-    return rawContent.replace(/<docs[\s\S]*?<\/docs>/, '').trim();
-  });
 
   const variantCodesMap = computed(() => {
-    const code = activeCode.value;
+    const storyRaw = getRawContent(activeKey.value).replace(/<docs[\s\S]*?<\/docs>/, '').trim();
     const map: Record<string, string> = {};
     const variantRegex = /<Variant\s+title=["']([^"']+)["'][^>]*>([\s\S]*?)<\/Variant>/g;
+
+    // Find imports in the story script to support deep extraction
+    const scriptMatch = storyRaw.match(/<script[\s\S]*?>([\s\S]*?)<\/script>/);
+    const scriptContent = scriptMatch ? scriptMatch[1] : '';
+
     let match;
-    while ((match = variantRegex.exec(code)) !== null) {
+    while ((match = variantRegex.exec(storyRaw)) !== null) {
       const title = match[1];
       const content = match[2].trim();
+
+      // Deep Extraction Logic per Variant
+      // Check if content is just a simple component tag like <Demo /> or <Basic />
+      const compMatch = content.match(/^<([A-Z][a-zA-Z0-9]+)(\s+[^>]*?)?\s*\/>$/);
+      if (compMatch) {
+        const compName = compMatch[1];
+        // Look for the import of this component in the script block
+        const importMatch = scriptContent.match(new RegExp(`import\\s+${compName}\\s+from\\s+['"](.+)['"]`));
+        if (importMatch) {
+          let importPath = importMatch[1];
+          if (importPath.startsWith('./')) {
+            // Resolve relative path based on the story file's directory
+            const currentDir = activeKey.value.substring(0, activeKey.value.lastIndexOf('/'));
+            const targetPath = `${currentDir}/${importPath.replace('./', '')}`;
+            const targetRaw = getRawContent(targetPath);
+            if (targetRaw) {
+              map[title] = targetRaw.replace(/<docs[\s\S]*?<\/docs>/, '').trim();
+              continue;
+            }
+          }
+        }
+      }
+
       map[title] = content;
     }
     return map;
@@ -118,11 +144,15 @@ const App = defineComponent(() => {
     const index: { type: 'component' | 'demo' | 'doc-header' | 'doc-content', key: string, label: string, anchorId?: string, snippet?: string }[] = [];
 
     Object.entries(rawExampleModules).forEach(([path, content]) => {
-      const componentKey = path.match(/\.\/examples\/(.+)\.vue$/)?.[1] || '';
-      if (!componentKey) return;
+      // Only index from stories for components list, but use raw for content
+      if (!path.endsWith('.story.vue')) return;
+
+      const componentLabel = path.split('/').pop()?.replace('.story.vue', '') || '';
+      const componentKey = path; // Use full path as key
+      if (!componentLabel) return;
 
       // 1. Index Component
-      index.push({ type: 'component', key: componentKey, label: componentKey });
+      index.push({ type: 'component', key: componentKey, label: componentLabel });
 
       const raw = typeof content === 'string' ? content : (content as any).default || '';
       if (typeof raw !== 'string') return; // Defensive check
@@ -227,13 +257,17 @@ const App = defineComponent(() => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
           e.preventDefault();
           isSearchFocused.value = true;
-          // Focus input after render
-          setTimeout(() => {
-              const input = document.getElementById('spotlight-search') as HTMLInputElement;
-              input?.focus();
-          }, 50);
       }
   };
+
+  watch(isSearchFocused, (val) => {
+      if (val) {
+          nextTick(() => {
+              const input = document.getElementById('spotlight-search') as HTMLInputElement;
+              input?.focus();
+          });
+      }
+  });
 
   onMounted(() => {
       window.addEventListener('keydown', onGlobalKeyDown);
@@ -279,7 +313,7 @@ const App = defineComponent(() => {
     },
     {
       title: '组件库',
-      items: menuItems.value.map(item => ({ key: item.key, label: item.key }))
+      items: menuItems.value.map(item => ({ key: item.key, label: item.label }))
     },
     {
       title: '建模参考',
@@ -327,7 +361,7 @@ const App = defineComponent(() => {
             <div class="mb-8 flex items-center justify-between border-b border-gray-100">
               <div>
                   <h1 class="text-3xl font-semibold text-gray-900 tracking-tight mb-2 flex items-center">
-                      {activeKey.value}
+                      {activeDocs.value.title}
                   </h1>
                   <p class="text-[14px] text-gray-500 font-normal">{activeDocs.value.subtitle}</p>
               </div>

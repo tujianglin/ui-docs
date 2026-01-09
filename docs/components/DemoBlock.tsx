@@ -27,6 +27,18 @@ md.use((md) => {
 
 import PreviewIframe from './PreviewIframe';
 
+// Singleton highlighter to avoid repeated initialization and handle SSR/CI issues
+let highlighterPromise: Promise<any> | null = null;
+const getHighlighter = () => {
+  if (!highlighterPromise) {
+    highlighterPromise = createHighlighter({
+      themes: ['github-light'],
+      langs: ['vue'],
+    });
+  }
+  return highlighterPromise;
+};
+
 export default defineComponent({
   name: 'DemoBlock',
   props: {
@@ -36,21 +48,27 @@ export default defineComponent({
     hideDocsTab: Boolean,
   },
   setup(props, { slots }) {
-    const highlightedCode = ref('');
+    const highlightedCode = ref(props.code || '');
     const showCode = ref(false);
     const copied = ref(false);
     let timer: any = null;
 
     const highlight = async () => {
-      if (!props.code) return;
-      const highlighter = await createHighlighter({
-        themes: ['github-light'],
-        langs: ['vue'],
-      });
-      highlightedCode.value = highlighter.codeToHtml(props.code, {
-        lang: 'vue',
-        theme: 'github-light',
-      });
+      if (!props.code) {
+        highlightedCode.value = '';
+        return;
+      }
+      try {
+        const highlighter = await getHighlighter();
+        highlightedCode.value = highlighter.codeToHtml(props.code, {
+          lang: 'vue',
+          theme: 'github-light',
+        });
+      } catch (err) {
+        console.error('Shiki highlight failed:', err);
+        // Fallback to plain code
+        highlightedCode.value = `<pre class="shiki github-light"><code>${props.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+      }
     };
 
     watch(() => props.code, () => {
