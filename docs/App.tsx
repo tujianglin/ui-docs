@@ -27,10 +27,14 @@ const App = defineComponent(() => {
   const searchSelectedIndex = ref(0);
 
   const getRawContent = (path: string) => {
-    const raw = rawExampleModules[path];
-    if (typeof raw === 'string') return raw;
-    if (raw && typeof (raw as any).default === 'string') return (raw as any).default;
-    // Fallback if it's somehow a module object but not raw
+    // Try both with and without ./ for robustness across dev/prod
+    const normalizedKey = path.startsWith('./') ? path : `./${path}`;
+    const keyWithoutDot = path.startsWith('./') ? path.substring(2) : path;
+
+    const content = rawExampleModules[normalizedKey] || rawExampleModules[keyWithoutDot];
+
+    if (typeof content === 'string') return content;
+    if (content && typeof (content as any).default === 'string') return (content as any).default;
     return '';
   };
 

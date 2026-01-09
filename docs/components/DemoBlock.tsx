@@ -1,6 +1,11 @@
 import { defineComponent, ref, onUnmounted, watch, computed } from 'vue';
-import { createHighlighter } from 'shiki';
+import PreviewIframe from './PreviewIframe';
 import MarkdownIt from 'markdown-it';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-markup'; // For HTML/Vue
+import 'prismjs/themes/prism.css'; // Basic theme
 
 const md = new MarkdownIt({
   html: true,
@@ -8,73 +13,44 @@ const md = new MarkdownIt({
   typographer: true,
 });
 
-// Simple plugin to add IDs to headers
-md.use((md) => {
-  const originalHeaderOpen = md.renderer.rules.heading_open || function(tokens, idx, options, _env, self) {
-    return self.renderToken(tokens, idx, options);
-  };
-
-  md.renderer.rules.heading_open = function(tokens, idx, options, env, self) {
-    const token = tokens[idx];
-    const contentToken = tokens[idx + 1];
-    if (contentToken && contentToken.type === 'inline') {
-      const id = contentToken.content.toLowerCase().replace(/[^\w]+/g, '-');
-      token.attrSet('id', id);
-    }
-    return originalHeaderOpen(tokens, idx, options, env, self);
-  };
-});
-
-import PreviewIframe from './PreviewIframe';
-
-// Singleton highlighter to avoid repeated initialization and handle SSR/CI issues
-let highlighterPromise: Promise<any> | null = null;
-const getHighlighter = () => {
-  if (!highlighterPromise) {
-    highlighterPromise = createHighlighter({
-      themes: ['github-light'],
-      langs: ['vue'],
-    });
-  }
-  return highlighterPromise;
-};
-
 export default defineComponent({
   name: 'DemoBlock',
   props: {
     title: String,
     description: String,
-    code: String,
-    hideDocsTab: Boolean,
+    code: {
+      type: String,
+      default: '',
+    },
+    hideDocsTab: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { slots }) {
-    const highlightedCode = ref(props.code || '');
     const showCode = ref(false);
     const copied = ref(false);
+    const highlightedCode = ref('');
     let timer: any = null;
 
-    const highlight = async () => {
+    const highlight = () => {
       if (!props.code) {
         highlightedCode.value = '';
         return;
       }
       try {
-        const highlighter = await getHighlighter();
-        highlightedCode.value = highlighter.codeToHtml(props.code, {
-          lang: 'vue',
-          theme: 'github-light',
-        });
+        highlightedCode.value = Prism.highlight(
+          props.code,
+          Prism.languages.markup,
+          'markup'
+        );
       } catch (err) {
-        console.error('Shiki highlight failed:', err);
-        // Fallback to plain code
-        highlightedCode.value = `<pre class="shiki github-light"><code>${props.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+        console.error('Prism highlight failed:', err);
+        highlightedCode.value = props.code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       }
     };
 
-    watch(() => props.code, () => {
-      highlight();
-      showCode.value = false;
-    }, { immediate: true });
+    watch(() => props.code, highlight, { immediate: true });
 
     const handleCopy = async () => {
       if (!props.code) return;
@@ -102,18 +78,15 @@ export default defineComponent({
     return () => (
       <div class="demo-block mb-12 animate-in fade-in duration-500">
         <div class="space-y-4">
-            {/* Optional Title/Description for specific variants */}
             {(props.title || props.description) && (
                 <div class="mb-4">
                     {props.title && <h4 class="text-base font-semibold text-gray-900 mb-1">{props.title}</h4>}
-                    {props.description && <div class="text-[13px] text-gray-500 leading-relaxed markdown-body" v-html={renderedMiniDescription.value} />}
+                    {props.description && <div class="text-[13px] text-gray-500 leading-relaxed markdown-style" v-html={renderedMiniDescription.value} />}
                 </div>
             )}
 
-            {/* Ant Design Style Container */}
             <div class={`border border-gray-200 rounded-lg bg-white overflow-hidden transition-all ${props.hideDocsTab ? 'mt-2' : ''}`}>
-                {/* Demo Area */}
-                <div class="p-4 md:p-6 flex items-center justify-center min-h-[180px] border-b border-gray-100">
+                <div class="p-4 md:p-6 flex items-center justify-center min-h-45 border-b border-gray-100">
                     <div class="w-full relative z-10">
                         <PreviewIframe>
                             {slots.default?.()}
@@ -121,7 +94,6 @@ export default defineComponent({
                     </div>
                 </div>
 
-                {/* Action Toolbar (Ant Design Style) */}
                 <div class="flex items-center justify-center space-x-6 py-3 bg-white relative group">
                     <div class="absolute right-6 top-1/2 -translate-y-1/2 flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">vue</span>
@@ -155,18 +127,16 @@ export default defineComponent({
                     </button>
                 </div>
 
-                {/* Code Content */}
                 <div
                     class={[
                         "overflow-hidden transition-all duration-300 ease-in-out border-t border-dashed border-gray-100 bg-[#fafafa]",
-                        showCode.value ? "max-h-[3000px]" : "max-h-0"
+                        showCode.value ? "max-h-750 visible" : "max-h-0 invisible"
                     ]}
                 >
                     <div class="relative">
-                            <div class="shiki-container p-6 text-[13px] font-mono leading-relaxed overflow-auto custom-scrollbar">
-                            <div v-html={highlightedCode.value} />
-                        </div>
-                        {/* Centered Collapse Button at bottom */}
+                        <pre class="shiki-container p-6 text-[13px] font-mono leading-relaxed overflow-auto custom-scrollbar bg-[#fafafa]">
+                            <code class="language-markup" v-html={highlightedCode.value} />
+                        </pre>
                         <button
                             onClick={() => showCode.value = false}
                             class="w-full h-11 border-t border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors bg-white group/collapse"
