@@ -1,0 +1,27 @@
+{
+  "name": "@vc-com/cssinjs-utils",
+  "version": "1.0.0",
+  "description": "Vue 3 CSS-in-JS utilities for component styling",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublish": "pnpm build",
+    "bump": "bumpp --release patch"
+  },
+  "dependencies": {
+    "@vc-com/cssinjs": "workspace:*",
+    "@vc-com/util": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  }
+}

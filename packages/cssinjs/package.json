@@ -1,0 +1,35 @@
+{
+  "name": "@vc-com/cssinjs",
+  "version": "1.0.0",
+  "description": "Vue 3 CSS-in-JS solution",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublish": "pnpm build",
+    "bump": "bumpp --release patch"
+  },
+  "dependencies": {
+    "@ctrl/tinycolor": "^4.2.0",
+    "@emotion/hash": "^0.9.2",
+    "@emotion/unitless": "^0.10.0",
+    "@vc-com/util": "workspace:*",
+    "stylis": "^4.3.6",
+    "tslib": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/stylis": "^4.2.7",
+    "csstype": "^3.2.3"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  }
+}

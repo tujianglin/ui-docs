@@ -1,0 +1,38 @@
+:root {
+  color: #111827;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  background: transparent;
+}
+
+#app,
+.preview-root {
+  width: 100%;
+  min-height: 100px;
+  display: flow-root;
+}
+
+.preview-empty {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+vite-error-overlay,
+#vite-error-overlay,
+#immersive-translate-popup,
+#__vconsole,
+.vconsole,
+iframe[src^='chrome-extension://'],
+iframe[src^='moz-extension://'],
+iframe[src^='safari-web-extension://'] {
+  display: none !important;
+}

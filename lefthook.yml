@@ -1,0 +1,32 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint-oxlint:
+      run: pnpm oxfmt --write && pnpm oxlint {staged_files} --fix
+      glob: '*.{js,jsx,ts,tsx}'
+
+    lint-prettier:
+      run: pnpm prettier --cache --ignore-unknown --write {staged_files}
+      glob: '*.{scss,less,styl,html,vue,css,md}'
+
+    lint-package:
+      run: pnpm prettier --cache --write {staged_files}
+      glob: 'package.json'
+
+    lint-json:
+      run: pnpm prettier --cache --write --parser json {staged_files}
+      glob: '{!(package)*.json,*.code-snippets,.!(browserslist)*rc}'
+
+    lint-vue:
+      run: pnpm prettier --write {staged_files} && pnpm eslint --cache --fix {staged_files}
+      glob: '*.vue'
+
+post-merge:
+  commands:
+    install:
+      run: pnpm install
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit $1

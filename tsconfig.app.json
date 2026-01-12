@@ -1,0 +1,33 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite/client", "@types/node"],
+
+    "jsx": "preserve",
+    "jsxImportSource": "vue-jsx-vapor",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+
+    "baseUrl": ".",
+    "paths": {
+      "@vc-com/*": ["packages/*/src/index.ts", "packages/*/src/index.tsx", "packages/*/src"],
+      "@vc-com/util/*": ["packages/util/src/*"],
+      "@vc-com/util/lib/*": ["packages/util/lib/*"],
+      "@vc-com/cssinjs/*": ["packages/cssinjs/src/*"],
+      "@vc-com/input/*": ["packages/input/src/*"],
+      "@vc-com/portal/*": ["packages/portal/src/*"],
+      "@vc-com/resize-observer/*": ["packages/resize-observer/src/*"]
+    }
+  },
+  "include": ["packages/**/*.ts", "packages/**/*.tsx", "packages/**/*.vue", "docs/**/*.tsx", "docs/**/*.ts", "docs/**/*.vue"]
+}
