@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue';
-import ResizeObserverStory from '../packages/resize-observer/docs/resize-observer.story.vue';
+import MotionStory from '../packages/motion/docs/motion.story.vue';
 const App = defineComponent(() => {
-  return () => <ResizeObserverStory></ResizeObserverStory>;
+  return () => <MotionStory></MotionStory>;
 });
 
 export default App;
