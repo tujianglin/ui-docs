@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+html,
+body,
+#app {
+  @apply size-full;
+}
