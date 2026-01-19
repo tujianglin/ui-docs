@@ -43,8 +43,8 @@
   // 排除文件
   "files.exclude": {
     "**/.git": true,
-    "**/.DS_Store": true,
-    "**/node_modules": true
+    "**/.DS_Store": true
+    // "**/node_modules": true
   },
   "search.exclude": {
     "**/node_modules": true,
@@ -60,6 +60,9 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[vue]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

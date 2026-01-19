@@ -1,0 +1,23 @@
+{
+  "name": "@vc-com/util",
+  "version": "1.0.0",
+  "description": "",
+  "files": [
+    "lib",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublish": "pnpm build",
+    "bump": "bumpp --release patch"
+  },
+  "devDependencies": {
+    "is-mobile": "^5.0.0"
+  }
+}

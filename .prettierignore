@@ -5,6 +5,4 @@
 /public/*
 /src/assets/*
 **/*.js
-**/*.ts
-**/*.tsx
 

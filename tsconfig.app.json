@@ -20,8 +20,10 @@
 
     "baseUrl": ".",
     "paths": {
+      "@vc-com/*": ["packages/*/src/index.ts", "packages/*/src/index.tsx", "packages/*/src"],
       "@/*": ["playground/*"],
-      "@vc-com/util/*": ["packages/util/src/*"]
+      "@vc-com/util/lib/*": ["packages/util/src/*"],
+      "@vc-com/resize-observer/*": ["packages/resize-observer/src/*"]
     }
   },
   "include": [
