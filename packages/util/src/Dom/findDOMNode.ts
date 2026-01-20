@@ -1,4 +1,4 @@
-import { Fragment, isVNode, type VNode } from 'vue';
+import { Fragment, isVNode, type ComponentPublicInstance, type VNode } from 'vue';
 
 export function isDOM(node: any): node is HTMLElement | SVGElement {
   // https://developer.mozilla.org/en-US/docs/Web/API/Element
@@ -10,20 +10,20 @@ export function isDOM(node: any): node is HTMLElement | SVGElement {
  * Retrieves a DOM node via a ref, and does not invoke `findDOMNode`.
  */
 export function getDOM(node: any): HTMLElement | SVGElement | null {
-  if (!node) {
-    return null;
-  }
+  if (!node) return null;
 
-  if (node && typeof node === 'object' && isDOM(node.nativeElement)) {
-    return node.nativeElement;
-  }
+  // 1) 原生 Element
+  if (node instanceof HTMLElement) return node;
 
-  if (isDOM(node)) {
-    return node as any;
-  }
+  // 2) 组件实例
+  const maybeEl = (node as ComponentPublicInstance)?.$el ?? (node as any).__$el;
+  if (maybeEl instanceof HTMLElement) return maybeEl;
 
-  if (typeof node === 'object' && isDOM((node as any).$el)) {
-    return (node as any).$el;
+  // 3) Text/Comment 等 Node：取后面的元素
+  if (node instanceof Node) {
+    const next = (node as any).nextElementSibling;
+    if (next instanceof HTMLElement) return next;
+    if ((node as any).parentElement instanceof HTMLElement) return (node as any).parentElement;
   }
 
   return null;

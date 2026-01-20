@@ -30,11 +30,11 @@ export interface ResizeObserverProps {
 }
 
 const RefResizeObserver = defineComponent(
-  (props: ResizeObserverProps, { slots }) => {
-    defineSlots<{ default?: () => any }>();
+  (props: ResizeObserverProps) => {
+    const slots = defineSlots<{ default: () => any }>();
 
     return () => {
-      const childNodes = filterEmpty(slots.default?.()).filter(Boolean) as VNode[];
+      const childNodes = filterEmpty(<slots.default />).filter(Boolean) as VNode[];
 
       if (process.env.NODE_ENV !== 'production') {
         if (childNodes.length > 1) {
@@ -46,6 +46,7 @@ const RefResizeObserver = defineComponent(
           warning(false, '`children` of ResizeObserver is empty. Nothing is in observe.');
         }
       }
+
       return (
         <SingleObserver v-for={(child, index) in childNodes} {...props} key={child?.key || `${INTERNAL_PREFIX_KEY}-${index}`}>
           {child}

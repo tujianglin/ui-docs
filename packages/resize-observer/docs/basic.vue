@@ -9,7 +9,7 @@ import ResizeObserver from '@vc-com/resize-observer';
 import { onMounted, ref } from 'vue';
 import './assets/index.css';
 
-const Wrapper = (_props: any, { slots }: any) => slots?.default?.();
+const Wrapper = (_props: any, { slots }: any) => <>{slots?.default?.()}</>;
 
 const times = ref(0);
 const disabled = ref(false);

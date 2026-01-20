@@ -1,6 +1,19 @@
-import { defineComponent, shallowRef } from 'vue';
+import { defineComponent, inject, provide, shallowRef, type InjectionKey } from 'vue';
 import type { SizeInfo } from '.';
-import { CollectionContextProvider, useCollectionContextInject } from './context';
+
+type onCollectionResize = (size: SizeInfo, element: HTMLElement, data: any) => void;
+
+const CollectionContext: InjectionKey<onCollectionResize> = Symbol('CollectionContext');
+
+export const useCollectionContextInject = () => {
+  return inject(CollectionContext, null);
+};
+
+export const CollectionContextProvider = defineComponent(({ value }: { value: onCollectionResize }) => {
+  const slots = defineSlots();
+  provide(CollectionContext, value);
+  return () => <slots.default />;
+});
 
 export interface ResizeInfo {
   size: SizeInfo;
@@ -16,8 +29,8 @@ export interface CollectionProps {
 /**
  * Collect all the resize event from children ResizeObserver
  */
-export const Collection = defineComponent(({ onBatchResize }: CollectionProps, { slots }) => {
-  defineSlots<{ default: () => any }>();
+export const Collection = defineComponent(({ onBatchResize }: CollectionProps) => {
+  const slots = defineSlots<{ default: () => any }>();
 
   const resizeIdRef = shallowRef(0);
   const resizeInfosRef = shallowRef<ResizeInfo[]>([]);
@@ -45,5 +58,9 @@ export const Collection = defineComponent(({ onBatchResize }: CollectionProps, {
     onCollectionResize?.(size, element, data);
   };
 
-  return () => <CollectionContextProvider value={onResize}>{slots.default?.()}</CollectionContextProvider>;
+  return () => (
+    <CollectionContextProvider value={onResize}>
+      <slots.default />
+    </CollectionContextProvider>
+  );
 });

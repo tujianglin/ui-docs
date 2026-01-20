@@ -6,7 +6,7 @@
  */
 import ResizeObserver from '@vc-com/resize-observer';
 import type { ResizeInfo } from '@vc-com/resize-observer/Collection';
-import { effect, ref } from 'vue';
+import { ref } from 'vue';
 import './assets/index.css';
 
 function randomSize() {
@@ -35,9 +35,6 @@ const onBatchResize = (infoList: ResizeInfo[]) => {
     infoList.map(({ data, size }) => `${data}(${size.width}/${size.height})`),
   );
 };
-effect(() => {
-  console.log(size1.value.width);
-});
 </script>
 
 <template>

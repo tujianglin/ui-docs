@@ -1,0 +1,27 @@
+{
+  "name": "@vc-com/portal",
+  "version": "1.0.0",
+  "description": "Vue 3 Portal 组件",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build && pnpm build:types",
+    "build:types": "tsmc -p tsconfig.build.json",
+    "prepublish": "pnpm build",
+    "bump": "bumpp --release patch"
+  },
+  "devDependencies": {
+    "@vc-com/util": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  }
+}
