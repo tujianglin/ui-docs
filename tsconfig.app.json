@@ -25,7 +25,8 @@
       "@vc-com/util/lib/*": ["packages/util/src/*"],
       "@vc-com/resize-observer/*": ["packages/resize-observer/src/*"],
       "@vc-com/motion/*": ["packages/motion/src/*"],
-      "@vc-com/portal/*": ["packages/portal/src/*"]
+      "@vc-com/portal/*": ["packages/portal/src/*"],
+      "@vc-com/trigger/*": ["packages/trigger/src/*"]
     }
   },
   "include": [

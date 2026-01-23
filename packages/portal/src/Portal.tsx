@@ -1,7 +1,7 @@
 import canUseDom from '@vc-com/util/lib/Dom/canUseDom';
 import { filterEmpty } from '@vc-com/util/lib/props-util';
-import { warningOnce } from '@vc-com/util/lib/warning';
-import { computed, createVNode, defineComponent, isVNode, ref, shallowRef, Teleport, watch, watchEffect } from 'vue';
+import { warning } from '@vc-com/util/lib/warning';
+import { computed, createVNode, defineComponent, isVNode, onMounted, shallowRef, Teleport, watch, type PropType } from 'vue';
 import { useOrderContextProvider } from './Context';
 import { inlineMock } from './mock';
 import useDom from './useDom';
@@ -47,99 +47,126 @@ const getPortalContainer = (getContainer: GetContainer) => {
   return getContainer;
 };
 
-const Portal = defineComponent(
-  ({ open, autoLock, getContainer, debug, autoDestroy = true, onEsc }: PortalProps) => {
-    const slots = defineSlots<{ default?: () => any }>();
-    const shouldRender = shallowRef(open);
-
-    const mergedRender = computed(() => shouldRender.value || open);
-
+const Portal = defineComponent({
+  inheritAttrs: false,
+  props: {
+    getContainer: {
+      type: [String, Function] as PropType<GetContainer | string>,
+      default: 'body',
+    },
+    open: {
+      type: Boolean,
+      default: undefined,
+    },
+    autoDestroy: {
+      type: Boolean,
+      default: true,
+    },
+    autoLock: {
+      type: Boolean,
+      default: undefined,
+    },
+    onEsc: {
+      type: Function as PropType<EscCallback>,
+    },
+    debug: {
+      type: String,
+    },
+  },
+  setup(props, { slots, expose }) {
+    const shouldRender = shallowRef(props.open);
+    const mergedRender = computed(() => shouldRender.value || props.open);
     // ========================= Warning =========================
     if (process.env.NODE_ENV !== 'production') {
-      warningOnce(
+      warning(
         canUseDom() || !open,
         `Portal only work in client side. Please call 'useEffect' to show Portal instead default render in SSR.`,
       );
     }
-
     // ====================== Should Render ======================
-    watch(
-      [() => open, () => autoDestroy],
-      () => {
-        if (autoDestroy || open) {
-          shouldRender.value = open;
-        }
-      },
-      { immediate: true },
-    );
+    watch([() => props.open, () => props.autoDestroy], () => {
+      if (props.autoDestroy || props.open) shouldRender.value = props.open;
+    });
 
     // ======================== Container ========================
-    const innerContainer = ref<ContainerType | false>(getPortalContainer(getContainer));
-
-    watchEffect(() => {
-      const customizeContainer = getPortalContainer(getContainer);
+    const innerContainer = shallowRef<ContainerType | false | null>(getPortalContainer(props.getContainer!));
+    onMounted(() => {
+      const customizeContainer = getPortalContainer(props.getContainer!);
+      // Tell component that we check this in effect which is safe to be `null`
       innerContainer.value = customizeContainer ?? null;
     });
 
-    const [defaultContainer, queueCreate] = useDom(
-      computed(() => mergedRender.value && !innerContainer.value),
-      debug,
+    watch(
+      () => props.getContainer,
+      () => {
+        const customizeContainer = getPortalContainer(props.getContainer!);
+        // Tell component that we check this in effect which is safe to be `null`
+        innerContainer.value = customizeContainer ?? null;
+      },
     );
-    const mergedContainer = computed(() => innerContainer.value ?? defaultContainer.value);
+
+    const [defaultContainer, queueCreate] = useDom(
+      computed(() => !!(mergedRender.value && !innerContainer.value)),
+      props.debug,
+    );
+
+    useOrderContextProvider(queueCreate);
+
+    const mergedContainer = computed(() => innerContainer.value ?? defaultContainer);
 
     // ========================= Locker ==========================
     useScrollLocker(
       computed(
         () =>
-          autoLock &&
-          open &&
-          canUseDom() &&
-          (mergedContainer.value === defaultContainer.value || mergedContainer.value === document.body),
+          !!(
+            props.autoLock &&
+            props.open &&
+            canUseDom() &&
+            (mergedContainer.value === defaultContainer || mergedContainer.value === document.body)
+          ),
       ),
     );
 
     // ========================= Esc Keydown ==========================
     useEscKeyDown(
-      computed(() => open),
-      onEsc,
+      computed(() => !!props.open),
+      (...args) => {
+        props.onEsc?.(...args);
+      },
     );
 
-    // =========================== Ref ===========================
-    const dom = shallowRef();
+    const elementEl = shallowRef();
     const setRef = (el: any) => {
-      dom.value = el;
+      elementEl.value = el;
     };
-    defineExpose({
-      get dom() {
-        return dom.value;
-      },
+    expose({
+      elementEl,
     });
 
-    useOrderContextProvider(queueCreate);
-
     return () => {
-      if (!mergedRender.value || !canUseDom() || innerContainer.value === undefined) {
-        return null;
-      }
+      // ========================= Render ==========================
+      // Do not render when nothing need render
+      // When innerContainer is `undefined`, it may not ready since user use ref in the same render
+      if (!mergedRender.value || !canUseDom() || innerContainer.value === undefined) return null;
+      // Render inline
       const renderInline = mergedContainer.value === false || inlineMock();
-      const reffedChildren = filterEmpty(<slots.default />);
 
+      const reffedChildren = filterEmpty(slots.default?.() ?? []);
       if (renderInline) {
         return reffedChildren;
+      } else {
+        const child =
+          reffedChildren.length === 1
+            ? isVNode(reffedChildren[0])
+              ? createVNode(reffedChildren[0], {
+                  ref: setRef,
+                })
+              : reffedChildren[0]
+            : reffedChildren;
+        return <Teleport to={mergedContainer.value}>{child}</Teleport>;
       }
-
-      const child =
-        reffedChildren.length === 1
-          ? isVNode(reffedChildren[0])
-            ? createVNode(reffedChildren[0], {
-                ref: setRef,
-              })
-            : reffedChildren[0]
-          : reffedChildren;
-      return <Teleport to={mergedContainer.value || 'body'}>{child}</Teleport>;
     };
   },
-  { inheritAttrs: false, name: process.env.NODE_ENV !== 'production' && 'Portal' },
-);
+});
 
 export default Portal;

@@ -1,10 +1,10 @@
-import { computed, shallowRef, unref, watch, type ComputedRef } from 'vue';
+import { shallowRef, unref, watch, type ComputedRef, type Ref } from 'vue';
 import type { OnResize, SizeInfo } from '.';
 import { observe, unobserve } from './utils/observerUtil';
 
 export default function useResizeObserver(
   enabled: ComputedRef<boolean>,
-  getTarget: ComputedRef<HTMLElement | (() => HTMLElement)>,
+  getTarget: Ref<HTMLElement | (() => HTMLElement)>,
   onDelayResize?: OnResize,
   onSyncResize?: OnResize,
 ) {
@@ -62,12 +62,12 @@ export default function useResizeObserver(
   };
 
   // Dynamic observe
-  const isFuncTarget = computed(() => typeof unref(getTarget) === 'function');
 
   watch(
-    [enabled, () => (isFuncTarget.value ? 0 : getTarget.value)],
+    [enabled, getTarget],
     (_n, _o, onCleanup) => {
-      const target = isFuncTarget.value ? (getTarget.value as any)() : getTarget.value;
+      const isFuncTarget = typeof unref(getTarget) === 'function';
+      const target = isFuncTarget ? (getTarget.value as any)() : getTarget.value;
 
       if (target && enabled.value) {
         observe(target, onInternalResize);

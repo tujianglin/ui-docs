@@ -9,9 +9,9 @@ import useResizeObserver from '../useResizeObserver';
 export interface SingleObserverProps extends ResizeObserverProps {}
 
 const SingleObserver = defineComponent(
-  (props: SingleObserverProps) => {
+  (props: SingleObserverProps, { slots }) => {
     const { disabled, onResize, data } = $(props);
-    const slots = defineSlots<{ default: () => any }>();
+    defineSlots<{ default: () => any }>();
 
     const elementRef = useRef<Element>(null);
     const setWrapperRef = (el: any) => {
@@ -41,7 +41,7 @@ const SingleObserver = defineComponent(
 
     // ============================ Render ============================
     return () => {
-      const children = filterEmpty(<slots.default />);
+      const children = filterEmpty(slots.default?.());
       if (children.length === 1 && isVNode(children[0])) {
         return createVNode(children[0], {
           ref: setWrapperRef,

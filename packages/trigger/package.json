@@ -1,0 +1,30 @@
+{
+  "name": "@vc-com/trigger",
+  "version": "1.0.0",
+  "description": "Vue 3 Trigger 组件",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build && pnpm build:types",
+    "build:types": "tsmc -p tsconfig.build.json",
+    "prepublish": "pnpm build",
+    "bump": "bumpp --release patch"
+  },
+  "devDependencies": {
+    "@vc-com/util": "workspace:*",
+    "@vc-com/motion": "workspace:*",
+    "@vc-com/portal": "workspace:*",
+    "@vc-com/resize-observer": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  }
+}

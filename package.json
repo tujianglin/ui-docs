@@ -1,9 +1,12 @@
 {
-  "name": "vue1",
+  "name": "vue",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "histoire dev --port 8080",
+    "story:build": "histoire build",
+    "story:preview": "histoire preview",
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
@@ -20,6 +23,7 @@
     "@commitlint/cli": "^20.3.0",
     "@commitlint/config-conventional": "^20.3.0",
     "@eslint/js": "^9.39.2",
+    "@histoire/plugin-vue": "1.0.0-beta.1",
     "@tailwindcss/vite": "^4.1.18",
     "@ts-macro/tsc": "catalog:",
     "@types/node": "^24.10.1",
@@ -36,6 +40,7 @@
     "eslint-plugin-unused-imports": "^4.3.0",
     "eslint-plugin-vue": "^10.6.2",
     "globals": "^17.0.0",
+    "histoire": "1.0.0-beta.1",
     "lefthook": "^2.0.13",
     "less": "^4.5.1",
     "oxfmt": "^0.21.0",
@@ -50,5 +55,16 @@
     "vue-eslint-parser": "^10.2.0",
     "vue-jsx-vapor": "catalog:",
     "vue-tsc": "catalog:"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "8.0.0-beta.7"
+    },
+    "ignoredBuiltDependencies": [
+      "esbuild"
+    ],
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

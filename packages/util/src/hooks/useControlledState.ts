@@ -34,7 +34,7 @@ type Updater<T> = (updater: T | ((origin: T) => T)) => void;
  * @param value - 外部传入的受控值（可选）
  * @returns [当前值, 更新函数] 元组
  */
-export default function useControlledState<T>(defaultStateValue: T | (() => T), value?: T): [Ref<T>, Updater<T>] {
+export default function useControlledState<T>(defaultStateValue: T | (() => T), value?: Ref<T>): [Ref<T>, Updater<T>] {
   const innerValue = ref<T>(
     typeof defaultStateValue === 'function' ? (defaultStateValue as () => T)() : defaultStateValue,
   ) as Ref<T>;
@@ -43,15 +43,15 @@ export default function useControlledState<T>(defaultStateValue: T | (() => T), 
   useLayoutEffect(
     (mount) => {
       if (!mount && value !== undefined) {
-        innerValue.value = value;
+        innerValue.value = value.value;
       }
     },
-    [() => value],
+    [value],
   );
 
   // 合并后的值：优先使用外部 value
   const getMergedValue = (): T => {
-    return value !== undefined ? value : innerValue.value;
+    return value.value !== undefined ? value.value : innerValue.value;
   };
 
   const setInnerValue: Updater<T> = (updater) => {
@@ -65,7 +65,7 @@ export default function useControlledState<T>(defaultStateValue: T | (() => T), 
   // 使用 watch 同步
   useLayoutEffect(() => {
     mergedRef.value = getMergedValue();
-  }, [() => value, innerValue]);
+  }, [value, innerValue]);
 
   return [mergedRef, setInnerValue];
 }
