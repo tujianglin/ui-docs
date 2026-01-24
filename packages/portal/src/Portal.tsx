@@ -1,7 +1,6 @@
 import canUseDom from '@vc-com/util/lib/Dom/canUseDom';
-import { filterEmpty } from '@vc-com/util/lib/props-util';
 import { warning } from '@vc-com/util/lib/warning';
-import { computed, createVNode, defineComponent, isVNode, onMounted, shallowRef, Teleport, watch, type PropType } from 'vue';
+import { computed, defineComponent, onMounted, shallowRef, Teleport, watch } from 'vue';
 import { useOrderContextProvider } from './Context';
 import { inlineMock } from './mock';
 import useDom from './useDom';
@@ -47,35 +46,13 @@ const getPortalContainer = (getContainer: GetContainer) => {
   return getContainer;
 };
 
-const Portal = defineComponent({
-  inheritAttrs: false,
-  props: {
-    getContainer: {
-      type: [String, Function] as PropType<GetContainer | string>,
-      default: 'body',
-    },
-    open: {
-      type: Boolean,
-      default: undefined,
-    },
-    autoDestroy: {
-      type: Boolean,
-      default: true,
-    },
-    autoLock: {
-      type: Boolean,
-      default: undefined,
-    },
-    onEsc: {
-      type: Function as PropType<EscCallback>,
-    },
-    debug: {
-      type: String,
-    },
-  },
-  setup(props, { slots, expose }) {
-    const shouldRender = shallowRef(props.open);
-    const mergedRender = computed(() => shouldRender.value || props.open);
+const Portal = defineComponent(
+  ({ open, autoLock, getContainer, debug, autoDestroy = true, onEsc }: PortalProps) => {
+    const slots = defineSlots({
+      default: () => <></>,
+    });
+    const shouldRender = shallowRef(open);
+    const mergedRender = computed(() => shouldRender.value || open);
     // ========================= Warning =========================
     if (process.env.NODE_ENV !== 'production') {
       warning(
@@ -84,22 +61,22 @@ const Portal = defineComponent({
       );
     }
     // ====================== Should Render ======================
-    watch([() => props.open, () => props.autoDestroy], () => {
-      if (props.autoDestroy || props.open) shouldRender.value = props.open;
+    watch([() => open, () => autoDestroy], () => {
+      if (autoDestroy || open) shouldRender.value = open;
     });
 
     // ======================== Container ========================
-    const innerContainer = shallowRef<ContainerType | false | null>(getPortalContainer(props.getContainer!));
+    const innerContainer = shallowRef<ContainerType | false | null>(getPortalContainer(getContainer!));
     onMounted(() => {
-      const customizeContainer = getPortalContainer(props.getContainer!);
+      const customizeContainer = getPortalContainer(getContainer!);
       // Tell component that we check this in effect which is safe to be `null`
       innerContainer.value = customizeContainer ?? null;
     });
 
     watch(
-      () => props.getContainer,
+      () => getContainer,
       () => {
-        const customizeContainer = getPortalContainer(props.getContainer!);
+        const customizeContainer = getPortalContainer(getContainer!);
         // Tell component that we check this in effect which is safe to be `null`
         innerContainer.value = customizeContainer ?? null;
       },
@@ -107,20 +84,22 @@ const Portal = defineComponent({
 
     const [defaultContainer, queueCreate] = useDom(
       computed(() => !!(mergedRender.value && !innerContainer.value)),
-      props.debug,
+      debug,
     );
 
     useOrderContextProvider(queueCreate);
 
-    const mergedContainer = computed(() => innerContainer.value ?? defaultContainer);
+    const mergedContainer = computed(() => {
+      return innerContainer.value ?? defaultContainer;
+    });
 
     // ========================= Locker ==========================
     useScrollLocker(
       computed(
         () =>
           !!(
-            props.autoLock &&
-            props.open &&
+            autoLock &&
+            open &&
             canUseDom() &&
             (mergedContainer.value === defaultContainer || mergedContainer.value === document.body)
           ),
@@ -129,9 +108,9 @@ const Portal = defineComponent({
 
     // ========================= Esc Keydown ==========================
     useEscKeyDown(
-      computed(() => !!props.open),
+      computed(() => !!open),
       (...args) => {
-        props.onEsc?.(...args);
+        onEsc?.(...args);
       },
     );
 
@@ -139,7 +118,7 @@ const Portal = defineComponent({
     const setRef = (el: any) => {
       elementEl.value = el;
     };
-    expose({
+    defineExpose({
       elementEl,
     });
 
@@ -151,22 +130,18 @@ const Portal = defineComponent({
       // Render inline
       const renderInline = mergedContainer.value === false || inlineMock();
 
-      const reffedChildren = filterEmpty(slots.default?.() ?? []);
       if (renderInline) {
-        return reffedChildren;
+        return <slots.default />;
       } else {
-        const child =
-          reffedChildren.length === 1
-            ? isVNode(reffedChildren[0])
-              ? createVNode(reffedChildren[0], {
-                  ref: setRef,
-                })
-              : reffedChildren[0]
-            : reffedChildren;
-        return <Teleport to={mergedContainer.value}>{child}</Teleport>;
+        return (
+          <Teleport to={mergedContainer.value}>
+            <slots.default ref={setRef} />
+          </Teleport>
+        );
       }
     };
   },
-});
+  { inheritAttrs: false },
+);
 
 export default Portal;

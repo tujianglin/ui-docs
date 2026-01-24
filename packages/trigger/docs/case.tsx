@@ -54,15 +54,15 @@ const LabelItem = defineComponent((props: { title: string }, { slots, attrs }) =
 });
 
 export default defineComponent(() => {
-  const hover = ref(true);
+  const hover = ref(false);
   const focus = ref(false);
-  const click = ref(false);
-  const contextMenu = ref(false);
+  const click = ref(true);
+  const contextmenu = ref(false);
 
   const placement = ref('right');
   const stretch = ref('');
   const motion = ref(true);
-  const destroyPopupOnHide = ref(false);
+  const destroyPopupOnHide = ref(true);
   const mask = ref(false);
   const maskClosable = ref(true);
   const forceRender = ref(false);
@@ -74,7 +74,7 @@ export default defineComponent(() => {
       hover: hover.value,
       focus: focus.value,
       click: click.value,
-      contextMenu: contextMenu.value,
+      contextmenu: contextmenu.value,
     };
     return Object.keys(actions).filter((key) => actions[key]);
   });
@@ -113,9 +113,9 @@ export default defineComponent(() => {
         <LabelItem title="ContextMenu">
           <input
             type="checkbox"
-            checked={contextMenu.value}
+            checked={contextmenu.value}
             onChange={(event) => {
-              contextMenu.value = (event.target as HTMLInputElement).checked;
+              contextmenu.value = (event.target as HTMLInputElement).checked;
             }}
           />
         </LabelItem>

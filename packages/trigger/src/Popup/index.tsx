@@ -83,8 +83,10 @@ export interface PopupProps {
   mobile?: MobileConfig;
 }
 
-const Popup = defineComponent((props: PopupProps, { slots }) => {
-  defineSlots<{ default: () => any }>();
+const Popup = defineComponent((props: PopupProps) => {
+  const slots = defineSlots({
+    default: () => <></>,
+  });
   const {
     onEsc,
     popup,
@@ -299,7 +301,7 @@ const Popup = defineComponent((props: PopupProps, { slots }) => {
             }}
           </CSSMotion>
         </ResizeObserver>
-        {slots.default?.()}
+        <slots.default></slots.default>
       </Portal>
     );
   };

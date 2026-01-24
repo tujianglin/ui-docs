@@ -1,5 +1,5 @@
 import canUseDom from '@vc-com/util/lib/Dom/canUseDom';
-import { computed, nextTick, ref, watch, type ComputedRef, type Ref } from 'vue';
+import { computed, nextTick, onUnmounted, shallowRef, watch, type ComputedRef, type Ref } from 'vue';
 import { useOrderContextInject, type QueueCreate } from './Context';
 
 const EMPTY_LIST = [];
@@ -8,26 +8,21 @@ const EMPTY_LIST = [];
  * Will add `div` to document. Nest call will keep order
  * @param render Render DOM in document
  */
-export default function useDom(render: Ref<boolean>, debug?: string): [Ref<HTMLDivElement | null>, ComputedRef<QueueCreate>] {
-  const ele = computed(() => {
-    if (!canUseDom()) {
-      return null;
-    }
+export default function useDom(render: Ref<boolean>, debug?: string): [HTMLDivElement | null, ComputedRef<QueueCreate>] {
+  const eleFun = () => {
+    if (!canUseDom()) return null;
 
     const defaultEle = document.createElement('div');
 
-    if (process.env.NODE_ENV !== 'production' && debug) {
-      defaultEle.setAttribute('data-debug', debug);
-    }
-
+    if (process.env.NODE_ENV !== 'production' && debug) defaultEle.setAttribute('data-debug', debug);
     return defaultEle;
-  });
+  };
+  const ele = eleFun();
 
   // ========================== Order ==========================
-  const appendedRef = ref(false);
-
+  const appendedRef = shallowRef(false);
   const queueCreate = useOrderContextInject();
-  const queue = ref<VoidFunction[]>(EMPTY_LIST);
+  const queue = shallowRef<VoidFunction[]>([]);
 
   const mergedQueueCreate = computed(
     () =>
@@ -35,55 +30,59 @@ export default function useDom(render: Ref<boolean>, debug?: string): [Ref<HTMLD
       (appendedRef.value
         ? undefined
         : (appendFn: VoidFunction) => {
-            const newQueue = [appendFn, ...queue.value];
-            queue.value = newQueue;
+            queue.value = [appendFn, ...queue.value];
           }),
   );
 
   // =========================== DOM ===========================
   function append() {
-    if (!ele.value.parentElement) {
-      document.body.appendChild(ele.value);
-    }
-
+    if (!ele?.parentElement) document.body.appendChild(ele!);
     appendedRef.value = true;
   }
 
   function cleanup() {
-    ele.value.parentElement?.removeChild(ele.value);
+    if (ele?.parentElement) {
+      ele?.parentElement?.removeChild(ele);
+    } else {
+      if (ele && appendedRef.value) {
+        document.body?.removeChild?.(ele!);
+      }
+    }
 
     appendedRef.value = false;
   }
 
   watch(
     render,
-    async (_n, _o, onCleanup) => {
-      await nextTick();
+    () => {
       if (render.value) {
-        if (queueCreate?.value) {
-          queueCreate?.value?.(append);
-        } else {
-          append();
-        }
+        if (queueCreate?.value) queueCreate.value(append);
+        else append();
       } else {
-        cleanup();
+        nextTick(() => {
+          cleanup();
+        });
       }
-      onCleanup(() => {
-        cleanup();
-      });
     },
-    { flush: 'post', immediate: true },
+    {
+      immediate: true,
+    },
   );
+
+  onUnmounted(cleanup);
 
   watch(
     queue,
-    (val) => {
-      if (val.length) {
-        val.forEach((appendFn) => appendFn());
-        queue.value = EMPTY_LIST;
+    () => {
+      if (queue.value.length) {
+        queue.value.forEach((fn) => fn());
+        queue.value = [...EMPTY_LIST];
       }
     },
-    { immediate: true, deep: true },
+    {
+      flush: 'post',
+      immediate: true,
+    },
   );
 
   return [ele, mergedQueueCreate];

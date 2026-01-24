@@ -23,8 +23,12 @@ export default defineComponent((props: MaskProps) => {
     }
     return (
       <CSSMotion {...motion} motionAppear visible={open} removeOnLeave>
-        {({ class: className }) => (
-          <div style={{ zIndex }} class={clsx(`${prefixCls}-mask`, mobile && `${prefixCls}-mobile-mask`, className)} />
+        {({ class: className, ref: motionRef }) => (
+          <div
+            style={{ zIndex }}
+            ref={motionRef}
+            class={clsx(`${prefixCls}-mask`, mobile && `${prefixCls}-mobile-mask`, className)}
+          />
         )}
       </CSSMotion>
     );
