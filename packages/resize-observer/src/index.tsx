@@ -32,8 +32,8 @@ export interface ResizeObserverProps {
 }
 
 const RefResizeObserver = defineComponent(
-  (props: ResizeObserverProps, { slots }) => {
-    defineSlots<{ default: () => any }>();
+  (props: ResizeObserverProps) => {
+    const slots = defineSlots({ default: () => <></> });
 
     return () => {
       const childNodes = filterEmpty(slots.default?.() ?? []).filter(Boolean) as VNode[];

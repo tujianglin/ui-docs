@@ -118,10 +118,12 @@ export function genCSSMotion(config: CSSMotionConfig) {
   }
 
   const CSSMotion = defineComponent(
-    (props: CSSMotionProps, { slots }) => {
-      defineSlots<{
-        default: (props: { visible?: boolean; class?: string; style?: CSSProperties; [key: string]: any; ref: VNodeRef }) => any;
-      }>();
+    (props: CSSMotionProps) => {
+      const slots = defineSlots({
+        default: (_props: { visible?: boolean; class?: string; style?: CSSProperties; [key: string]: any; ref: VNodeRef }) => (
+          <></>
+        ),
+      });
 
       const {
         // Default config

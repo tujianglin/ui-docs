@@ -10,8 +10,8 @@ export interface SingleObserverProps extends ResizeObserverProps {}
 
 const SingleObserver = defineComponent(
   (props: SingleObserverProps, { slots }) => {
-    const { disabled, onResize, data } = $(props);
     defineSlots<{ default: () => any }>();
+    const { disabled, onResize, data } = $(props);
 
     const elementRef = useRef<Element>(null);
     const setWrapperRef = (el: any) => {

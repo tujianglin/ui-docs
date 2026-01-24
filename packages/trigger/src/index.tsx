@@ -140,73 +140,70 @@ export interface TriggerProps {
 
 export function generateTrigger(PortalComponent: Component = Portal) {
   const Trigger = defineComponent(
-    (
-      {
-        prefixCls = 'rc-trigger-popup',
+    ({
+      prefixCls = 'rc-trigger-popup',
 
-        // Action
-        action = ['hover'],
-        showAction,
-        hideAction,
+      // Action
+      action = ['hover'],
+      showAction,
+      hideAction,
 
-        // Open
-        popupVisible,
-        defaultPopupVisible,
-        onOpenChange,
-        afterOpenChange,
+      // Open
+      popupVisible,
+      defaultPopupVisible,
+      onOpenChange,
+      afterOpenChange,
 
-        // Delay
-        mouseEnterDelay,
-        mouseLeaveDelay = 0.1,
+      // Delay
+      mouseEnterDelay,
+      mouseLeaveDelay = 0.1,
 
-        focusDelay,
-        blurDelay,
+      focusDelay,
+      blurDelay,
 
-        // Mask
-        mask,
-        maskClosable = true,
+      // Mask
+      mask,
+      maskClosable = true,
 
-        // Portal
-        getPopupContainer,
-        forceRender,
-        autoDestroy,
+      // Portal
+      getPopupContainer,
+      forceRender,
+      autoDestroy,
 
-        // Popup
-        popup,
-        popupClassName,
-        uniqueContainerClassName,
-        uniqueContainerStyle,
-        popupStyle,
+      // Popup
+      popup,
+      popupClassName,
+      uniqueContainerClassName,
+      uniqueContainerStyle,
+      popupStyle,
 
-        popupPlacement,
-        builtinPlacements = {},
-        popupAlign,
-        zIndex,
-        stretch,
-        getPopupClassNameFromAlign,
-        fresh,
-        unique,
+      popupPlacement,
+      builtinPlacements = {},
+      popupAlign,
+      zIndex,
+      stretch,
+      getPopupClassNameFromAlign,
+      fresh,
+      unique,
 
-        alignPoint,
+      alignPoint,
 
-        onPopupClick,
-        onPopupAlign,
+      onPopupClick,
+      onPopupAlign,
 
-        // Arrow
-        arrow,
+      // Arrow
+      arrow,
 
-        // Motion
-        popupMotion,
-        maskMotion,
+      // Motion
+      popupMotion,
+      maskMotion,
 
-        // Private
-        mobile,
+      // Private
+      mobile,
 
-        ...restProps
-      }: TriggerProps,
-      { slots },
-    ) => {
-      defineSlots<{ default: () => any }>();
+      ...restProps
+    }: TriggerProps) => {
+      const slots = defineSlots({ default: () => <></> });
       const mergedAutoDestroy = computed(() => autoDestroy || false);
       const openUncontrolled = computed(() => popupVisible === undefined);
 
