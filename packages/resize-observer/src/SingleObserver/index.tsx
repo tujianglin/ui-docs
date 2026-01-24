@@ -1,5 +1,5 @@
-import { getDOM } from '@vc-com/util/lib/Dom/findDOMNode';
 import { filterEmpty } from '@vc-com/util/lib/props-util';
+import { resolveToElement } from '@vc-com/util/lib/vnode';
 import { computed, createVNode, defineComponent, isVNode } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
 import type { ResizeObserverProps } from '..';
@@ -15,7 +15,7 @@ const SingleObserver = defineComponent(
 
     const elementRef = useRef<Element>(null);
     const setWrapperRef = (el: any) => {
-      const dom = getDOM(el);
+      const dom = resolveToElement(el);
       elementRef.value = dom;
     };
 

@@ -5,10 +5,9 @@ import { getShadowRoot } from '@vc-com/util/lib/Dom/shadow';
 import { useId } from '@vc-com/util/lib/hooks/useId';
 import type { VueNode } from '@vc-com/util/lib/types';
 import { resolveToElement } from '@vc-com/util/lib/vnode';
-import { clsx } from 'clsx';
 import Popup, { type MobileConfig } from './Popup';
 import type { TriggerContextProps } from './context';
-import { TriggerContextProvider, useUniqueContextInject } from './context';
+import { TriggerContextProvider, useTriggerContextInject, useUniqueContextInject } from './context';
 import useAction from './hooks/useAction';
 import useAlign from './hooks/useAlign';
 import useDelay from './hooks/useDelay';
@@ -21,9 +20,9 @@ import { getAlignPopupClassName } from './util';
 export type { ActionType, AlignType, ArrowTypeOuter as ArrowType, BuildInPlacements };
 
 import { useResizeObserver } from '@vc-com/resize-observer';
-import { useControlledState } from '@vc-com/util/lib/index';
-import { getDOM } from '@vc-com/util/src/Dom/findDOMNode';
+import { useControlledState } from '@vc-com/util/src';
 import { filterEmpty } from '@vc-com/util/src/props-util';
+import clsx from 'clsx';
 import {
   computed,
   createVNode,
@@ -37,9 +36,8 @@ import {
   type Component,
   type CSSProperties,
 } from 'vue';
-import type { HTMLAttributes, MouseEvent, MouseEventHandler, SyntheticEvent } from 'vue-jsx-vapor';
+import type { MouseEvent, MouseEventHandler } from 'vue-jsx-vapor';
 import UniqueProvider, { type UniqueProviderProps } from './UniqueProvider';
-import { useTriggerContextInject } from './context';
 
 export { UniqueProvider };
 export type { UniqueProviderProps };
@@ -131,7 +129,7 @@ export interface TriggerProps {
   // // ========================== Mobile ==========================
   /**
    * @private Bump fixed position at bottom in mobile.
-   * Will replace the config of root props.
+   * Will replace the config of root
    * This will directly trade as mobile view which will not check what real is.
    * This is internal usage currently, do not use in your prod.
    */
@@ -211,8 +209,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       const isMobile = computed(() => !!mobile);
 
       // ========================== Context ===========================
-      const subPopupElements = shallowRef<Record<string, HTMLElement>>({});
-
+      const subPopupElements = ref<Record<string, HTMLElement | null>>({});
       const parentContext = useTriggerContextInject();
       const context = computed<TriggerContextProps>(() => {
         return {
@@ -226,14 +223,11 @@ export function generateTrigger(PortalComponent: Component = Portal) {
 
       // ======================== UniqueContext =========================
       const uniqueContext = useUniqueContextInject();
-
       // =========================== Popup ============================
       const id = useId();
-      const popupEle = ref<HTMLDivElement>(null);
-
+      const popupEle = shallowRef<HTMLDivElement | null>(null);
       // Used for forwardRef popup. Not use internal
-      const externalPopupRef = shallowRef<HTMLDivElement>(null);
-
+      const externalPopupRef = shallowRef<HTMLDivElement | null>(null);
       const setPopupRef = (node: any) => {
         const element = resolveToElement(node) as HTMLDivElement | null;
         externalPopupRef.value = element;
@@ -245,13 +239,11 @@ export function generateTrigger(PortalComponent: Component = Portal) {
 
       // =========================== Target ===========================
       // Use state to control here since `useRef` update not trigger render
-      const targetEle = ref<HTMLElement>(null);
-
+      const targetEle = shallowRef<HTMLElement>();
       // Used for forwardRef target. Not use internal
-      const externalForwardRef = shallowRef<HTMLElement>(null);
-
+      const externalForwardRef = shallowRef<HTMLElement | null>(null);
       const setTargetRef = (node: any) => {
-        const element = getDOM(node);
+        const element = resolveToElement(node);
         if (element && targetEle.value !== element) {
           targetEle.value = element as HTMLElement;
           externalForwardRef.value = element as HTMLElement;
@@ -260,30 +252,23 @@ export function generateTrigger(PortalComponent: Component = Portal) {
           externalForwardRef.value = null;
         }
       };
-      const cloneProps = reactive<
-        Pick<
-          HTMLAttributes<HTMLElement>,
-          | 'onClick'
-          | 'onMouseenter'
-          | 'onMouseleave'
-          | 'onMousemove'
-          | 'onPointerenter'
-          | 'onPointerleave'
-          | 'onFocus'
-          | 'onBlur'
-          | 'onContextmenu'
-        > & { onTouchstartPassive?: (e: TouchEvent) => void }
-      >({});
+
+      const originChildProps = reactive<Record<string, any>>({});
+      const baseActionProps = shallowRef<Record<string, any>>({});
+      const hoverActionProps = shallowRef<Record<string, any>>({});
+      const cloneProps = computed<Record<string, any>>(() => ({
+        ...baseActionProps.value,
+        ...hoverActionProps.value,
+      }));
 
       const inPopupOrChild = (ele: EventTarget) => {
         const childDOM = targetEle.value;
-
         return (
           childDOM?.contains(ele as HTMLElement) ||
-          getShadowRoot(childDOM)?.host === ele ||
+          (childDOM && getShadowRoot(childDOM)?.host === ele) ||
           ele === childDOM ||
           popupEle.value?.contains(ele as HTMLElement) ||
-          getShadowRoot(popupEle.value)?.host === ele ||
+          (popupEle.value && getShadowRoot(popupEle.value)?.host === ele) ||
           ele === popupEle.value ||
           Object.values(subPopupElements.value).some(
             (subPopupEle) => subPopupEle?.contains(ele as HTMLElement) || ele === subPopupEle,
@@ -310,8 +295,6 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       const mergedOpen = computed(() => internalOpen.value || false);
 
       // ========================== Children ==========================
-
-      const originChildProps = reactive<Record<string, any>>({});
 
       // Support ref
       const isOpen = () => mergedOpen.value;
@@ -355,9 +338,6 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       });
 
       const openRef = shallowRef(mergedOpen.value);
-      watchEffect(() => {
-        openRef.value = mergedOpen.value;
-      });
 
       const internalTriggerOpen = (nextOpen: boolean) => {
         nextTick(() => {
@@ -404,8 +384,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       }
 
       // ========================== Motion ============================
-      const inMotion = ref(false);
-
+      const inMotion = shallowRef(false);
       watch(mergedOpen, () => {
         if (mergedOpen.value) {
           inMotion.value = true;
@@ -415,8 +394,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       const motionPrepareResolve = shallowRef<VoidFunction>(null);
 
       // =========================== Align ============================
-      const mousePos = shallowRef<[x: number, y: number] | null>(null);
-
+      const mousePos = ref<[x: number, y: number] | null>(null);
       const setMousePosByEvent = (event: Pick<MouseEvent, 'clientX' | 'clientY'>) => {
         mousePos.value = [event.clientX, event.clientY];
       };
@@ -534,20 +512,22 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       // =========================== Action ===========================
       /**
        * Util wrapper for trigger action
+       * @param target
        * @param eventName  Listen event name
        * @param nextOpen  Next open state after trigger
        * @param delay Delay to trigger open change
        * @param callback Callback if current event need additional action
        * @param ignoreCheck  Ignore current event if check return true
        */
-      function wrapperAction<Event extends SyntheticEvent>(
+      function wrapperAction(
+        target: Record<string, any>,
         eventName: string,
         nextOpen: boolean,
         delay?: number,
         callback?: (event: Event) => void,
         ignoreCheck?: () => boolean,
       ) {
-        cloneProps[eventName] = (event: any, ...args: any[]) => {
+        target[eventName] = (event: any, ...args: any[]) => {
           if (!ignoreCheck || !ignoreCheck()) {
             callback?.(event);
             triggerOpen(nextOpen, delay);
@@ -566,8 +546,9 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       const touchedRef = shallowRef(false);
 
       watchEffect(() => {
+        const nextCloneProps: Record<string, any> = {};
         if (touchToShow.value || touchToHide.value) {
-          cloneProps.onTouchstartPassive = (...args: any[]) => {
+          nextCloneProps.onTouchstartPassive = (...args: any[]) => {
             touchedRef.value = true;
 
             if (openRef.value && touchToHide.value) {
@@ -583,7 +564,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
 
         // ======================= Action: Click ========================
         if (clickToShow.value || clickToHide.value) {
-          cloneProps.onClick = (event: MouseEvent<HTMLElement>, ...args: any[]) => {
+          nextCloneProps.onClick = (event: MouseEvent<HTMLElement>, ...args: any[]) => {
             if (openRef.value && clickToHide.value) {
               triggerOpen(false);
             } else if (!openRef.value && clickToShow.value) {
@@ -592,10 +573,11 @@ export function generateTrigger(PortalComponent: Component = Portal) {
             }
 
             // Pass to origin
-            originChildProps.onClick?.(event, ...args);
+            originChildProps?.onClick?.(event, ...args);
             touchedRef.value = false;
           };
         }
+        baseActionProps.value = nextCloneProps;
       });
 
       // Click to hide is special action since click popup element should not hide
@@ -615,58 +597,67 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       const hoverToHide = computed(() => hideActions.value?.has('hover'));
 
       let onPopupMouseEnter: any;
-      let onPopupMouseLeave: VoidFunction;
+      let onPopupMouseLeave: undefined | ((event: MouseEvent) => void);
 
       const ignoreMouseTrigger = () => {
         return touchedRef.value;
       };
 
       watchEffect(() => {
+        const nextHoverProps: Record<string, any> = {};
         if (hoverToShow.value) {
-          const onMouseEnterCallback = (event: MouseEvent) => {
+          const onMouseEnterCallback = (event: any) => {
             setMousePosByEvent(event);
           };
 
           // Compatible with old browser which not support pointer event
-          wrapperAction('onMouseenter', true, mouseEnterDelay, onMouseEnterCallback, ignoreMouseTrigger);
-          wrapperAction('onPointerenter', true, mouseEnterDelay, onMouseEnterCallback, ignoreMouseTrigger);
+          wrapperAction(nextHoverProps, 'onMouseenter', true, mouseEnterDelay, onMouseEnterCallback, ignoreMouseTrigger);
+          wrapperAction(nextHoverProps, 'onPointerenter', true, mouseEnterDelay, onMouseEnterCallback, ignoreMouseTrigger);
 
-          onPopupMouseEnter = (event) => {
+          onPopupMouseEnter = (event: any) => {
             // Only trigger re-open when popup is visible
-            if ((mergedOpen.value || inMotion) && popupEle.value?.contains(event.target as HTMLElement)) {
+            if ((mergedOpen.value || inMotion.value) && popupEle?.value?.contains(event.target as HTMLElement)) {
               triggerOpen(true, mouseEnterDelay);
             }
           };
 
           // Align Point
           if (alignPoint) {
-            cloneProps.onMousemove = (event: MouseEvent) => {
+            nextHoverProps.onMouseMove = (event: any) => {
               originChildProps.onMousemove?.(event);
             };
           }
+        } else {
+          onPopupMouseEnter = undefined;
         }
 
         if (hoverToHide.value) {
-          wrapperAction('onMouseleave', false, mouseLeaveDelay, undefined, ignoreMouseTrigger);
-          wrapperAction('onPointerleave', false, mouseLeaveDelay, undefined, ignoreMouseTrigger);
+          wrapperAction(nextHoverProps, 'onMouseleave', false, mouseLeaveDelay, undefined, ignoreMouseTrigger);
+          wrapperAction(nextHoverProps, 'onPointerleave', false, mouseLeaveDelay, undefined, ignoreMouseTrigger);
 
-          onPopupMouseLeave = () => {
+          onPopupMouseLeave = (event: MouseEvent) => {
+            const { relatedTarget } = event;
+            if (relatedTarget && inPopupOrChild(relatedTarget)) {
+              return;
+            }
             triggerOpen(false, mouseLeaveDelay);
           };
+        } else {
+          onPopupMouseLeave = undefined;
         }
 
         // ======================= Action: Focus ========================
         if (showActions.value.has('focus')) {
-          wrapperAction('onFocus', true, focusDelay);
+          wrapperAction(nextHoverProps, 'onFocus', true, focusDelay);
         }
 
         if (hideActions.value.has('focus')) {
-          wrapperAction('onBlur', false, blurDelay);
+          wrapperAction(nextHoverProps, 'onBlur', false, blurDelay);
         }
 
         // ==================== Action: ContextMenu =====================
         if (showActions.value.has('contextmenu')) {
-          cloneProps.onContextmenu = (event: MouseEvent, ...args: any[]) => {
+          nextHoverProps.onContextmenu = (event: any, ...args: any[]) => {
             if (openRef.value && hideActions.value.has('contextmenu')) {
               triggerOpen(false);
             } else {
@@ -680,6 +671,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
             originChildProps.onContextmenu?.(event, ...args);
           };
         }
+        hoverActionProps.value = nextHoverProps;
       });
 
       // ============================ Perf ============================
@@ -692,22 +684,18 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       // Use hook to observe target element resize
       // Pass targetEle directly instead of a function so the hook will re-observe when target changes
       useResizeObserver(mergedOpen, targetEle, onTargetResize);
-
       const arrowPos = computed<ArrowPos>(() => ({
         x: arrowX.value,
         y: arrowY.value,
       }));
-
-      // =========================== Render ===========================
       return () => {
         // ========================== Children ==========================
         const child = filterEmpty(slots?.default?.() ?? [])?.[0];
-
+        // =========================== Render ===========================
         const mergedChildrenProps = {
           ...originChildProps,
-          ...cloneProps,
+          ...cloneProps.value,
         };
-
         // Pass props into cloneProps for nest usage
         const passedProps: Record<string, any> = {};
         const passedEventList = [

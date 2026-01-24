@@ -1,4 +1,4 @@
-import { shallowRef } from 'vue';
+import { ref } from 'vue';
 import type { UniqueShowOptions } from '../context';
 
 /**
@@ -11,34 +11,32 @@ import type { UniqueShowOptions } from '../context';
  * 4. During appear/enter animation, cache new options and apply after animation completes.
  */
 export default function useTargetState() {
-  const options = shallowRef<UniqueShowOptions | null>(null);
-  const open = shallowRef(false);
-  const isAnimating = shallowRef(false);
-  const pendingOptionsRef = shallowRef<UniqueShowOptions | null>(null);
+  const options = ref<UniqueShowOptions>();
+  const open = ref(false);
+  const isAnimating = ref(false);
+  const pendingOptionsRef = ref<UniqueShowOptions | null>();
 
   const trigger = (nextOptions: UniqueShowOptions | false) => {
+    const wasOpen = open.value;
     if (nextOptions === false) {
       // Clear pending options when hiding
       pendingOptionsRef.value = null;
       open.value = false;
     } else {
-      if (isAnimating && open) {
-        // If animating (appear or enter), cache new options
+      if (isAnimating.value && wasOpen) {
+        // If enter animation is in progress, cache new options
         pendingOptionsRef.value = nextOptions;
       } else {
         open.value = true;
-        // Set new options
         options.value = nextOptions;
         pendingOptionsRef.value = null;
-
         // Only mark as animating when transitioning from closed to open
-        if (!open) {
+        if (!wasOpen) {
           isAnimating.value = true;
         }
       }
     }
   };
-
   const onVisibleChanged = (visible: boolean) => {
     if (visible) {
       // Animation enter completed, check if there are pending options
@@ -54,6 +52,5 @@ export default function useTargetState() {
       pendingOptionsRef.value = null;
     }
   };
-
   return [trigger, open, options, onVisibleChanged] as const;
 }

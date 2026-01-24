@@ -65,14 +65,17 @@ const UniqueContainer = defineComponent((props: UniqueContainerProps) => {
       cachedOffsetStyleRef.value = offsetStyle.value;
     }
   });
+
+  const sizeStyle = computed(() => {
+    const result: CSSProperties = {};
+    if (popupSize) {
+      result.width = `${popupSize.width}px`;
+      result.height = `${popupSize.height}px`;
+    }
+    return result;
+  });
   // ========================= Render =========================
   return () => {
-    // Apply popup size if available
-    const sizeStyle: CSSProperties = {};
-    if (popupSize) {
-      sizeStyle.width = popupSize.width;
-      sizeStyle.height = popupSize.height;
-    }
     return (
       <CSSMotion
         motionAppear
@@ -90,7 +93,6 @@ const UniqueContainer = defineComponent((props: UniqueContainerProps) => {
           const cls = clsx(containerCls.value, motionClassName, uniqueContainerClassName, {
             [`${containerCls.value}-visible`]: motionVisible.value,
           });
-
           return (
             <div
               class={cls}
@@ -99,7 +101,7 @@ const UniqueContainer = defineComponent((props: UniqueContainerProps) => {
                   '--arrow-x': `${arrowPos?.x || 0}px`,
                   '--arrow-y': `${arrowPos?.y || 0}px`,
                   ...cachedOffsetStyleRef.value,
-                  ...sizeStyle,
+                  ...sizeStyle.value,
                   ...motionStyle,
                   ...uniqueContainerStyle,
                 } as CSSProperties

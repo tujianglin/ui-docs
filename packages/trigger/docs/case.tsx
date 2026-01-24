@@ -1,5 +1,6 @@
 import { computed, defineComponent, h, ref } from 'vue';
 import Trigger from '../src';
+import './assets/index.less';
 import './case.less';
 
 const builtinPlacements = {
