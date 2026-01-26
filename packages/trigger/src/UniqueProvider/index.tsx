@@ -101,9 +101,9 @@ const UniqueProvider = defineComponent(
       offsetB,
       arrowX,
       arrowY, // scaleX - not used in UniqueProvider
-      ,
-      ,
       // scaleY - not used in UniqueProvider
+      ,
+      ,
       alignInfo,
       onAlign,
     ] = useAlign(

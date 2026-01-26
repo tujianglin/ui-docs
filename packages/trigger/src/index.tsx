@@ -96,7 +96,7 @@ export interface TriggerProps {
   blurDelay?: number;
 
   // ==================== Popup ====================
-  popup: VueNode;
+  popup: (() => VueNode) | VueNode;
   popupPlacement?: string;
   builtinPlacements?: BuildInPlacements;
   popupAlign?: AlignType;
@@ -201,7 +201,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
 
       ...restProps
     }: TriggerProps) => {
-      const slots = defineSlots({ default: () => <></> });
+      const slots = defineSlots({ default: (_props?: { open: boolean }) => <></> });
       const mergedAutoDestroy = computed(() => autoDestroy || false);
       const openUncontrolled = computed(() => popupVisible === undefined);
 

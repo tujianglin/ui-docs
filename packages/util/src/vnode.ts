@@ -3,6 +3,7 @@ import { cloneVNode, Comment, Fragment, isVNode, render as VueRender } from 'vue
 import type { RefObject } from './createRef';
 import { isDOM } from './Dom/findDOMNode';
 import { filterEmpty } from './props-util';
+import type { VueNode } from './types';
 import { warning } from './warning';
 
 type NodeProps = Record<string, any> & Omit<VNodeProps, 'ref'> & { ref?: VNodeProps['ref'] | RefObject };
@@ -109,4 +110,8 @@ export function resolveToElement(node: any) {
       return (dom as any).nextElementSibling as HTMLElement;
   }
   return null;
+}
+
+export function resolveVNode<T = any>(vnode: ((_props: T) => VueNode) | VueNode, props?: T) {
+  return typeof vnode === 'function' ? vnode(props) : vnode;
 }
