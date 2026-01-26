@@ -1,5 +1,5 @@
 import type { Slots, VNode, VNodeArrayChildren, VNodeProps } from 'vue';
-import { cloneVNode, Comment, Fragment, isVNode, render as VueRender } from 'vue';
+import { cloneVNode, Comment, Fragment, isRef, isVNode, render as VueRender } from 'vue';
 import type { RefObject } from './createRef';
 import { isDOM } from './Dom/findDOMNode';
 import { filterEmpty } from './props-util';
@@ -80,6 +80,9 @@ export function customRenderSlot(
 export function resolveToElement(node: any) {
   if (!node) {
     return null;
+  }
+  if (isDOM(isRef(node.domRef) ? node.domRef?.value : node?.domRef)) {
+    return isRef(node.domRef) ? node.domRef?.value : node?.domRef;
   }
   if (isDOM(node?.__$el)) {
     return node.__$el;

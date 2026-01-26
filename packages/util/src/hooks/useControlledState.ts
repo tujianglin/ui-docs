@@ -42,8 +42,8 @@ export default function useControlledState<T>(defaultStateValue: T | (() => T), 
   // 当 value 变化时同步到内部状态
   useLayoutEffect(
     (mount) => {
-      if (!mount && value !== undefined) {
-        innerValue.value = value.value;
+      if (!mount && value?.value !== undefined) {
+        innerValue.value = value?.value;
       }
     },
     [value],
@@ -51,7 +51,7 @@ export default function useControlledState<T>(defaultStateValue: T | (() => T), 
 
   // 合并后的值：优先使用外部 value
   const getMergedValue = (): T => {
-    return value.value !== undefined ? value.value : innerValue.value;
+    return value?.value !== undefined ? value?.value : innerValue.value;
   };
 
   const setInnerValue: Updater<T> = (updater) => {
