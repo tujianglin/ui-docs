@@ -1,7 +1,7 @@
 {
-  "name": "@vc-com/async-validator",
+  "name": "@vc-com/mutate-observer",
   "version": "1.0.0",
-  "description": "Vue 3 AsyncValidator 组件",
+  "description": "Vue 3 MutateObserver 组件",
   "files": [
     "dist",
     "package.json"
@@ -17,6 +17,9 @@
     "build:types": "tsmc -p tsconfig.build.json",
     "prepublish": "pnpm build",
     "bump": "bumpp --release patch"
+  },
+  "devDependencies": {
+    "@vc-com/util": "workspace:*"
   },
   "peerDependencies": {
     "vue": "catalog:"

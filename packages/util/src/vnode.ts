@@ -112,6 +112,12 @@ export function resolveToElement(node: any) {
     if (dom && (dom.nodeType === 3 || dom.nodeType === 8) && (dom as any).nextElementSibling)
       return (dom as any).nextElementSibling as HTMLElement;
   }
+  // Text/Comment 等 Node：取后面的元素
+  if (node instanceof Node) {
+    const next = (node as any).nextElementSibling;
+    if (next instanceof HTMLElement) return next;
+    if ((node as any).parentElement instanceof HTMLElement) return (node as any).parentElement;
+  }
   return null;
 }
 
