@@ -27,7 +27,10 @@
       "@vc-com/motion/*": ["packages/motion/src/*"],
       "@vc-com/portal/*": ["packages/portal/src/*"],
       "@vc-com/trigger/*": ["packages/trigger/src/*"],
-      "@vc-com/tooltip/*": ["packages/tooltip/src/*"]
+      "@vc-com/tooltip/*": ["packages/tooltip/src/*"],
+      "@vc-com/tour/*": ["packages/tour/src/*"],
+      "@vc-com/virtual-list/*": ["packages/virtual-list/src/*"],
+      "@vc-com/async-validator/*": ["packages/async-validator/src/*"]
     }
   },
   "include": [
