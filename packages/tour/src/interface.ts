@@ -1,7 +1,7 @@
 import type { TriggerProps } from '@vc-com/trigger';
+import type { VueNode } from '@vc-com/util/lib/types';
 import type { CSSProperties, Ref } from 'vue';
 import type { AriaAttributes, HTMLAttributes } from 'vue-jsx-vapor';
-import type { VueNode } from '../../util/src/types';
 import type { Gap } from './hooks/useTarget';
 import type { PlacementType } from './placements';
 import { type DefaultPanelProps } from './TourStep/DefaultPanel';

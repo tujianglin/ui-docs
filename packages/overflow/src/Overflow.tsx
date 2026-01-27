@@ -1,9 +1,9 @@
 import ResizeObserver from '@vc-com/resize-observer';
+import type { VueNode } from '@vc-com/util/lib/types';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent, nextTick, ref, watch, type CSSProperties } from 'vue';
 import type { HTMLAttributes } from 'vue-jsx-vapor';
-import type { VueNode } from '../../util/src/types';
-import { resolveVNode } from '../../util/src/vnode';
 import Item from './Item';
 import RawItem from './RawItem';
 import { OverflowContextProvider } from './context';

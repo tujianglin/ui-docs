@@ -1,7 +1,7 @@
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { defineComponent } from 'vue';
-import { resolveVNode } from '../../../util/src/vnode';
 import type { TourStepProps } from '../interface';
 
 export type DefaultPanelProps = Exclude<TourStepProps, 'closable'> & {

@@ -1,8 +1,8 @@
 import ResizeObserver from '@vc-com/resize-observer';
+import type { VueNode } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent, onBeforeUnmount, type CSSProperties } from 'vue';
 import { useRef, type HTMLAttributes } from 'vue-jsx-vapor';
-import type { VueNode } from '../../util/src/types';
 
 // Use shared variable to save bundle size
 const UNDEFINED = undefined;

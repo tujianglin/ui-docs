@@ -1,11 +1,11 @@
 import type { ActionType, AlignType, ArrowType, TriggerProps, TriggerRef } from '@vc-com/trigger';
 import Trigger from '@vc-com/trigger';
 import { useId } from '@vc-com/util/lib/hooks/useId';
+import { filterEmpty } from '@vc-com/util/lib/props-util';
+import type { VueNode } from '@vc-com/util/lib/types';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, createVNode, defineComponent, shallowRef, type CSSProperties } from 'vue';
-import { filterEmpty } from '../../util/src/props-util';
-import type { VueNode } from '../../util/src/types';
-import { resolveVNode } from '../../util/src/vnode';
 import { placements } from './placements';
 import Popup from './Popup';
 
