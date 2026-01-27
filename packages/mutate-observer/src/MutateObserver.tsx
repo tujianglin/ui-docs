@@ -1,5 +1,5 @@
+import { resolveToElement } from '@vc-com/util/lib/vnode';
 import { computed, defineComponent, ref } from 'vue';
-import { resolveToElement } from '../../util/src/vnode';
 import type { MutationObserverProps } from './interface';
 import useMutateObserver from './useMutateObserver';
 

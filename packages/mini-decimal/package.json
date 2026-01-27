@@ -1,7 +1,7 @@
 {
-  "name": "@vc-com/async-validator",
+  "name": "@vc-com/mini-decimal",
   "version": "1.0.0",
-  "description": "Vue 3 AsyncValidator 组件",
+  "description": "Vue 3 MiniDecimal 组件",
   "files": [
     "dist",
     "package.json"

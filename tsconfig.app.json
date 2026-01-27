@@ -30,7 +30,10 @@
       "@vc-com/tooltip/*": ["packages/tooltip/src/*"],
       "@vc-com/tour/*": ["packages/tour/src/*"],
       "@vc-com/virtual-list/*": ["packages/virtual-list/src/*"],
-      "@vc-com/async-validator/*": ["packages/async-validator/src/*"]
+      "@vc-com/async-validator/*": ["packages/async-validator/src/*"],
+      "@vc-com/mini-decimal/*": ["packages/mini-decimal/src/*"],
+      "@vc-com/overflow/*": ["packages/overflow/src/*"],
+      "@vc-com/mutate-observer/*": ["packages/mutate-observer/src/*"]
     }
   },
   "include": [
