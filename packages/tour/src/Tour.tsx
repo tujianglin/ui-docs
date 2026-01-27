@@ -54,7 +54,7 @@ const Tour = defineComponent(
     builtinPlacements,
     disabledInteraction,
     styles,
-    classes: tourClassNames,
+    classNames: tourClassNames,
     class: className,
     style,
     getPopupContainer,
@@ -227,7 +227,7 @@ const Tour = defineComponent(
     const getPopupElement = () => (
       <TourStep
         styles={styles}
-        classes={tourClassNames}
+        classNames={tourClassNames}
         arrow={mergedArrow.value}
         key="content"
         prefixCls={prefixCls}
@@ -269,7 +269,7 @@ const Tour = defineComponent(
           <Mask
             getPopupContainer={getPopupContainer}
             styles={styles}
-            classes={tourClassNames}
+            classNames={tourClassNames}
             zIndex={zIndex}
             prefixCls={prefixCls}
             pos={posInfo.value}

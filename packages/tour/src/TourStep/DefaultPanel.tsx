@@ -21,7 +21,7 @@ export default defineComponent(
     onFinish,
     class: className,
     closable,
-    classes: tourClassNames,
+    classNames: tourClassNames,
     styles,
   }: DefaultPanelProps) => {
     return () => {

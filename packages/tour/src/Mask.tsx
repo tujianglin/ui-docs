@@ -23,7 +23,7 @@ export interface MaskProps {
   animated?: boolean | { placeholder: boolean };
   zIndex?: number;
   disabledInteraction?: boolean;
-  classes?: Partial<Record<SemanticName, string>>;
+  classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
   getPopupContainer?: TourProps['getPopupContainer'];
   onEsc?: (info: { top: boolean; event: KeyboardEvent }) => void;
@@ -42,7 +42,7 @@ const Mask = defineComponent(
     zIndex,
     disabledInteraction,
     styles,
-    classes: tourClassNames,
+    classNames: tourClassNames,
     getPopupContainer,
     onEsc,
   }: MaskProps) => {

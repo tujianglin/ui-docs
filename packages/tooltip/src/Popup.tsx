@@ -5,7 +5,7 @@ import type { TooltipProps } from './Tooltip';
 export interface ContentProps {
   prefixCls?: string;
   id?: string;
-  classes?: TooltipProps['classes'];
+  classNames?: TooltipProps['classNames'];
   styles?: TooltipProps['styles'];
   class?: string;
   style?: CSSProperties;
@@ -13,7 +13,7 @@ export interface ContentProps {
 
 const Popup = defineComponent(
   (props: ContentProps) => {
-    const { prefixCls, id, classes, styles, class: className, style } = $(props);
+    const { prefixCls, id, classNames, styles, class: className, style } = $(props);
     const slots = defineSlots({
       default: () => <></>,
     });
@@ -21,7 +21,7 @@ const Popup = defineComponent(
     return () => (
       <div
         id={id}
-        class={clsx(`${prefixCls}-container`, classes?.container, className)}
+        class={clsx(`${prefixCls}-container`, classNames?.container, className)}
         style={{ ...styles?.container, ...style }}
         role="tooltip"
       >

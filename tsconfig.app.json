@@ -33,7 +33,8 @@
       "@vc-com/async-validator/*": ["packages/async-validator/src/*"],
       "@vc-com/mini-decimal/*": ["packages/mini-decimal/src/*"],
       "@vc-com/overflow/*": ["packages/overflow/src/*"],
-      "@vc-com/mutate-observer/*": ["packages/mutate-observer/src/*"]
+      "@vc-com/mutate-observer/*": ["packages/mutate-observer/src/*"],
+      "@vc-com/input/*": ["packages/input/src/*"]
     }
   },
   "include": [

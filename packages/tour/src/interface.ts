@@ -41,12 +41,12 @@ export interface TourStepProps extends TourStepInfo {
   renderPanel?: (step: TourStepProps, current: number) => VueNode;
   onPrev?: () => void;
   onNext?: () => void;
-  classes?: Partial<Record<SemanticName, string>>;
+  classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
 }
 
 export interface TourProps extends Pick<TriggerProps, 'onPopupAlign'> {
-  classes?: Partial<Record<SemanticName, string>>;
+  classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
   class?: string;
   style?: CSSProperties;

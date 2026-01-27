@@ -23,7 +23,7 @@ export interface TooltipProps extends Pick<
   | 'popupVisible'
 > {
   // Style
-  classes?: Partial<Record<SemanticName, string>>;
+  classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
 
   /** Config popup motion */
@@ -75,7 +75,7 @@ const Tooltip = defineComponent(
     overlay,
     id,
     showArrow = true,
-    classes,
+    classNames,
     styles,
     ...restProps
   }: TooltipProps) => {
@@ -105,7 +105,7 @@ const Tooltip = defineComponent(
       // Apply semantic styles with unified logic
       return {
         ...arrowConfig,
-        class: clsx(arrowConfig.class, classes?.arrow),
+        class: clsx(arrowConfig.class, classNames?.arrow),
         style: { ...arrowConfig.style, ...styles?.arrow },
         content: arrowConfig.content ?? arrowContent,
       };
@@ -133,10 +133,10 @@ const Tooltip = defineComponent(
 
       return (
         <Trigger
-          popupClassName={classes?.root}
+          popupClassName={classNames?.root}
           prefixCls={prefixCls}
           popup={() => (
-            <Popup key="content" prefixCls={prefixCls} id={mergedId.value} classes={classes} styles={styles}>
+            <Popup key="content" prefixCls={prefixCls} id={mergedId.value} classNames={classNames} styles={styles}>
               {resolveVNode(overlay)}
             </Popup>
           )}
@@ -155,7 +155,7 @@ const Tooltip = defineComponent(
           popupStyle={styles?.root}
           mouseEnterDelay={mouseEnterDelay}
           arrow={mergedArrow.value}
-          uniqueContainerClassName={classes?.uniqueContainer}
+          uniqueContainerClassName={classNames?.uniqueContainer}
           uniqueContainerStyle={styles?.uniqueContainer}
           {...extraProps}
         >
