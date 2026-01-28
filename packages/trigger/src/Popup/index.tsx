@@ -208,6 +208,27 @@ const Popup = defineComponent((props: PopupProps) => {
   defineExpose({
     nativeElement: domRef,
   });
+  // >>>>> Misc
+  const miscStyle = computed(() => {
+    const result: CSSProperties = {};
+    if (stretch) {
+      if (stretch.includes('height') && targetHeight) {
+        result.height = `${targetHeight}px`;
+      } else if (stretch.includes('minHeight') && targetHeight) {
+        result.minHeight = `${targetHeight}px`;
+      }
+      if (stretch.includes('width') && targetWidth) {
+        result.width = `${targetWidth}px`;
+      } else if (stretch.includes('minWidth') && targetWidth) {
+        result.minWidth = `${targetWidth}px`;
+      }
+    }
+
+    if (!open) {
+      result.pointerEvents = 'none';
+    }
+    return result;
+  });
 
   // ========================= Render =========================
   return () => {
@@ -215,24 +236,6 @@ const Popup = defineComponent((props: PopupProps) => {
       return null;
     }
 
-    // >>>>> Misc
-    const miscStyle: CSSProperties = {};
-    if (stretch) {
-      if (stretch.includes('height') && targetHeight) {
-        miscStyle.height = targetHeight;
-      } else if (stretch.includes('minHeight') && targetHeight) {
-        miscStyle.minHeight = targetHeight;
-      }
-      if (stretch.includes('width') && targetWidth) {
-        miscStyle.width = targetWidth;
-      } else if (stretch.includes('minWidth') && targetWidth) {
-        miscStyle.minWidth = targetWidth;
-      }
-    }
-
-    if (!open) {
-      miscStyle.pointerEvents = 'none';
-    }
     return (
       <Portal
         open={forceRender || isNodeVisible.value}
@@ -279,7 +282,7 @@ const Popup = defineComponent((props: PopupProps) => {
                       '--arrow-x': `${arrowPos.x || 0}px`,
                       '--arrow-y': `${arrowPos.y || 0}px`,
                       ...offsetStyle.value,
-                      ...miscStyle,
+                      ...miscStyle.value,
                       ...motionStyle,
                       boxSizing: 'border-box',
                       zIndex,

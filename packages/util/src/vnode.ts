@@ -122,5 +122,8 @@ export function resolveToElement(node: any) {
 }
 
 export function resolveVNode<T = any>(vnode: ((_props: T) => VueNode) | VueNode, props?: T) {
+  if ((vnode as any)?.default) {
+    return (vnode as any).default?.(props);
+  }
   return typeof vnode === 'function' ? vnode(props) : vnode;
 }

@@ -17,6 +17,8 @@
 
     "noImplicitAny": false,
     "strictNullChecks": false,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
 
     "baseUrl": ".",
     "paths": {
@@ -34,7 +36,8 @@
       "@vc-com/mini-decimal/*": ["packages/mini-decimal/src/*"],
       "@vc-com/overflow/*": ["packages/overflow/src/*"],
       "@vc-com/mutate-observer/*": ["packages/mutate-observer/src/*"],
-      "@vc-com/input/*": ["packages/input/src/*"]
+      "@vc-com/input/*": ["packages/input/src/*"],
+      "@vc-com/select/*": ["packages/select/src/*"]
     }
   },
   "include": [
