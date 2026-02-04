@@ -1,6 +1,7 @@
+import type { RenderNode } from '@vc-com/util/lib/types';
 import { reactiveComputed } from '@vueuse/core';
 import { defineComponent, inject, provide, reactive, type CSSProperties, type InjectionKey, type Reactive } from 'vue';
-import type { RawValueType, RenderNode } from './BaseSelect';
+import type { RawValueType } from './BaseSelect';
 import type {
   BaseOptionType,
   FieldNames,
@@ -47,9 +48,7 @@ export const useSelectContextInject = () => {
 };
 
 export const SelectContextProvider = defineComponent(({ value }: { value: SelectContextProps }) => {
-  const slots = defineSlots({
-    default: () => <></>,
-  });
+  const slots = defineSlots({ default: () => <></> });
   provide(
     SelectContext,
     reactiveComputed(() => value),

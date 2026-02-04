@@ -169,7 +169,7 @@ const UniqueProvider = defineComponent(
 
     return () => (
       <UniqueContextProvider value={contextValue.value}>
-        <slots.default></slots.default>
+        <slots.default />
         {mergedOptions.value && (
           <TriggerContextProvider value={triggerContextValue.value}>
             <Popup

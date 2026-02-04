@@ -28,7 +28,7 @@ const App = defineComponent(() => {
         steps={[
           {
             title: () => '创建',
-            description: (
+            description: () => (
               <div>
                 <span>创建一条数据</span>
                 <button>帮助文档</button>

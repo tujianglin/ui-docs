@@ -18,6 +18,7 @@
     "bump": "bumpp --release patch"
   },
   "devDependencies": {
+    "@vc-com/resize-observer": "workspace:*",
     "@vc-com/util": "workspace:*"
   },
   "peerDependencies": {

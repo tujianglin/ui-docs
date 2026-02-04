@@ -1,10 +1,10 @@
 import Overflow from '@vc-com/overflow';
+import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent } from 'vue';
 import { useRef, type MouseEvent, type MouseEventHandler } from 'vue-jsx-vapor';
 import type { SharedContentProps } from '.';
-import type { RenderNode, VueNode } from '../../../../util/src/types';
-import { resolveVNode } from '../../../../util/src/vnode';
 import type { CustomTagProps } from '../../BaseSelect';
 import TransBtn from '../../TransBtn';
 import { useBaseSelectContextInject } from '../../hooks/useBaseProps';

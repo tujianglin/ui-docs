@@ -14,9 +14,7 @@ export interface ContentProps {
 const Popup = defineComponent(
   (props: ContentProps) => {
     const { prefixCls, id, classNames, styles, class: className, style } = $(props);
-    const slots = defineSlots({
-      default: () => <></>,
-    });
+    const slots = defineSlots({ default: () => <></> });
 
     return () => (
       <div
@@ -25,7 +23,7 @@ const Popup = defineComponent(
         style={{ ...styles?.container, ...style }}
         role="tooltip"
       >
-        <slots.default></slots.default>
+        <slots.default />
       </div>
     );
   },

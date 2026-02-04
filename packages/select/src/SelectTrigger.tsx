@@ -1,10 +1,10 @@
 import Trigger, { type TriggerRef } from '@vc-com/trigger';
 import type { AlignType, BuildInPlacements } from '@vc-com/trigger/interface';
+import type { VueNode } from '@vc-com/util/lib/types';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent, type CSSProperties } from 'vue';
 import { useRef, type FocusEventHandler, type MouseEventHandler } from 'vue-jsx-vapor';
-import type { VueNode } from '../../util/src/types';
-import { resolveVNode } from '../../util/src/vnode';
 import type { Placement, RenderDOMFunc } from './BaseSelect';
 
 const getBuiltInPlacements = (popupMatchSelectWidth: boolean | number): Record<string, AlignType> => {
@@ -104,9 +104,7 @@ const SelectTrigger = defineComponent(
     onPopupBlur,
     ...restProps
   }: SelectTriggerProps) => {
-    const slots = defineSlots({
-      default: () => <></>,
-    });
+    const slots = defineSlots({ default: () => <></> });
     // We still use `dropdown` className to keep compatibility
     // This is used for:
     // 1. Styles
@@ -180,7 +178,7 @@ const SelectTrigger = defineComponent(
         popupStyle={mergedPopupStyle.value}
         onOpenChange={onPopupVisibleChange}
       >
-        <slots.default></slots.default>
+        <slots.default />
       </Trigger>
     );
   },

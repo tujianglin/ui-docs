@@ -1,5 +1,5 @@
+import type { RenderNode } from '@vc-com/util/lib/types';
 import { computed, ref, type ComputedRef, type Ref } from 'vue';
-import type { RenderNode } from '../../../util/src/types';
 import type { DisplayValueType, Mode } from '../interface';
 
 export interface AllowClearConfig {

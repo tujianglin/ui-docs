@@ -1,4 +1,4 @@
-import type { Key, RenderNode } from '../../util/src/types';
+import type { Key, RenderNode } from '@vc-com/util/lib/types';
 
 export type RawValueType = string | number;
 export interface FlattenOptionData<OptionType> {

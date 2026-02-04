@@ -1,7 +1,7 @@
 import type { InputFocusOptions } from '@vc-com/util/lib/Dom/focus';
+import type { VueNode } from '@vc-com/util/lib/types';
 import type { CSSProperties } from 'vue';
 import type { InputHTMLAttributes, KeyboardEventHandler, MouseEventHandler } from 'vue-jsx-vapor';
-import type { VueNode } from '../../util/src/types';
 import type { LiteralUnion } from './utils/types';
 
 export interface CommonInputProps {

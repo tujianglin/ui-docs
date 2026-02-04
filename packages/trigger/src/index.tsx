@@ -201,7 +201,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
 
       ...restProps
     }: TriggerProps) => {
-      const slots = defineSlots({ default: (_props?: { open: boolean }) => <></> });
+      const slots = defineSlots<{ default: (_props?: { open: boolean }) => any }>();
       const mergedAutoDestroy = computed(() => autoDestroy || false);
       const openUncontrolled = computed(() => popupVisible === undefined);
 
@@ -379,6 +379,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
 
       function onEsc({ top }: Parameters<PortalProps['onEsc']>[0]) {
         if (top) {
+          console.log(1);
           triggerOpen(false);
         }
       }

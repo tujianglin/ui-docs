@@ -1,5 +1,5 @@
+import type { VueNode } from '@vc-com/util/lib/types';
 import { computed, type Ref, type VNode } from 'vue';
-import type { VueNode } from '../../../util/src/types';
 import type { FieldNames, RawValueType } from '../Select';
 import { convertChildrenToData } from '../utils/legacyUtil';
 

@@ -11,7 +11,7 @@ export interface PortalProps {
 const Portal = defineComponent(
   (props: PortalProps) => {
     const { didUpdate, getContainer } = $(props);
-    const slots = defineSlots<{ default: () => any }>();
+    const slots = defineSlots({ default: () => <></> });
 
     const parentRef = shallowRef<ParentNode>(null);
     const containerRef = shallowRef<HTMLElement>(null);

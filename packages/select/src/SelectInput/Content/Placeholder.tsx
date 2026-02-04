@@ -1,6 +1,6 @@
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { defineComponent } from 'vue';
-import { resolveVNode } from '../../../../util/src/vnode';
 import { useBaseSelectContextInject } from '../../hooks/useBaseProps';
 import { useSelectInputContextInject } from '../context';
 

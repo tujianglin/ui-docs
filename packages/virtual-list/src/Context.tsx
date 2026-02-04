@@ -7,7 +7,7 @@ const WheelLockContext: InjectionKey<WheelLockContextProps> = Symbol('WheelLockC
 export const useWheelLockContextInject = () => inject(WheelLockContext, null);
 
 export const WheelLockContextProvider = defineComponent(({ value }: { value?: WheelLockContextProps }) => {
-  const slots = defineSlots();
+  const slots = defineSlots({ default: () => <></> });
   provide(WheelLockContext, value);
   return () => <slots.default />;
 });

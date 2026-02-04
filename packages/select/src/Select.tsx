@@ -31,10 +31,10 @@
 
 import useControlledState from '@vc-com/util/lib/hooks/useControlledState';
 import { useId } from '@vc-com/util/lib/hooks/useId';
+import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
 import { warning } from '@vc-com/util/lib/warning';
 import { computed, defineComponent, isVNode, ref, shallowRef, watch, type CSSProperties } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
-import type { RenderNode, VueNode } from '../../util/src/types';
 import type {
   BaseSelectProps,
   BaseSelectPropsWithoutPrivate,
@@ -195,9 +195,7 @@ const Select = defineComponent(
     styles,
     ...restProps
   }: SelectProps<any, DefaultOptionType>) => {
-    const slots = defineSlots<{
-      default: () => any;
-    }>();
+    const slots = defineSlots<{ default: () => any }>();
     const [mergedShowSearch, searchConfig] = useSearchConfig(
       computed(() => showSearch),
       computed(() => mode),

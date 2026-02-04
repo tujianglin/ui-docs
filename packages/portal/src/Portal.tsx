@@ -1,4 +1,5 @@
 import canUseDom from '@vc-com/util/lib/Dom/canUseDom';
+import { filterEmpty } from '@vc-com/util/lib/props-util';
 import { warning } from '@vc-com/util/lib/warning';
 import { computed, defineComponent, onMounted, shallowRef, Teleport, watch } from 'vue';
 import { useOrderContextProvider } from './Context';
@@ -48,9 +49,7 @@ const getPortalContainer = (getContainer: GetContainer) => {
 
 const Portal = defineComponent(
   ({ open, autoLock, getContainer, debug, autoDestroy = true, onEsc }: PortalProps) => {
-    const slots = defineSlots({
-      default: () => <></>,
-    });
+    const slots = defineSlots<{ default: () => any }>();
     const shouldRender = shallowRef(open);
     const mergedRender = computed(() => shouldRender.value || open);
     // ========================= Warning =========================
@@ -110,17 +109,10 @@ const Portal = defineComponent(
     useEscKeyDown(
       computed(() => !!open),
       (...args) => {
+        console.log(onEsc);
         onEsc?.(...args);
       },
     );
-
-    const elementEl = shallowRef();
-    const setRef = (el: any) => {
-      elementEl.value = el;
-    };
-    defineExpose({
-      elementEl,
-    });
 
     return () => {
       // ========================= Render ==========================
@@ -130,14 +122,11 @@ const Portal = defineComponent(
       // Render inline
       const renderInline = mergedContainer.value === false || inlineMock();
 
+      const children = filterEmpty(slots.default?.());
       if (renderInline) {
-        return <slots.default />;
+        return children;
       } else {
-        return (
-          <Teleport to={mergedContainer.value}>
-            <slots.default ref={setRef} />
-          </Teleport>
-        );
+        return <Teleport to={mergedContainer.value}>{children}</Teleport>;
       }
     };
   },

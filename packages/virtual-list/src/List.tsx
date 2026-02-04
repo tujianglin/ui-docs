@@ -110,9 +110,9 @@ export default defineComponent(
     showScrollBar = 'optional',
     ...restProps
   }: ListProps<any>) => {
-    const slots = defineSlots({
-      default: (_props?: { item: any; index: number; style: CSSProperties; offsetX: number }) => <></>,
-    });
+    const slots = defineSlots<{
+      default: (_props?: { item: any; index: number; style: CSSProperties; offsetX: number }) => any;
+    }>();
     const props = useFullProps() as unknown as ListProps<any>;
 
     // Keep `itemKey` in a plain variable to avoid triggering Vue reactivity tracking

@@ -1,9 +1,9 @@
+import { filterEmpty } from '@vc-com/util/lib/props-util';
+import type { VueNode } from '@vc-com/util/lib/types';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, createVNode, defineComponent, type VNode } from 'vue';
 import { useFullProps, useRef, type MouseEventHandler } from 'vue-jsx-vapor';
-import { filterEmpty } from '../../util/src/props-util';
-import type { VueNode } from '../../util/src/types';
-import { resolveVNode } from '../../util/src/vnode';
 import type { BaseInputProps, ValueType } from './interface';
 import { hasAddon, hasPrefixSuffix } from './utils/commonUtils';
 
@@ -34,9 +34,7 @@ const BaseInput = defineComponent(
     components,
     onClear,
   }: BaseInputProps) => {
-    const slots = defineSlots({
-      default: () => <></>,
-    });
+    const slots = defineSlots<{ default: () => any }>();
     const props = useFullProps();
     const value = defineModel<ValueType>('value');
     const AffixWrapperComponent = computed(() => components?.affixWrapper || 'span');

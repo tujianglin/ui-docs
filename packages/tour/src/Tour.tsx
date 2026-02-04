@@ -4,11 +4,11 @@ import useControlledState from '@vc-com/util/lib/hooks/useControlledState';
 import KeyCode from '@vc-com/util/lib/KeyCode';
 import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
-import { computed, defineComponent, nextTick, ref, shallowRef, toRefs, watch, type CSSProperties } from 'vue';
+import { computed, defineComponent, isRef, nextTick, ref, shallowRef, watch, type CSSProperties } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
 import { useClosable } from './hooks/useClosable';
 import useTarget from './hooks/useTarget';
-import type { TourProps } from './interface';
+import type { TourProps, TourStepInfo } from './interface';
 import Mask from './Mask';
 import Placeholder from './Placeholder';
 import { getPlacements } from './placements';
@@ -103,22 +103,20 @@ const Tour = defineComponent(
       arrow: stepArrow,
       class: stepClassName,
       mask: stepMask,
-      scrollIntoViewOptions: _stepScrollIntoViewOptions,
+      scrollIntoViewOptions: stepScrollIntoViewOptions = defaultScrollIntoViewOptions,
       closeIcon: stepCloseIcon,
       closable: stepClosable,
-    } = toRefs(reactiveComputed(() => steps[mergedCurrent.value] || ({} as any)));
-
-    const stepScrollIntoViewOptions = computed(() => _stepScrollIntoViewOptions?.value || defaultScrollIntoViewOptions);
+    } = $(reactiveComputed(() => steps[mergedCurrent.value] || ({} as TourStepInfo)));
 
     const mergedClosable = useClosable(
-      stepClosable,
-      stepCloseIcon,
+      computed(() => stepClosable),
+      computed(() => stepCloseIcon),
       computed(() => closable),
       computed(() => closeIcon),
     );
 
-    const mergedMask = computed(() => mergedOpen?.value && (stepMask?.value ?? mask));
-    const mergedScrollIntoViewOptions = computed(() => stepScrollIntoViewOptions?.value ?? scrollIntoViewOptions);
+    const mergedMask = computed(() => mergedOpen?.value && (stepMask ?? mask));
+    const mergedScrollIntoViewOptions = computed(() => stepScrollIntoViewOptions ?? scrollIntoViewOptions);
 
     // ====================== Align Target ======================
     const placeholderRef = useRef();
@@ -126,7 +124,7 @@ const Tour = defineComponent(
     const inlineMode = computed(() => getPopupContainer === false);
 
     const [posInfo, targetElement] = useTarget(
-      target,
+      computed(() => (isRef(target) ? target.value : target) as any),
       computed(() => open),
       computed(() => gap),
       mergedScrollIntoViewOptions,
@@ -137,13 +135,11 @@ const Tour = defineComponent(
     const mergedPlacement = getPlacement(
       targetElement,
       computed(() => placement),
-      stepPlacement,
+      computed(() => stepPlacement),
     );
 
     // ========================= arrow =========================
-    const mergedArrow = computed(() =>
-      targetElement?.value ? (typeof stepArrow?.value === 'undefined' ? arrow : stepArrow?.value) : false,
-    );
+    const mergedArrow = computed(() => (targetElement?.value ? (typeof stepArrow === 'undefined' ? arrow : stepArrow) : false));
     const arrowPointAtCenter = computed(() =>
       typeof mergedArrow?.value === 'object' ? mergedArrow.value?.pointAtCenter : false,
     );
@@ -180,6 +176,7 @@ const Tour = defineComponent(
     // ========================= Esc Close =========================
     // Use Portal's onEsc to handle Escape key with proper stacking logic
     const handleEscClose = ({ event }: { top: boolean; event: KeyboardEvent }) => {
+      console.log(1);
       if (keyboard && mergedClosable.value !== null) {
         event.preventDefault();
         handleClose();
@@ -288,10 +285,10 @@ const Tour = defineComponent(
             getPopupContainer={getPopupContainer as any}
             builtinPlacements={mergedBuiltinPlacements.value}
             ref={triggerRef}
-            popupStyle={stepStyle?.value}
+            popupStyle={stepStyle}
             popupPlacement={mergedPlacement?.value}
             popupVisible={mergedOpen?.value}
-            popupClassName={clsx(rootClassName, stepClassName?.value)}
+            popupClassName={clsx(rootClassName, stepClassName)}
             prefixCls={prefixCls}
             popup={getPopupElement}
             forceRender={false}

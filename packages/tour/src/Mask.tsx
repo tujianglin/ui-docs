@@ -56,6 +56,7 @@ const Mask = defineComponent(
       const maskRectSize = isSafari ? { width: '100%', height: '100%' } : { width: '100vw', height: '100vh' };
 
       const inlineMode = getPopupContainer === false;
+
       return (
         <Portal open={open} autoLock={!inlineMode} getContainer={getPopupContainer as any} onEsc={onEsc}>
           <div

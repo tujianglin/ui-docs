@@ -6,9 +6,7 @@ export interface ItemProps {
 
 export const Item = defineComponent(
   ({ setRef }: ItemProps) => {
-    const slots = defineSlots({
-      default: () => <></>,
-    });
+    const slots = defineSlots({ default: () => <></> });
     const currentElement = shallowRef<HTMLElement | null>(null);
 
     const refFunc = (node) => {
@@ -18,7 +16,7 @@ export const Item = defineComponent(
       }
     };
 
-    return () => <slots.default ref={refFunc}></slots.default>;
+    return () => <slots.default ref={refFunc} />;
   },
   { inheritAttrs: false },
 );

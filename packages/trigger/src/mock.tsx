@@ -9,7 +9,7 @@ interface MockPortalProps {
 
 const MockPortal = defineComponent(({ open, autoDestroy, getContainer }: MockPortalProps) => {
   const visible = ref(open);
-  const slots = defineSlots();
+  const slots = defineSlots({ default: () => <></> });
 
   watchEffect(() => {
     getContainer?.();

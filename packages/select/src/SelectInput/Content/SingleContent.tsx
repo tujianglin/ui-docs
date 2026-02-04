@@ -1,8 +1,8 @@
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent, ref, watch, type CSSProperties } from 'vue';
 import { useRef, type HTMLAttributes } from 'vue-jsx-vapor';
 import type { SharedContentProps } from '.';
-import { resolveVNode } from '../../../../util/src/vnode';
 import { useBaseSelectContextInject } from '../../hooks/useBaseProps';
 import { useSelectContextInject } from '../../SelectContext';
 import { getTitle } from '../../utils/commonUtil';

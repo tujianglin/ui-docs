@@ -1,5 +1,7 @@
 import type { AlignType, BuildInPlacements } from '@vc-com/trigger';
 import { getDOM } from '@vc-com/util/lib/Dom/findDOMNode';
+import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
+import { resolveToElement } from '@vc-com/util/lib/vnode';
 import type { ScrollConfig, ScrollTo } from '@vc-com/virtual-list';
 import { clsx } from 'clsx';
 import { computed, defineComponent, effect, ref, watch, type CSSProperties } from 'vue';
@@ -14,8 +16,6 @@ import {
   type MouseEventHandler,
   type UIEventHandler,
 } from 'vue-jsx-vapor';
-import type { RenderNode, VueNode } from '../../../util/src/types';
-import { resolveToElement } from '../../../util/src/vnode';
 import { useAllowClear } from '../hooks/useAllowClear';
 import { BaseSelectContextProvider, type BaseSelectContextProps } from '../hooks/useBaseProps';
 import type { ComponentsConfig } from '../hooks/useComponents';

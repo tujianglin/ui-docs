@@ -1,5 +1,6 @@
 import { triggerFocus, type InputFocusOptions } from '@vc-com/util/lib/Dom/focus';
 import omit from '@vc-com/util/lib/omit';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent, ref, watch } from 'vue';
 import {
@@ -11,7 +12,6 @@ import {
   type FocusEventHandler,
   type KeyboardEvent,
 } from 'vue-jsx-vapor';
-import { resolveVNode } from '../../util/src/vnode';
 import type { HolderRef } from './BaseInput';
 import BaseInput from './BaseInput';
 import useCount from './hooks/useCount';

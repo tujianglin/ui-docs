@@ -45,9 +45,7 @@ const Item = defineComponent(
     component: Component = 'div',
     ...restProps
   }: ItemProps<any>) => {
-    const slots = defineSlots({
-      default: () => <></>,
-    });
+    const slots = defineSlots<{ default: () => any }>();
     const domRef = useRef();
     const mergedHidden = computed(() => responsive && !display);
 

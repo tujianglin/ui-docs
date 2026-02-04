@@ -9,27 +9,11 @@ import TransitionInsideDebug from './TransitionInsideDebug';
 </script>
 
 <template>
-  <Story title="CSSMotion">
-    <Variant title="Basic">
-      <Basic />
-    </Variant>
-    <Variant title="Deadline">
-      <Deadline />
-    </Variant>
-    <Variant title="Debug">
-      <Debug />
-    </Variant>
-    <Variant title="List">
-      <List />
-    </Variant>
-    <Variant title="Provider">
-      <Provider />
-    </Variant>
-    <Variant title="SSR">
-      <SSR />
-    </Variant>
-    <Variant title="Transition Inside Debug">
-      <TransitionInsideDebug />
-    </Variant>
-  </Story>
+  <Basic />
+  <Deadline />
+  <Debug />
+  <List />
+  <Provider />
+  <SSR />
+  <TransitionInsideDebug />
 </template>

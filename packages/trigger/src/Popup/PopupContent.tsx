@@ -1,3 +1,4 @@
+import { filterEmpty } from '@vc-com/util/src/props-util';
 import { defineComponent, shallowRef } from 'vue';
 
 export interface PopupContentProps {
@@ -6,9 +7,9 @@ export interface PopupContentProps {
 
 const PopupContent = defineComponent((props: PopupContentProps) => {
   const cachedChildren = shallowRef();
-  const slots = defineSlots();
+  const slots = defineSlots<{ default: () => any }>();
   return () => {
-    const children = <slots.default />;
+    const children = filterEmpty(slots.default?.());
 
     if (!props.cache) {
       cachedChildren.value = children;

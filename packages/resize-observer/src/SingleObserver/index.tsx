@@ -9,8 +9,8 @@ import useResizeObserver from '../useResizeObserver';
 export interface SingleObserverProps extends ResizeObserverProps {}
 
 const SingleObserver = defineComponent(
-  (props: SingleObserverProps, { slots }) => {
-    defineSlots<{ default: () => any }>();
+  (props: SingleObserverProps) => {
+    const slots = defineSlots<{ default: () => any }>();
     const { disabled, onResize, data } = $(props);
 
     const elementRef = useRef<Element>(null);
@@ -47,7 +47,7 @@ const SingleObserver = defineComponent(
           ref: setWrapperRef,
         });
       }
-      return <slots.default />;
+      return children;
     };
   },
   { inheritAttrs: false, name: process.env.NODE_ENV !== 'production' && 'SingleObserver' },

@@ -14,7 +14,7 @@ const TriggerContext: InjectionKey<TriggerContextProps | null> = Symbol('Trigger
 export const useTriggerContextInject = () => inject(TriggerContext, null);
 
 export const TriggerContextProvider = defineComponent(({ value }: { value?: TriggerContextProps }) => {
-  const slots = defineSlots();
+  const slots = defineSlots({ default: () => <></> });
   provide(TriggerContext, value);
   return () => <slots.default />;
 });
@@ -54,7 +54,7 @@ const UniqueContext: InjectionKey<UniqueContextProps | null> = Symbol('UniqueCon
 export const useUniqueContextInject = () => inject(UniqueContext, null);
 
 export const UniqueContextProvider = defineComponent(({ value }: { value?: UniqueContextProps }) => {
-  const slots = defineSlots();
+  const slots = defineSlots({ default: () => <></> });
   provide(UniqueContext, value);
   return () => <slots.default />;
 });

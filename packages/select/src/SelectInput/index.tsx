@@ -4,6 +4,8 @@ import { omit } from '@vc-com/util/lib/index';
 import KeyCode from '@vc-com/util/lib/KeyCode';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
 import { composeRef } from '@vc-com/util/lib/ref';
+import type { RenderNode } from '@vc-com/util/lib/types';
+import { resolveToElement, resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { cloneVNode, computed, defineComponent, isVNode, toRefs } from 'vue';
 import {
@@ -15,8 +17,6 @@ import {
   type KeyboardEventHandler,
   type MouseEventHandler,
 } from 'vue-jsx-vapor';
-import type { RenderNode } from '../../../util/src/types';
-import { resolveToElement, resolveVNode } from '../../../util/src/vnode';
 import { useBaseSelectContextInject } from '../hooks/useBaseProps';
 import type { ComponentsConfig } from '../hooks/useComponents';
 import type { DisplayValueType, Mode } from '../interface';
@@ -120,9 +120,7 @@ export default defineComponent(
 
     ...restProps
   }: SelectInputProps) => {
-    const slots = defineSlots({
-      default: () => <></>,
-    });
+    const slots = defineSlots({ default: () => <></> });
     const props = useFullProps() as unknown as SelectInputProps;
     const { triggerOpen, toggleOpen, showSearch, disabled, loading, classNames, styles } = toRefs(useBaseSelectContextInject());
 
@@ -276,7 +274,7 @@ export default defineComponent(
             >
               {resolveVNode(clearIcon)}
             </Affix>
-            <slots.default></slots.default>
+            <slots.default />
           </div>
         </SelectInputContextProvider>
       );

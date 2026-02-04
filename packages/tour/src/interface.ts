@@ -1,5 +1,5 @@
 import type { TriggerProps } from '@vc-com/trigger';
-import type { VueNode } from '@vc-com/util/lib/types';
+import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
 import type { CSSProperties, Ref } from 'vue';
 import type { AriaAttributes, HTMLAttributes } from 'vue-jsx-vapor';
 import type { Gap } from './hooks/useTarget';
@@ -15,8 +15,8 @@ export type HTMLAriaDataAttributes = AriaAttributes & {
 export interface TourStepInfo {
   arrow?: boolean | { pointAtCenter: boolean };
   target?: Ref<HTMLElement> | (() => HTMLElement) | null | (() => null);
-  title: (() => VueNode) | VueNode;
-  description?: (() => VueNode) | VueNode;
+  title: RenderNode;
+  description?: RenderNode;
   placement?: PlacementType;
   mask?:
     | boolean
@@ -28,8 +28,8 @@ export interface TourStepInfo {
   class?: string;
   style?: CSSProperties;
   scrollIntoViewOptions?: boolean | ScrollIntoViewOptions;
-  closeIcon?: VueNode;
-  closable?: boolean | ({ closeIcon?: VueNode } & HTMLAriaDataAttributes);
+  closeIcon?: RenderNode;
+  closable?: boolean | ({ closeIcon?: RenderNode } & HTMLAriaDataAttributes);
 }
 
 export interface TourStepProps extends TourStepInfo {

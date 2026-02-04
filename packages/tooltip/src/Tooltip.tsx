@@ -79,9 +79,7 @@ const Tooltip = defineComponent(
     styles,
     ...restProps
   }: TooltipProps) => {
-    const slots = defineSlots({
-      default: () => <></>,
-    });
+    const slots = defineSlots<{ default: () => any }>();
 
     const mergedId = useId(id);
     const triggerRef = shallowRef<TriggerRef>(null);

@@ -48,7 +48,7 @@ export interface CSSMotionListState {
  */
 export function genCSSMotionList(_transitionSupport: boolean, CSSMotion = OriginCSSMotion): CSSMotionListProps {
   const CSSMotionList = defineComponent((props: CSSMotionListProps) => {
-    const slots = defineSlots({
+    const slots = defineSlots<{
       default: (_props: {
         visible?: boolean;
         class?: string;
@@ -56,8 +56,8 @@ export function genCSSMotionList(_transitionSupport: boolean, CSSMotion = Origin
         index?: number;
         [key: string]: any;
         ref: VNodeRef;
-      }) => <></>,
-    });
+      }) => any;
+    }>();
 
     const state = reactive({
       keyEntities: [] as KeyObject[],

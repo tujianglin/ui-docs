@@ -52,7 +52,7 @@ export interface PortalWrapperSlotProps {
 }
 
 const PortalWrapper = defineComponent((props: PortalWrapperProps) => {
-  const slots = defineSlots<{ default: (props: PortalWrapperProps) => any }>();
+  const slots = defineSlots({ default: (_props: PortalWrapperProps) => <></> });
   const container = ref<HTMLElement | undefined>();
   const portalRef = ref<any>(null);
   let rafId: number | undefined;

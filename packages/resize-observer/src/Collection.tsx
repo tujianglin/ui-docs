@@ -10,7 +10,7 @@ export const useCollectionContextInject = () => {
 };
 
 export const CollectionContextProvider = defineComponent(({ value }: { value: onCollectionResize }) => {
-  const slots = defineSlots();
+  const slots = defineSlots({ default: () => <></> });
   provide(CollectionContext, value);
   return () => <slots.default />;
 });
@@ -30,7 +30,7 @@ export interface CollectionProps {
  * Collect all the resize event from children ResizeObserver
  */
 export const Collection = defineComponent(({ onBatchResize }: CollectionProps) => {
-  const slots = defineSlots<{ default: () => any }>();
+  const slots = defineSlots({ default: () => <></> });
 
   const resizeIdRef = shallowRef(0);
   const resizeInfosRef = shallowRef<ResizeInfo[]>([]);
