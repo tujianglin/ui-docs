@@ -20,8 +20,8 @@ import { getAlignPopupClassName } from './util';
 export type { ActionType, AlignType, ArrowTypeOuter as ArrowType, BuildInPlacements };
 
 import { useResizeObserver } from '@vc-com/resize-observer';
-import { useControlledState } from '@vc-com/util/src';
-import { filterEmpty } from '@vc-com/util/src/props-util';
+import useControlledState from '@vc-com/util/lib/hooks/useControlledState';
+import { filterEmpty } from '@vc-com/util/lib/props-util';
 import clsx from 'clsx';
 import {
   computed,
@@ -379,7 +379,6 @@ export function generateTrigger(PortalComponent: Component = Portal) {
 
       function onEsc({ top }: Parameters<PortalProps['onEsc']>[0]) {
         if (top) {
-          console.log(1);
           triggerOpen(false);
         }
       }

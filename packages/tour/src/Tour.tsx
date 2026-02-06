@@ -104,6 +104,7 @@ const Tour = defineComponent(
       class: stepClassName,
       mask: stepMask,
       scrollIntoViewOptions: stepScrollIntoViewOptions = defaultScrollIntoViewOptions,
+      // @ts-ignore
       closeIcon: stepCloseIcon,
       closable: stepClosable,
     } = $(reactiveComputed(() => steps[mergedCurrent.value] || ({} as TourStepInfo)));
@@ -176,7 +177,6 @@ const Tour = defineComponent(
     // ========================= Esc Close =========================
     // Use Portal's onEsc to handle Escape key with proper stacking logic
     const handleEscClose = ({ event }: { top: boolean; event: KeyboardEvent }) => {
-      console.log(1);
       if (keyboard && mergedClosable.value !== null) {
         event.preventDefault();
         handleClose();

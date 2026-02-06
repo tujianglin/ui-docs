@@ -1,4 +1,4 @@
-import { onMounted, ref, type Ref } from 'vue';
+import { onMounted, ref, useId as useVueId, type Ref } from 'vue';
 
 let uuid = 0;
 
@@ -43,7 +43,7 @@ export function resetUuid() {
  * @returns 包含 ID 值的 Ref
  */
 export function useId(id?: string): Ref<string> {
-  const innerId = ref<string>('ssr-id');
+  const innerId = ref<string>(`ssr-id-${useVueId()}`);
 
   onMounted(() => {
     // 开发者传入的 ID 优先
