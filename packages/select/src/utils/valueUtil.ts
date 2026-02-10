@@ -23,9 +23,9 @@ export function isValidCount(value?: number) {
   return typeof value !== 'undefined' && !Number.isNaN(value);
 }
 
-export function fillFieldNames(fieldNames: FieldNames | undefined, childrenAsData: boolean) {
+export function fillFieldNames(fieldNames: FieldNames | undefined) {
   const { label, value, options, groupLabel } = fieldNames || {};
-  const mergedLabel = label || (childrenAsData ? 'children' : 'label');
+  const mergedLabel = label || 'label';
 
   return {
     label: mergedLabel,
@@ -42,11 +42,11 @@ export function fillFieldNames(fieldNames: FieldNames | undefined, childrenAsDat
  */
 export function flattenOptions<OptionType extends BaseOptionType = DefaultOptionType>(
   options: OptionType[],
-  { fieldNames, childrenAsData }: { fieldNames?: FieldNames; childrenAsData?: boolean } = {},
+  { fieldNames }: { fieldNames?: FieldNames } = {},
 ): FlattenOptionData<OptionType>[] {
   const flattenList: FlattenOptionData<OptionType>[] = [];
 
-  const { label: fieldLabel, value: fieldValue, options: fieldOptions, groupLabel } = fillFieldNames(fieldNames, false);
+  const { label: fieldLabel, value: fieldValue, options: fieldOptions, groupLabel } = fillFieldNames(fieldNames);
 
   function dig(list: OptionType[], isGroupOption: boolean) {
     if (!Array.isArray(list)) {
@@ -67,9 +67,6 @@ export function flattenOptions<OptionType extends BaseOptionType = DefaultOption
         });
       } else {
         let grpLabel = data[groupLabel];
-        if (grpLabel === undefined && childrenAsData) {
-          grpLabel = data.label;
-        }
 
         // Option Group
         flattenList.push({

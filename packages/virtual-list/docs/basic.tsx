@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue';
+import { defineComponent, reactive, ref, type CSSProperties } from 'vue';
 import { useRef, type UIEventHandler } from 'vue-jsx-vapor';
 import List, { type ListRef } from '../src/List';
 import './basic.less';
@@ -8,15 +8,18 @@ interface Item {
 }
 
 const ForwardMyItem = defineComponent(({ id, domRef }) => {
+  const style = reactive<CSSProperties>({});
   return () => (
     <span
       ref={domRef}
       style={{
         height: `${30 + (id % 2 ? 0 : 10)}px`,
+        ...style,
       }}
       class="fixed-item"
       onClick={() => {
         console.log('Click:', id);
+        style.color = 'red';
       }}
     >
       {id}
@@ -231,9 +234,9 @@ const Demo = defineComponent(() => {
           }}
           onScroll={onScroll}
         >
-          {({ item, index: _, ...props }) =>
-            type.value === 'dom' ? <ForwardMyItem {...item} {...props} /> : <TestItem {...item} {...props} />
-          }
+          {({ item, index: _, ...props }) => {
+            return type.value === 'dom' ? <ForwardMyItem {...item} {...props} /> : <TestItem {...item} {...props} />;
+          }}
         </List>
       )}
     </div>

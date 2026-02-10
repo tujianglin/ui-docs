@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import Select, { Option } from '@vc-com/select';
+import Select from '@vc-com/select';
 import { defineComponent, reactive } from 'vue';
 import './assets/index.less';
 import './single.less';
@@ -36,6 +36,44 @@ const Test = defineComponent(() => {
   const onSearch = (val) => {
     console.log('Search:', val);
   };
+
+  const options = [
+    {
+      value: null,
+      label: '不选择',
+      text: '不选择',
+    },
+    {
+      value: '01',
+      label: <b style={{ color: 'red' }}>jack</b>,
+      text: 'jack',
+      title: 'jack',
+    },
+    {
+      value: '11',
+      label: 'lucy',
+      text: 'lucy',
+    },
+    {
+      value: '21',
+      label: 'disabled',
+      text: 'disabled',
+      disabled: true,
+    },
+    {
+      value: '31',
+      label: 'yiminghe',
+      text: 'yiminghe',
+      className: 'test-option',
+      style: { background: 'yellow' },
+    },
+    ...Array.from({ length: 10 }, (_, i) => ({
+      value: String(i),
+      label: `${i}-text`,
+      text: String(i),
+    })),
+  ];
+
   return () => (
     <div style={{ margin: '20px' }}>
       <div
@@ -66,32 +104,8 @@ const Test = defineComponent(() => {
           onPopupScroll={() => {
             console.log('Scroll!');
           }}
-        >
-          <Option value={null}>不选择</Option>
-          <Option value="01" text="jack" title="jack">
-            <b
-              style={{
-                color: 'red',
-              }}
-            >
-              jack
-            </b>
-          </Option>
-          <Option value="11" text="lucy">
-            lucy
-          </Option>
-          <Option value="21" disabled text="disabled">
-            disabled
-          </Option>
-          <Option value="31" text="yiminghe" className="test-option" style={{ background: 'yellow' }}>
-            yiminghe
-          </Option>
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-            <Option key={i} value={String(i)} text={String(i)}>
-              {i}-text
-            </Option>
-          ))}
-        </Select>
+          options={options}
+        ></Select>
       </div>
       {/* <h2>native select</h2>
       <select value={state.value} style={{ width: '500px' }} onChange={onChange}>

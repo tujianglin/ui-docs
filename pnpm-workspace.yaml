@@ -1,8 +1,8 @@
 packages:
   - 'packages/*'
 catalog:
-  'vue': ^3.6.0-beta.4
-  'vite': ^8.0.0-beta.10
+  'vue': ^3.6.0-beta.5
+  'vite': ^8.0.0-beta.12
   '@ts-macro/tsc': ^0.3.7
   '@typescript/native-preview': 7.0.0-dev.20260109.1
   '@vueuse/core': ^14.1.0

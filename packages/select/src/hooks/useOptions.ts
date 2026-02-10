@@ -1,7 +1,6 @@
 import type { VueNode } from '@vc-com/util/lib/types';
-import { computed, type Ref, type VNode } from 'vue';
+import { computed, type Ref } from 'vue';
 import type { FieldNames, RawValueType } from '../Select';
-import { convertChildrenToData } from '../utils/legacyUtil';
 
 /**
  * Parse `children` to `options` if `options` is not provided.
@@ -9,18 +8,12 @@ import { convertChildrenToData } from '../utils/legacyUtil';
  */
 const useOptions = <OptionType>(
   options: Ref<OptionType[]>,
-  children: Ref<VNode[]>,
   fieldNames: Ref<FieldNames>,
   optionFilterProp: Ref<string[]>,
   optionLabelProp: Ref<string>,
 ) => {
   return computed(() => {
     let mergedOptions = options.value;
-    const childrenAsData = !options.value;
-
-    if (childrenAsData) {
-      mergedOptions = convertChildrenToData(children.value);
-    }
 
     const valueOptions = new Map<RawValueType, OptionType>();
     const labelOptions = new Map<VueNode, OptionType>();

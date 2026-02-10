@@ -2,6 +2,7 @@ import type { RenderNode } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { defineComponent, type CSSProperties } from 'vue';
 import type { MouseEventHandler } from 'vue-jsx-vapor';
+import { defineSlots1 } from '../../util/src';
 
 export interface TransBtnProps {
   class: string;
@@ -24,7 +25,7 @@ export interface TransBtnProps {
  */
 const TransBtn = defineComponent(
   ({ class: className, style, customizeIcon, customizeIconProps, onMouseDown, onClick }: TransBtnProps) => {
-    const slots = defineSlots({ default: () => <></> });
+    const slots = defineSlots1({ default: () => <></> });
 
     return () => {
       const icon = typeof customizeIcon === 'function' ? customizeIcon(customizeIconProps) : customizeIcon;

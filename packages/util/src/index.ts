@@ -9,3 +9,16 @@ export { supportNodeRef, supportRef, useComposeRef } from './ref';
 export { default as get } from './utils/get';
 export { merge, mergeWith, set } from './utils/set';
 export { noteOnce, warningOnce as warning } from './warning';
+
+import { useSlots } from 'vue';
+
+export function defineSlots1(defaultSlots: Record<string, any> = {}) {
+  const slots = useSlots();
+  return slots;
+  return new Proxy(defaultSlots, {
+    get(target, key: string) {
+      console.log(222, key, key in slots ? slots[key]?.() : target[key]?.());
+      return key in slots ? slots[key] : target[key];
+    },
+  });
+}

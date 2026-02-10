@@ -378,7 +378,7 @@ const OptionList = defineComponent(
               if (title !== undefined) {
                 optionTitle = title;
               }
-
+              console.log(selected);
               return (
                 <div
                   {...pickAttrs(passedProps)}

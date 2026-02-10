@@ -15,17 +15,16 @@ export default function useChildren<T>(
   return computed(() => {
     return list.value.slice(startIndex.value, endIndex.value + 1).map((item, index) => {
       const eleIndex = startIndex.value + index;
-      const node = renderFunc(item, eleIndex, {
-        style: {
-          width: `${scrollWidth.value}px`,
-        },
-        offsetX: offsetX.value,
-      });
 
       const key = getKey(item);
       return (
         <Item key={key} setRef={(ele) => setNodeRef(item, ele)}>
-          {node}
+          {renderFunc(item, eleIndex, {
+            style: {
+              width: `${scrollWidth.value}px`,
+            },
+            offsetX: offsetX.value,
+          })}
         </Item>
       );
     });

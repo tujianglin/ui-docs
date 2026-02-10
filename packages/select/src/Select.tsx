@@ -43,8 +43,6 @@ import type {
   DisplayValueType,
 } from './BaseSelect';
 import BaseSelect, { isMultiple } from './BaseSelect';
-import OptGroup from './OptGroup';
-import Option from './Option';
 import OptionList from './OptionList';
 import { SelectContextProvider, type SelectContextProps } from './SelectContext';
 import useCache from './hooks/useCache';
@@ -195,7 +193,6 @@ const Select = defineComponent(
     styles,
     ...restProps
   }: SelectProps<any, DefaultOptionType>) => {
-    const slots = defineSlots<{ default: () => any }>();
     const [mergedShowSearch, searchConfig] = useSearchConfig(
       computed(() => showSearch),
       computed(() => mode),
@@ -216,7 +213,6 @@ const Select = defineComponent(
 
     const mergedId = useId(id);
     const multiple = computed(() => isMultiple(mode));
-    const childrenAsData = computed(() => !!(!options && slots.default?.()));
 
     const mergedFilterOption = computed(() => {
       if (filterOption === undefined && mode === 'combobox') {
@@ -226,7 +222,7 @@ const Select = defineComponent(
     });
 
     // ========================= FieldNames =========================
-    const mergedFieldNames = computed(() => fillFieldNames(fieldNames, childrenAsData.value));
+    const mergedFieldNames = computed(() => fillFieldNames(fieldNames));
 
     // =========================== Search ===========================
     const [internalSearchValue, setSearchValue] = useControlledState(
@@ -238,7 +234,6 @@ const Select = defineComponent(
     // =========================== Option ===========================
     const parsedOptions = useOptions(
       computed(() => options),
-      computed(() => slots.default?.()),
       mergedFieldNames,
       normalizedOptionFilterProp,
       computed(() => optionLabelProp),
@@ -432,7 +427,6 @@ const Select = defineComponent(
     const displayOptions = computed(() =>
       flattenOptions(orderedFilteredOptions.value, {
         fieldNames: mergedFieldNames.value,
-        childrenAsData: childrenAsData.value,
       }),
     );
 
@@ -613,7 +607,6 @@ const Select = defineComponent(
         direction,
         listHeight,
         listItemHeight,
-        childrenAsData: childrenAsData.value,
         maxCount,
         optionRender,
         classNames,
@@ -665,12 +658,4 @@ const Select = defineComponent(
   { inheritAttrs: false, name: process.env.NODE_ENV !== 'production' ? 'Select' : undefined },
 );
 
-const TypedSelect = Select as typeof Select & {
-  Option: typeof Option;
-  OptGroup: typeof OptGroup;
-};
-
-TypedSelect.Option = Option;
-TypedSelect.OptGroup = OptGroup;
-
-export default TypedSelect;
+export default Select;

@@ -37,7 +37,6 @@ export interface SelectContextProps {
   direction?: 'ltr' | 'rtl';
   listHeight?: number;
   listItemHeight?: number;
-  childrenAsData?: boolean;
   maxCount?: number;
 }
 

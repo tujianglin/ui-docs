@@ -53,12 +53,12 @@
     "typescript-eslint": "^8.51.0",
     "vite": "catalog:",
     "vue-eslint-parser": "^10.2.0",
-    "vue-jsx-vapor": "catalog:",
+    "vue-jsx-vapor": "link:../vue-jsx-vapor/packages/vue-jsx-vapor",
     "vue-tsc": "catalog:"
   },
   "pnpm": {
     "overrides": {
-      "vite": "8.0.0-beta.7"
+      "vite": "8.0.0-beta.12"
     },
     "ignoredBuiltDependencies": [
       "esbuild"
