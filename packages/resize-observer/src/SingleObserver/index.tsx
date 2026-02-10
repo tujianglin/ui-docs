@@ -3,7 +3,6 @@ import { resolveToElement } from '@vc-com/util/lib/vnode';
 import { computed, createVNode, defineComponent, isVNode } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
 import type { ResizeObserverProps } from '..';
-import { defineSlots1 } from '../../../util/src';
 import { useCollectionContextInject } from '../Collection';
 import useResizeObserver from '../useResizeObserver';
 
@@ -11,7 +10,7 @@ export interface SingleObserverProps extends ResizeObserverProps {}
 
 const SingleObserver = defineComponent(
   (props: SingleObserverProps) => {
-    const slots = defineSlots1();
+    const slots = defineSlots();
     const { disabled, onResize, data } = $(props);
 
     const elementRef = useRef<Element>(null);

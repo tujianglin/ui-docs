@@ -31,7 +31,6 @@ interface FillerProps {
  */
 const Filler = defineComponent(
   ({ height, offsetY, offsetX, prefixCls, onInnerResize, innerProps, rtl, extra }: FillerProps) => {
-    const slots = defineSlots({ default: () => <></> });
     const domRef = useRef();
     const outerStyle = computed(() => {
       let result: CSSProperties = {};
@@ -81,7 +80,7 @@ const Filler = defineComponent(
           }}
         >
           <div style={innerStyle.value} class={clsx({ [`${prefixCls}-holder-inner`]: prefixCls })} ref={domRef} {...innerProps}>
-            <slots.default />
+            <slot></slot>
             {resolveVNode(extra)}
           </div>
         </ResizeObserver>

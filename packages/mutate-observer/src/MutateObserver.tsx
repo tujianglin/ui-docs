@@ -4,9 +4,7 @@ import type { MutationObserverProps } from './interface';
 import useMutateObserver from './useMutateObserver';
 
 const MutateObserver = defineComponent(({ options, onMutate = () => {} }: MutationObserverProps) => {
-  const slots = defineSlots({
-    default: () => <></>,
-  });
+  const slots = defineSlots({ default: () => <></> });
 
   const target = ref<HTMLElement | SVGElement>(null);
 

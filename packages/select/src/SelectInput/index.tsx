@@ -120,7 +120,6 @@ export default defineComponent(
 
     ...restProps
   }: SelectInputProps) => {
-    const slots = defineSlots({ default: () => <></> });
     const props = useFullProps() as unknown as SelectInputProps;
     const { triggerOpen, toggleOpen, showSearch, disabled, loading, classNames, styles } = toRefs(useBaseSelectContextInject());
 
@@ -268,13 +267,13 @@ export default defineComponent(
               style={styles?.value?.clear}
               onMousedown={(e) => {
                 // Mark to tell not trigger open or focus
-                (e.nativeEvent as any)._select_lazy = true;
+                (e as any)._select_lazy = true;
                 onClearMouseDown?.(e);
               }}
             >
               {resolveVNode(clearIcon)}
             </Affix>
-            <slots.default />
+            <slot></slot>
           </div>
         </SelectInputContextProvider>
       );

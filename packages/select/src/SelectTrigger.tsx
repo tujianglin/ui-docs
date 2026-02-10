@@ -104,7 +104,6 @@ const SelectTrigger = defineComponent(
     onPopupBlur,
     ...restProps
   }: SelectTriggerProps) => {
-    const slots = defineSlots({ default: () => <></> });
     // We still use `dropdown` className to keep compatibility
     // This is used for:
     // 1. Styles
@@ -178,7 +177,7 @@ const SelectTrigger = defineComponent(
         popupStyle={mergedPopupStyle.value}
         onOpenChange={onPopupVisibleChange}
       >
-        <slots.default />
+        <slot></slot>
       </Trigger>
     );
   },

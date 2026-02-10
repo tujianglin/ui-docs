@@ -4,7 +4,7 @@ import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
 import { resolveToElement } from '@vc-com/util/lib/vnode';
 import type { ScrollConfig, ScrollTo } from '@vc-com/virtual-list';
 import { clsx } from 'clsx';
-import { computed, defineComponent, effect, ref, watch, type CSSProperties } from 'vue';
+import { computed, defineComponent, ref, watch, type CSSProperties } from 'vue';
 import {
   useFullProps,
   useRef,
@@ -667,7 +667,6 @@ const BaseSelect = defineComponent(
       onClear?.();
 
       containerRef.value?.focus();
-
       onDisplayValuesChange([], {
         type: 'clear',
         values: displayValues,
@@ -701,9 +700,6 @@ const BaseSelect = defineComponent(
         [`${prefixCls}-show-search`]: showSearch,
       }),
     );
-    effect(() => {
-      console.log(mergedOpen.value);
-    });
     return () => (
       <BaseSelectContextProvider value={baseSelectContext.value}>
         <Polite visible={focused.value && !mergedOpen.value} values={displayValues} />

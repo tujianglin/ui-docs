@@ -18,12 +18,12 @@ const SingleContent = defineComponent(
 
     const inputChanged = ref(false);
 
-    const combobox = mode === 'combobox';
-    const displayValue = displayValues[0];
+    const combobox = computed(() => mode === 'combobox');
+    const displayValue = computed(() => displayValues[0]);
 
     // Implement the same logic as the old SingleSelector
     const mergedSearchValue = computed(() => {
-      if (combobox && activeValue && !inputChanged.value && triggerOpen) {
+      if (combobox.value && activeValue && !inputChanged.value && triggerOpen) {
         return activeValue;
       }
 
@@ -41,7 +41,7 @@ const SingleContent = defineComponent(
           : {},
       };
 
-      if (displayValue && selectContext?.flattenOptions) {
+      if (displayValue.value && selectContext?.flattenOptions) {
         // @ts-ignore
         const option = selectContext.flattenOptions.find((opt) => opt.value === displayValue.value);
         if (option?.data) {
@@ -54,8 +54,8 @@ const SingleContent = defineComponent(
         }
       }
 
-      if (displayValue && !restProps.title) {
-        restProps.title = getTitle(displayValue);
+      if (displayValue.value && !restProps.title) {
+        restProps.title = getTitle(displayValue.value);
       }
 
       if (rootTitle !== undefined) {
@@ -66,9 +66,9 @@ const SingleContent = defineComponent(
     });
 
     watch(
-      [() => combobox, () => activeValue],
+      [combobox, () => activeValue],
       () => {
-        if (combobox) {
+        if (combobox.value) {
           inputChanged.value = false;
         }
       },
@@ -85,8 +85,8 @@ const SingleContent = defineComponent(
 
     return () => (
       <div class={clsx(`${prefixCls}-content`, classNames?.content)} style={styles?.content}>
-        <div v-if={displayValue} {...optionProps.value}>
-          {resolveVNode(displayValue.label)}
+        <div v-if={displayValue.value} {...optionProps.value}>
+          {resolveVNode(displayValue.value?.label)}
         </div>
         <Placeholder v-else show={!mergedSearchValue.value} />
         <Input

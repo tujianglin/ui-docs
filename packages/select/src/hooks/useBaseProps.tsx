@@ -21,10 +21,9 @@ export const useBaseSelectContextInject = () => {
 };
 
 export const BaseSelectContextProvider = defineComponent(({ value }: { value: BaseSelectContextProps }) => {
-  const slots = defineSlots({ default: () => <></> });
   provide(
     BaseSelectContext,
     reactiveComputed(() => value),
   );
-  return () => <slots.default />;
+  return () => <slot></slot>;
 });

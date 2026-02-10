@@ -24,7 +24,6 @@ export interface UniqueProviderProps {
 
 const UniqueProvider = defineComponent(
   ({ postTriggerProps }: UniqueProviderProps) => {
-    const slots = defineSlots({ default: () => <></> });
     const [trigger, open, options, onTargetVisibleChanged] = useTargetState();
 
     // ========================== Options ===========================
@@ -169,7 +168,7 @@ const UniqueProvider = defineComponent(
 
     return () => (
       <UniqueContextProvider value={contextValue.value}>
-        <slots.default />
+        <slot></slot>
         {mergedOptions.value && (
           <TriggerContextProvider value={triggerContextValue.value}>
             <Popup

@@ -283,28 +283,28 @@ const OptionList = defineComponent(
         };
       }
 
-      const renderItem = (index: number) => {
-        const item = memoFlattenOptions[index];
-        if (!item) {
-          return null;
-        }
-        const itemData = item.data || {};
-        const { value } = itemData;
-        const { group } = item;
-        const attrs = pickAttrs(itemData, true);
-        const mergedLabel = getLabel(item);
-        return item ? (
-          <div
-            aria-label={typeof mergedLabel === 'string' && !group ? mergedLabel : null}
-            {...attrs}
-            key={index}
-            {...getItemAriaProps(item, index)}
-            aria-selected={isAriaSelected(value)}
-          >
-            {value}
-          </div>
-        ) : null;
-      };
+      // const renderItem = (index: number) => {
+      //   const item = memoFlattenOptions[index];
+      //   if (!item) {
+      //     return null;
+      //   }
+      //   const itemData = item.data || {};
+      //   const { value } = itemData;
+      //   const { group } = item;
+      //   const attrs = pickAttrs(itemData, true);
+      //   const mergedLabel = getLabel(item);
+      //   return item ? (
+      //     <div
+      //       aria-label={typeof mergedLabel === 'string' && !group ? mergedLabel : null}
+      //       {...attrs}
+      //       key={index}
+      //       {...getItemAriaProps(item, index)}
+      //       aria-selected={isAriaSelected(value)}
+      //     >
+      //       {value}
+      //     </div>
+      //   ) : null;
+      // };
 
       const a11yProps = {
         role: 'listbox',
@@ -314,9 +314,9 @@ const OptionList = defineComponent(
       return (
         <>
           <div v-if={virtual} {...a11yProps} style={{ height: 0, width: 0, overflow: 'hidden' }}>
-            {renderItem(activeIndex.value - 1)}
+            {/* {renderItem(activeIndex.value - 1)}
             {renderItem(activeIndex.value)}
-            {renderItem(activeIndex.value + 1)}
+            {renderItem(activeIndex.value + 1)} */}
           </div>
           <List
             itemKey="key"
@@ -378,7 +378,6 @@ const OptionList = defineComponent(
               if (title !== undefined) {
                 optionTitle = title;
               }
-              console.log(selected);
               return (
                 <div
                   {...pickAttrs(passedProps)}

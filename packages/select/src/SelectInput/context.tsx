@@ -11,10 +11,9 @@ export const useSelectInputContextInject = () => {
 };
 
 export const SelectInputContextProvider = defineComponent(({ value }: { value: ContentContextProps }) => {
-  const slots = defineSlots({ default: () => <></> });
   provide(
     SelectInputContext,
     reactiveComputed(() => value),
   );
-  return () => <slots.default />;
+  return () => <slot></slot>;
 });

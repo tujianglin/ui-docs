@@ -11,7 +11,6 @@ export interface PortalProps {
 const Portal = defineComponent(
   (props: PortalProps) => {
     const { didUpdate, getContainer } = $(props);
-    const slots = defineSlots({ default: () => <></> });
 
     const parentRef = shallowRef<ParentNode>(null);
     const containerRef = shallowRef<HTMLElement>(null);
@@ -47,7 +46,7 @@ const Portal = defineComponent(
       if (containerRef.value) {
         return (
           <Teleport to={containerRef.value}>
-            <slots.default />
+            <slot></slot>
           </Teleport>
         );
       }

@@ -9,7 +9,6 @@ interface MockPortalProps {
 
 const MockPortal = defineComponent(({ open, autoDestroy, getContainer }: MockPortalProps) => {
   const visible = ref(open);
-  const slots = defineSlots({ default: () => <></> });
 
   watchEffect(() => {
     getContainer?.();
@@ -27,7 +26,7 @@ const MockPortal = defineComponent(({ open, autoDestroy, getContainer }: MockPor
     { immediate: true },
   );
 
-  return () => (visible ? <slots.default /> : null);
+  return () => (visible ? <slot></slot> : null);
 });
 
 export default generateTrigger(MockPortal);

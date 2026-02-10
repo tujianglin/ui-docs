@@ -10,10 +10,9 @@ export const MotionContextKey: InjectionKey<MotionContextProps> = Symbol('Motion
 export const useMotionContext = () => inject(MotionContextKey, reactive({ motion: undefined }));
 
 export const MotionProvider = defineComponent(({ value }: { value: MotionContextProps }) => {
-  const slots = defineSlots({ default: () => <></> });
   provide(
     MotionContextKey,
     reactiveComputed(() => value),
   );
-  return () => <slots.default />;
+  return () => <slot></slot>;
 });
