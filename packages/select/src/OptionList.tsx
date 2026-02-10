@@ -260,6 +260,40 @@ const OptionList = defineComponent(
     });
 
     // ========================== Render ==========================
+    const getLabel = (item: Record<string, any>) => item.label;
+
+    function getItemAriaProps(item: FlattenOptionData<BaseOptionType>, index: number) {
+      const { group } = item;
+
+      return {
+        role: group ? 'presentation' : 'option',
+        id: `${id}_list_${index}`,
+      };
+    }
+
+    const RenderItem = ({ index }: { index: number }) => {
+      const item = memoFlattenOptions[index];
+      if (!item) {
+        return null;
+      }
+      const itemData = item.data || {};
+      const { value } = itemData;
+      const { group } = item;
+      const attrs = pickAttrs(itemData, true);
+      const mergedLabel = getLabel(item);
+      return (
+        <div
+          aria-label={typeof mergedLabel === 'string' && !group ? mergedLabel : null}
+          {...attrs}
+          key={index}
+          {...getItemAriaProps(item, index)}
+          aria-selected={isAriaSelected(value)}
+        >
+          {value}
+        </div>
+      );
+    };
+
     return () => {
       if (memoFlattenOptions.length === 0) {
         return (
@@ -272,40 +306,6 @@ const OptionList = defineComponent(
 
       const omitFieldNameList = Object.keys(fieldNames).map((key) => fieldNames[key]);
 
-      const getLabel = (item: Record<string, any>) => item.label;
-
-      function getItemAriaProps(item: FlattenOptionData<BaseOptionType>, index: number) {
-        const { group } = item;
-
-        return {
-          role: group ? 'presentation' : 'option',
-          id: `${id}_list_${index}`,
-        };
-      }
-
-      // const renderItem = (index: number) => {
-      //   const item = memoFlattenOptions[index];
-      //   if (!item) {
-      //     return null;
-      //   }
-      //   const itemData = item.data || {};
-      //   const { value } = itemData;
-      //   const { group } = item;
-      //   const attrs = pickAttrs(itemData, true);
-      //   const mergedLabel = getLabel(item);
-      //   return item ? (
-      //     <div
-      //       aria-label={typeof mergedLabel === 'string' && !group ? mergedLabel : null}
-      //       {...attrs}
-      //       key={index}
-      //       {...getItemAriaProps(item, index)}
-      //       aria-selected={isAriaSelected(value)}
-      //     >
-      //       {value}
-      //     </div>
-      //   ) : null;
-      // };
-
       const a11yProps = {
         role: 'listbox',
         id: `${id}_list`,
@@ -314,9 +314,9 @@ const OptionList = defineComponent(
       return (
         <>
           <div v-if={virtual} {...a11yProps} style={{ height: 0, width: 0, overflow: 'hidden' }}>
-            {/* {renderItem(activeIndex.value - 1)}
-            {renderItem(activeIndex.value)}
-            {renderItem(activeIndex.value + 1)} */}
+            <RenderItem index={activeIndex.value - 1}></RenderItem>
+            <RenderItem index={activeIndex.value}></RenderItem>
+            <RenderItem index={activeIndex.value + 1}></RenderItem>
           </div>
           <List
             itemKey="key"
