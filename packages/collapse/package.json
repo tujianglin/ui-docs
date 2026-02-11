@@ -19,8 +19,8 @@
     "bump": "bumpp --release patch"
   },
   "devDependencies": {
-    "@vc-com/util": "workspace:*",
-    "@vc-com/motion": "workspace:*"
+    "@vc-com/motion": "workspace:*",
+    "@vc-com/util": "workspace:*"
   },
   "peerDependencies": {
     "vue": "catalog:"
