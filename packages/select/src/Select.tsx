@@ -233,7 +233,9 @@ const Select = defineComponent(
       computed(() => optionLabelProp),
     );
 
-    const { valueOptions, labelOptions, options: mergedOptions } = $(parsedOptions.value);
+    const valueOptions = computed(() => parsedOptions.value?.valueOptions);
+    const labelOptions = computed(() => parsedOptions.value?.labelOptions);
+    const mergedOptions = computed(() => parsedOptions.value?.options);
 
     // ========================= Wrap Value =========================
     const convert2LabelValues = (draftValues: DraftValueType) => {
@@ -255,7 +257,7 @@ const Select = defineComponent(
           rawValue = val.value;
         }
 
-        const option = valueOptions.get(rawValue);
+        const option = valueOptions.value.get(rawValue);
         if (option) {
           // Fill missing props
           if (rawLabel === undefined) rawLabel = option?.[optionLabelProp || mergedFieldNames.value.label];
@@ -301,10 +303,7 @@ const Select = defineComponent(
     });
 
     // Fill label with cache to avoid option remove
-    const [mergedValues, getMixedOption] = useCache(
-      rawLabeledValues,
-      computed(() => valueOptions),
-    );
+    const [mergedValues, getMixedOption] = useCache(rawLabeledValues, valueOptions);
 
     const displayValues = computed(() => {
       // `null` need show as placeholder instead
@@ -349,14 +348,14 @@ const Select = defineComponent(
     // Fill tag as option if mode is `tags`
     const filledTagOptions = computed(() => {
       if (mode !== 'tags') {
-        return mergedOptions;
+        return mergedOptions.value;
       }
 
       // >>> Tag mode
-      const cloneOptions = [...mergedOptions];
+      const cloneOptions = [...mergedOptions.value];
 
       // Check if value exist in options (include new patch item)
-      const existOptions = (val: RawValueType) => valueOptions.has(val);
+      const existOptions = (val: RawValueType) => valueOptions.value.has(val);
 
       // Fill value value as option
       [...mergedValues.value]
@@ -443,9 +442,9 @@ const Select = defineComponent(
 
         onChange(
           // Value
-          multiple ? returnValues : returnValues[0],
+          multiple.value ? returnValues : returnValues[0],
           // Option
-          multiple ? returnOptions : returnOptions[0],
+          multiple.value ? returnOptions : returnOptions[0],
         );
       }
     };
@@ -572,7 +571,7 @@ const Select = defineComponent(
       if (mode !== 'tags') {
         patchValues = words
           .map((word) => {
-            const opt = labelOptions.get(word);
+            const opt = labelOptions.value.get(word);
             return opt?.value;
           })
           .filter((val) => val !== undefined);

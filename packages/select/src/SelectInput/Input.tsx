@@ -180,7 +180,7 @@ const Input = defineComponent(
       autocomplete: autoComplete || 'off',
       class: inputCls,
       disabled,
-      onChange: handleChange,
+      onInput: handleChange,
       onKeydown: handleKeyDown,
       onBlur: handleBlur,
       onPaste: handlePaste,
@@ -204,7 +204,8 @@ const Input = defineComponent(
 
         // Start with shared props as base
         const mergedProps = {
-          placeholder: props.placeholder || (placeholder as any),
+          // @ts-ignore
+          placeholder: props.placeholder || placeholder,
           ...sharedInputProps.value,
           ...existingProps,
         };
@@ -217,7 +218,7 @@ const Input = defineComponent(
             // Merge event handlers
             (mergedProps as any)[key] = (...args: any[]) => {
               existingValue(...args);
-              (sharedInputProps as any)[key]?.(...args);
+              (sharedInputProps.value as any)[key]?.(...args);
             };
           }
         });
@@ -225,7 +226,7 @@ const Input = defineComponent(
         // Update ref
         mergedProps.ref = composeRef(InputComponent.value.ref, sharedInputProps.value.ref);
 
-        return cloneVNode(InputComponent.value, mergedProps);
+        return cloneVNode(InputComponent.value, mergedProps, true);
       }
 
       // If InputComponent is a component type, render normally

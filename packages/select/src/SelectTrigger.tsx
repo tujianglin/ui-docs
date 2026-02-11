@@ -153,7 +153,6 @@ const SelectTrigger = defineComponent(
     defineExpose({
       getPopupElement: () => triggerPopupRef.value?.popupElement,
     });
-
     return () => (
       <Trigger
         {...restProps}

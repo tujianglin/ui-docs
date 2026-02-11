@@ -71,7 +71,7 @@ const OptionList = defineComponent(
 
     const memoFlattenOptions = useMemo(
       () => flattenOptions,
-      [() => open, () => lockOptions],
+      () => [open, lockOptions],
       (_prev, next) => next[0] && !next[1],
     );
 
@@ -98,12 +98,12 @@ const OptionList = defineComponent(
 
     // ========================== Active ==========================
     const getEnabledActiveIndex = (index: number, offset: number = 1): number => {
-      const len = memoFlattenOptions.length;
+      const len = memoFlattenOptions.value.length;
 
       for (let i = 0; i < len; i += 1) {
         const current = (index + i * offset + len) % len;
 
-        const { group, data } = memoFlattenOptions[current] || {};
+        const { group, data } = memoFlattenOptions.value[current] || {};
 
         if (!group && !data?.disabled && (isSelected(data.value) || !overMaxCount.value)) {
           return current;
@@ -120,7 +120,7 @@ const OptionList = defineComponent(
       const info = { source: fromKeyboard ? ('keyboard' as const) : ('mouse' as const) };
 
       // Trigger active event
-      const flattenItem = memoFlattenOptions[index];
+      const flattenItem = memoFlattenOptions.value[index];
       if (!flattenItem) {
         onActiveValue(null, -1, info);
         return;
@@ -130,7 +130,7 @@ const OptionList = defineComponent(
 
     // Auto active first item when list length or searchValue changed
     watch(
-      [() => memoFlattenOptions.length, () => searchValue],
+      [() => memoFlattenOptions.value.length, () => searchValue],
       () => {
         setActive(defaultActiveFirstOption !== false ? getEnabledActiveIndex(0) : -1);
       },
@@ -157,7 +157,7 @@ const OptionList = defineComponent(
       if (!multiple && open && rawValues.size === 1) {
         const value: RawValueType = Array.from(rawValues)[0];
         // Scroll to the option closest to the searchValue if searching.
-        const index = memoFlattenOptions.findIndex(({ data }) =>
+        const index = memoFlattenOptions.value.findIndex(({ data }) =>
           searchValue ? String(data.value).startsWith(searchValue) : data.value === value,
         );
 
@@ -225,7 +225,7 @@ const OptionList = defineComponent(
           case KeyCode.TAB:
           case KeyCode.ENTER: {
             // value
-            const item = memoFlattenOptions[activeIndex.value];
+            const item = memoFlattenOptions.value[activeIndex.value];
             if (!item || item.data.disabled) {
               return onSelectValue(undefined);
             }
@@ -272,7 +272,7 @@ const OptionList = defineComponent(
     }
 
     const RenderItem = ({ index }: { index: number }) => {
-      const item = memoFlattenOptions[index];
+      const item = memoFlattenOptions.value[index];
       if (!item) {
         return null;
       }
@@ -295,7 +295,7 @@ const OptionList = defineComponent(
     };
 
     return () => {
-      if (memoFlattenOptions.length === 0) {
+      if (memoFlattenOptions.value.length === 0) {
         return (
           <div role="listbox" id={`${id}_list`} class={`${itemPrefixCls}-empty`} onMousedown={onListMouseDown}>
             {/* @ts-ignore */}
@@ -321,7 +321,7 @@ const OptionList = defineComponent(
           <List
             itemKey="key"
             ref={listRef}
-            data={memoFlattenOptions}
+            data={memoFlattenOptions.value}
             height={listHeight}
             itemHeight={listItemHeight}
             fullHeight={false}
