@@ -38,7 +38,8 @@
       "@vc-com/mutate-observer/*": ["packages/mutate-observer/src/*"],
       "@vc-com/input/*": ["packages/input/src/*"],
       "@vc-com/select/*": ["packages/select/src/*"],
-      "@vc-com/checkbox/*": ["packages/checkbox/src/*"]
+      "@vc-com/checkbox/*": ["packages/checkbox/src/*"],
+      "@vc-com/collapse/*": ["packages/collapse/src/*"]
     }
   },
   "include": [
