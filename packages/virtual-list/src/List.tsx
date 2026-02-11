@@ -7,7 +7,6 @@ import { useFullProps, useRef, type HTMLAttributes, type UIEvent, type UIEventHa
 import type { InnerProps } from './Filler';
 import Filler from './Filler';
 import useChildren from './hooks/useChildren';
-import useDiffItem from './hooks/useDiffItem';
 import useFrameWheel from './hooks/useFrameWheel';
 import { useGetSize } from './hooks/useGetSize';
 import useHeights from './hooks/useHeights';
@@ -185,16 +184,6 @@ export default defineComponent(
     // ================================ Legacy ================================
     // Put ref here since the range is generate by follow
     const rangeRef = shallowRef({ start: 0, end: mergedData.value?.length });
-
-    const diffItemRef = useRef<any>();
-    const [diffItem] = useDiffItem(mergedData, getKey);
-    watch(
-      diffItem,
-      () => {
-        diffItemRef.value = diffItem.value;
-      },
-      { deep: true, immediate: true },
-    );
 
     // ========================== Visible Calculation =========================
     const scrollHeight = ref(0);

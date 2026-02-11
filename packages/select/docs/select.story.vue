@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
 import multiple from './multiple';
-// import single from './single';
+import single from './single';
 </script>
 <template>
-  <!-- <single /> -->
+  <single />
   <multiple />
 </template>

@@ -105,7 +105,7 @@ const OptionList = defineComponent(
 
         const { group, data } = memoFlattenOptions[current] || {};
 
-        if (!group && !data?.disabled && (isSelected(data.value) || !overMaxCount)) {
+        if (!group && !data?.disabled && (isSelected(data.value) || !overMaxCount.value)) {
           return current;
         }
       }
@@ -230,7 +230,7 @@ const OptionList = defineComponent(
               return onSelectValue(undefined);
             }
 
-            if (!overMaxCount || rawValues.has(item.value)) {
+            if (!overMaxCount.value || rawValues.has(item.value)) {
               onSelectValue(item.value);
             } else {
               onSelectValue(undefined);
