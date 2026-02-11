@@ -21,9 +21,9 @@ const Test = defineComponent(() => {
     state.value = value;
   };
 
-  // const onDestroy = () => {
-  //   state.destroy = 1;
-  // };
+  const onDestroy = () => {
+    state.destroy = true;
+  };
 
   const onBlur = (v) => {
     console.log('onBlur', v);
@@ -75,7 +75,7 @@ const Test = defineComponent(() => {
   ];
 
   return () => (
-    <div style={{ margin: '20px' }}>
+    <div v-if={!state.destroy} style={{ margin: '20px' }}>
       <div
         style={{ height: '150px', background: 'rgba(0, 255, 0, 0.1)' }}
         onMousedown={(e) => {
@@ -107,7 +107,7 @@ const Test = defineComponent(() => {
           options={options}
         ></Select>
       </div>
-      {/* <h2>native select</h2>
+      <h2>native select</h2>
       <select value={state.value} style={{ width: '500px' }} onChange={onChange}>
         <option value="01">jack</option>
         <option value="11">lucy</option>
@@ -132,20 +132,26 @@ const Test = defineComponent(() => {
           popupMatchSelectWidth={300}
           popupStyle={{ minWidth: '300px' }}
           style={{ width: '500px' }}
-        >
-          <Option value="1">1</Option>
-          <Option value="2">2</Option>
-        </Select>
+          options={[
+            {
+              label: '1',
+              value: '1',
+            },
+            {
+              label: '2',
+              value: '2',
+            },
+          ]}
+        ></Select>
       </div>
 
       <p>
         <button type="button" onClick={onDestroy}>
           destroy
         </button>
-      </p> */}
+      </p>
     </div>
   );
 });
 
 export default Test;
-/* eslint-enable */

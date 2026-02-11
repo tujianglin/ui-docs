@@ -171,7 +171,7 @@ const Select = defineComponent(
     onSelect,
     onDeselect,
     onActive,
-    popupMatchSelectWidth = true,
+    popupMatchSelectWidth: selecWidth,
     optionLabelProp,
     options,
     optionRender,
@@ -193,18 +193,12 @@ const Select = defineComponent(
     styles,
     ...restProps
   }: SelectProps<any, DefaultOptionType>) => {
+    const popupMatchSelectWidth = computed(() => selecWidth ?? true);
     const [mergedShowSearch, searchConfig] = useSearchConfig(
       computed(() => showSearch),
       computed(() => mode),
     );
-    const {
-      filterOption,
-      searchValue,
-      optionFilterProp,
-      filterSort,
-      onSearch,
-      autoClearSearchValue = true,
-    } = $(searchConfig.value);
+    const { filterOption, searchValue, optionFilterProp, filterSort, onSearch, autoClearSearchValue } = $(searchConfig.value);
 
     const normalizedOptionFilterProp = computed(() => {
       if (!optionFilterProp) return [];
@@ -593,7 +587,7 @@ const Select = defineComponent(
 
     // ========================== Context ===========================
     const selectContext = computed<SelectContextProps>(() => {
-      const realVirtual = virtual !== false && popupMatchSelectWidth !== false;
+      const realVirtual = virtual !== false && popupMatchSelectWidth.value !== false;
       return {
         ...parsedOptions.value,
         flattenOptions: displayOptions.value,
@@ -643,7 +637,7 @@ const Select = defineComponent(
           onSearch={onInternalSearch}
           autoClearSearchValue={autoClearSearchValue}
           onSearchSplit={onInternalSearchSplit}
-          popupMatchSelectWidth={popupMatchSelectWidth}
+          popupMatchSelectWidth={popupMatchSelectWidth.value}
           // >>> OptionList
           OptionList={OptionList}
           emptyOptions={!displayOptions.value.length}

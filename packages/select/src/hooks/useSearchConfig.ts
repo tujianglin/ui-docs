@@ -8,8 +8,8 @@ export default function useSearchConfig(
 ) {
   const result = computed<[boolean | undefined, SearchConfig<DefaultOptionType>]>(() => {
     const isObject = typeof showSearch?.value === 'object';
-    const searchConfig = isObject ? showSearch?.value : {};
-
+    const searchConfig = (isObject ? showSearch?.value : {}) as SearchConfig<DefaultOptionType>;
+    searchConfig.autoClearSearchValue = searchConfig.autoClearSearchValue ?? true;
     return [
       isObject ||
       mode.value === 'combobox' ||

@@ -38,6 +38,7 @@ export default defineComponent(
       disabled,
       showSearch,
       triggerOpen,
+      rawOpen,
       toggleOpen,
       autoClearSearchValue,
       tagRender: tagRenderFromContext,
@@ -52,9 +53,10 @@ export default defineComponent(
 
     // ===================== Search ======================
     // Apply autoClearSearchValue logic: when dropdown is closed and autoClearSearchValue is not false (default true), clear search value
+    // Use rawOpen to avoid clearing search when emptyListContent blocks open
     const computedSearchValue = computed(() => {
       let result = searchValue;
-      if (!triggerOpen && mode === 'multiple' && autoClearSearchValue !== false) {
+      if (!rawOpen && mode === 'multiple' && autoClearSearchValue !== false) {
         result = '';
       }
       return result;

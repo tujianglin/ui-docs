@@ -1,7 +1,7 @@
-import { resolveVNode } from '@vc-com/util/lib/vnode';
+import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
 import { computed, defineComponent, ref, watch, type CSSProperties } from 'vue';
-import { useRef, type HTMLAttributes } from 'vue-jsx-vapor';
+import { useRef } from 'vue-jsx-vapor';
 import type { SharedContentProps } from '.';
 import { useBaseSelectContextInject } from '../../hooks/useBaseProps';
 import { useSelectContextInject } from '../../SelectContext';
@@ -30,40 +30,40 @@ const SingleContent = defineComponent(
       return showSearch ? searchValue : '';
     });
 
-    // Extract option props, excluding label and value, and handle className/style merging
-    const optionProps = computed(() => {
-      const restProps: HTMLAttributes<HTMLDivElement> = {
-        class: `${prefixCls}-content-value`,
-        style: mergedSearchValue.value
-          ? {
-              visibility: 'hidden',
-            }
-          : {},
-      };
+    const {
+      className: optionClassName,
+      style: optionStyle,
+      titleValue: optionTitle,
+      nextHasStyle: hasOptionStyle,
+    } = $(
+      reactiveComputed(() => {
+        let className: string | undefined;
+        let style: CSSProperties | undefined;
+        let titleValue: string | undefined;
 
-      if (displayValue.value && selectContext?.flattenOptions) {
-        // @ts-ignore
-        const option = selectContext.flattenOptions.find((opt) => opt.value === displayValue.value);
-        if (option?.data) {
-          const { class: className, style } = option.data;
-          Object.assign(restProps, {
-            title: getTitle(option.data),
-            class: clsx(restProps.class, className),
-            style: { ...(restProps.style as CSSProperties), ...style },
-          });
+        if (displayValue.value && selectContext?.flattenOptions) {
+          // @ts-ignore
+          const option = selectContext.flattenOptions?.find((opt) => opt.value === displayValue.value.value);
+          if (option?.data) {
+            className = option.data.className;
+            style = option.data.style;
+            titleValue = getTitle(option.data);
+          }
         }
-      }
 
-      if (displayValue.value && !restProps.title) {
-        restProps.title = getTitle(displayValue.value);
-      }
+        if (displayValue.value && !titleValue) {
+          titleValue = getTitle(displayValue.value);
+        }
 
-      if (rootTitle !== undefined) {
-        restProps.title = rootTitle;
-      }
+        if (rootTitle !== undefined) {
+          titleValue = rootTitle;
+        }
 
-      return restProps;
-    });
+        const nextHasStyle = !!className || !!style;
+
+        return { className, style, titleValue, nextHasStyle } as const;
+      }),
+    );
 
     watch(
       [combobox, () => activeValue],
@@ -84,11 +84,36 @@ const SingleContent = defineComponent(
     });
 
     return () => (
-      <div class={clsx(`${prefixCls}-content`, classNames?.content)} style={styles?.content}>
-        <div v-if={displayValue.value} {...optionProps.value}>
-          {resolveVNode(displayValue.value?.label)}
-        </div>
-        <Placeholder v-else show={!mergedSearchValue.value} />
+      <div
+        class={clsx(
+          `${prefixCls}-content`,
+          displayValue.value && `${prefixCls}-content-has-value`,
+          mergedSearchValue.value && `${prefixCls}-content-has-search-value`,
+          hasOptionStyle && `${prefixCls}-content-has-option-style`,
+          classNames?.content,
+        )}
+        style={styles?.content}
+        title={hasOptionStyle ? undefined : optionTitle}
+      >
+        {displayValue.value ? (
+          hasOptionStyle ? (
+            <div
+              class={clsx(`${prefixCls}-content-value`, optionClassName)}
+              style={{
+                ...(mergedSearchValue.value ? { visibility: 'hidden' } : {}),
+                ...optionStyle,
+              }}
+              title={optionTitle}
+            >
+              {/* @ts-ignore */}
+              {displayValue.value.label}
+            </div>
+          ) : (
+            displayValue.value.label
+          )
+        ) : (
+          <Placeholder show={!mergedSearchValue.value} />
+        )}
         <Input
           ref={domRef}
           {...(inputProps as any)}

@@ -350,7 +350,7 @@ const BaseSelect = defineComponent(
     // Not trigger `open` when `notFoundContent` is empty
     const emptyListContent = computed(() => !notFoundContent && emptyOptions);
 
-    const [mergedOpen, triggerOpen, lockOptions] = useOpen(
+    const [rawOpen, mergedOpen, triggerOpen, lockOptions] = useOpen(
       computed(() => defaultOpen || false),
       computed(() => open),
       onPopupVisibleChange,
@@ -417,11 +417,14 @@ const BaseSelect = defineComponent(
       onSearch(searchText, { source: 'submit' });
     };
 
-    // Close will clean up single mode search text
+    // Clean up search value when the dropdown is closed.
+    // We use `rawOpen` here to avoid clearing the search input when the dropdown is
+    // programmatically closed due to `notFoundContent={null}` and no matching options.
+    // This allows the user to continue typing their search query.
     watch(
-      [mergedOpen],
+      [rawOpen],
       () => {
-        if (!mergedOpen.value && !multiple.value && mode !== 'combobox') {
+        if (!rawOpen.value && !multiple.value && mode !== 'combobox') {
           onInternalSearch('', false, false);
         }
       },
@@ -632,6 +635,7 @@ const BaseSelect = defineComponent(
       notFoundContent,
       open: mergedOpen.value,
       triggerOpen: mergedOpen.value,
+      rawOpen: rawOpen.value,
       id,
       showSearch,
       multiple,

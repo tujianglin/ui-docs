@@ -1,5 +1,5 @@
 import useControlledState from '@vc-com/util/lib/hooks/useControlledState';
-import { computed, onMounted, ref, shallowRef, type Ref } from 'vue';
+import { computed, onMounted, ref, shallowRef, type ComputedRef, type Ref } from 'vue';
 
 const internalMacroTask = (fn: VoidFunction) => {
   const channel = new MessageChannel();
@@ -43,7 +43,7 @@ export default function useOpen(
   propOpen: Ref<boolean>,
   onOpen: (nextOpen: boolean) => void,
   postOpen: (nextOpen: boolean) => boolean,
-): [Ref<boolean>, TriggerOpenType, Ref<boolean>] {
+): [ComputedRef<boolean>, ComputedRef<boolean>, TriggerOpenType, Ref<boolean>] {
   // SSR not support Portal which means we need delay `open` for the first time render
   const rendered = ref(false);
 
@@ -101,5 +101,5 @@ export default function useOpen(
     }
   };
 
-  return [mergedOpen, toggleOpen, lock];
+  return [ssrSafeOpen, mergedOpen, toggleOpen, lock];
 }
