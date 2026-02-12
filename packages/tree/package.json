@@ -1,7 +1,7 @@
 {
-  "name": "@vc-com/tooltip",
+  "name": "@vc-com/trigger",
   "version": "1.0.0",
-  "description": "Vue 3 Tooltip 组件",
+  "description": "Vue 3 Trigger 组件",
   "files": [
     "dist",
     "package.json"
@@ -19,8 +19,9 @@
     "bump": "bumpp --release patch"
   },
   "dependencies": {
-    "@vc-com/trigger": "workspace:*",
+    "@vc-com/motion": "workspace:*",
     "@vc-com/util": "workspace:*",
+    "@vc-com/virtual-list": "workspace:*",
     "clsx": "catalog:"
   },
   "peerDependencies": {

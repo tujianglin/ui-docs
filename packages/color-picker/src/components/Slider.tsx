@@ -23,76 +23,79 @@ export interface BaseSliderProps {
   color: Color;
 }
 
-const Slider = defineComponent(({ prefixCls, colors, disabled, onChange, onChangeComplete, color, type }: BaseSliderProps) => {
-  const sliderRef = ref<HTMLDivElement>();
-  const transformRef = ref<HTMLDivElement>();
-  const colorRef = shallowRef<Color>(color);
+const Slider = defineComponent(
+  ({ prefixCls, colors, disabled, onChange, onChangeComplete, color, type }: BaseSliderProps) => {
+    const sliderRef = ref<HTMLDivElement>();
+    const transformRef = ref<HTMLDivElement>();
+    const colorRef = shallowRef<Color>(color);
 
-  const getValue = (c: Color) => {
-    return type === 'hue' ? c.getHue() : c.a * 100;
-  };
+    const getValue = (c: Color) => {
+      return type === 'hue' ? c.getHue() : c.a * 100;
+    };
 
-  const onDragChange = (offsetValue: TransformOffset) => {
-    const calcColor = calculateColor({
-      offset: offsetValue,
-      targetRef: transformRef,
-      containerRef: sliderRef,
-      color,
-      type,
+    const onDragChange = (offsetValue: TransformOffset) => {
+      const calcColor = calculateColor({
+        offset: offsetValue,
+        targetRef: transformRef,
+        containerRef: sliderRef,
+        color,
+        type,
+      });
+
+      colorRef.value = calcColor;
+      onChange(getValue(calcColor));
+    };
+
+    const [offset, dragStartHandle] = useColorDrag(
+      reactiveComputed(() => ({
+        color,
+        targetRef: transformRef.value,
+        containerRef: sliderRef.value,
+        calculate: () => calcOffset(color, type),
+        onDragChange,
+        onDragChangeComplete() {
+          onChangeComplete(getValue(colorRef.value));
+        },
+        direction: 'x',
+        disabledDrag: disabled,
+      })),
+    );
+
+    const handleColor = computed(() => {
+      if (type === 'hue') {
+        const hsb = color.toHsb();
+        hsb.s = 1;
+        hsb.b = 1;
+        hsb.a = 1;
+
+        const lightColor = new Color(hsb);
+        return lightColor;
+      }
+
+      return color;
     });
 
-    colorRef.value = calcColor;
-    onChange(getValue(calcColor));
-  };
+    // ========================= Gradient =========================
+    const gradientList = computed(() => colors.map((info) => `${info.color} ${info.percent}%`));
 
-  const [offset, dragStartHandle] = useColorDrag(
-    reactiveComputed(() => ({
-      color,
-      targetRef: transformRef.value,
-      containerRef: sliderRef.value,
-      calculate: () => calcOffset(color, type),
-      onDragChange,
-      onDragChangeComplete() {
-        onChangeComplete(getValue(colorRef.value));
-      },
-      direction: 'x',
-      disabledDrag: disabled,
-    })),
-  );
-
-  const handleColor = computed(() => {
-    if (type === 'hue') {
-      const hsb = color.toHsb();
-      hsb.s = 1;
-      hsb.b = 1;
-      hsb.a = 1;
-
-      const lightColor = new Color(hsb);
-      return lightColor;
-    }
-
-    return color;
-  });
-
-  // ========================= Gradient =========================
-  const gradientList = computed(() => colors.map((info) => `${info.color} ${info.percent}%`));
-
-  // ========================== Render ==========================
-  return () => (
-    <div
-      ref={sliderRef}
-      class={clsx(`${prefixCls}-slider`, `${prefixCls}-slider-${type}`)}
-      onMousedown={dragStartHandle as any}
-      onTouchstart_passive={dragStartHandle as any}
-    >
-      <Palette prefixCls={prefixCls}>
-        <Transform x={offset.value.x} y={offset.value.y} ref={transformRef}>
-          <Handler size="small" color={handleColor.value.toHexString()} prefixCls={prefixCls} />
-        </Transform>
-        <Gradient colors={gradientList.value} type={type} prefixCls={prefixCls} />
-      </Palette>
-    </div>
-  );
-});
+    // ========================== Render ==========================
+    return () => (
+      <div
+        ref={sliderRef}
+        class={clsx(`${prefixCls}-slider`, `${prefixCls}-slider-${type}`)}
+        onMousedown={dragStartHandle as any}
+        onTouchstart_passive={dragStartHandle as any}
+      >
+        <Palette prefixCls={prefixCls}>
+          <Transform x={offset.value.x} y={offset.value.y} ref={transformRef}>
+            <Handler size="small" color={handleColor.value.toHexString()} prefixCls={prefixCls} />
+          </Transform>
+          <Gradient colors={gradientList.value} type={type} prefixCls={prefixCls} />
+        </Palette>
+      </div>
+    );
+  },
+  { inheritAttrs: false },
+);
 
 export default Slider;

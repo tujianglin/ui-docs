@@ -5,22 +5,25 @@ export interface PopupContentProps {
   cache?: boolean;
 }
 
-const PopupContent = defineComponent((props: PopupContentProps) => {
-  const cachedChildren = shallowRef();
-  const slots = defineSlots<{ default: () => any }>();
-  return () => {
-    const children = filterEmpty(slots.default?.());
+const PopupContent = defineComponent(
+  (props: PopupContentProps) => {
+    const cachedChildren = shallowRef();
+    const slots = defineSlots<{ default: () => any }>();
+    return () => {
+      const children = filterEmpty(slots.default?.());
 
-    if (!props.cache) {
-      cachedChildren.value = children;
-      return children;
-    }
+      if (!props.cache) {
+        cachedChildren.value = children;
+        return children;
+      }
 
-    if (!cachedChildren.value) {
-      cachedChildren.value = children;
-    }
-    return cachedChildren.value;
-  };
-});
+      if (!cachedChildren.value) {
+        cachedChildren.value = children;
+      }
+      return cachedChildren.value;
+    };
+  },
+  { inheritAttrs: false },
+);
 
 export default PopupContent;

@@ -727,10 +727,7 @@ const InputNumber = defineComponent(
       </div>
     );
   },
+  { inheritAttrs: false, name: process.env.NODE_ENV !== 'production' ? 'InputNumber' : undefined },
 );
-
-if (process.env.NODE_ENV !== 'production') {
-  InputNumber.displayName = 'InputNumber';
-}
 
 export default InputNumber;

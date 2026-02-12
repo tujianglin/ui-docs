@@ -24,13 +24,10 @@ export const useOverflowContextInject = () => {
   return inject(OverflowContext, reactive(null));
 };
 
-export const OverflowContextProvider = defineComponent(
-  (props: { value?: OverflowContextProps }) => {
-    provide(
-      OverflowContext,
-      reactiveComputed(() => props.value || ({} as any)),
-    );
-    return () => <slot></slot>;
-  },
-  { inheritAttrs: false },
-);
+export const OverflowContextProvider = defineComponent((props: { value?: OverflowContextProps }) => {
+  provide(
+    OverflowContext,
+    reactiveComputed(() => props.value || ({} as any)),
+  );
+  return () => <slot></slot>;
+});

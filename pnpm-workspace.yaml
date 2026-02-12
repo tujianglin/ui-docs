@@ -8,3 +8,4 @@ catalog:
   '@vueuse/core': ^14.1.0
   'vue-jsx-vapor': 3.1.20
   'vue-tsc': ^3.2.2
+  'clsx': ^2.1.1

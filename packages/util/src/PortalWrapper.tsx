@@ -51,152 +51,155 @@ export interface PortalWrapperSlotProps {
   scrollLocker: ScrollLocker;
 }
 
-const PortalWrapper = defineComponent((props: PortalWrapperProps) => {
-  const slots = defineSlots({ default: (_props: PortalWrapperProps) => <></> });
-  const container = ref<HTMLElement | undefined>();
-  const portalRef = ref<any>(null);
-  let rafId: number | undefined;
-  let scrollLocker: ScrollLocker;
+const PortalWrapper = defineComponent(
+  (props: PortalWrapperProps) => {
+    const slots = defineSlots({ default: (_props: PortalWrapperProps) => <></> });
+    const container = ref<HTMLElement | undefined>();
+    const portalRef = ref<any>(null);
+    let rafId: number | undefined;
+    let scrollLocker: ScrollLocker;
 
-  // 初始化 scrollLocker
-  scrollLocker = new ScrollLocker({
-    container: getParent(props.getContainer) as HTMLElement,
-  });
+    // 初始化 scrollLocker
+    scrollLocker = new ScrollLocker({
+      container: getParent(props.getContainer) as HTMLElement,
+    });
 
-  const setWrapperClassName = () => {
-    if (container.value && props.wrapperClassName && props.wrapperClassName !== container.value.className) {
-      container.value.className = props.wrapperClassName;
-    }
-  };
-
-  const attachToParent = (force = false): boolean => {
-    if (force || (container.value && !container.value.parentNode)) {
-      const parent = getParent(props.getContainer);
-      if (parent && container.value) {
-        parent.appendChild(container.value);
-        return true;
+    const setWrapperClassName = () => {
+      if (container.value && props.wrapperClassName && props.wrapperClassName !== container.value.className) {
+        container.value.className = props.wrapperClassName;
       }
-      return false;
-    }
-    return true;
-  };
-
-  const getContainerElement = (): HTMLElement | null => {
-    if (!supportDom) {
-      return null;
-    }
-    if (!container.value) {
-      container.value = document.createElement('div');
-      attachToParent(true);
-    }
-    setWrapperClassName();
-    return container.value;
-  };
-
-  const removeCurrentContainer = () => {
-    container.value?.parentNode?.removeChild(container.value);
-  };
-
-  const switchScrollingEffect = () => {
-    if (openCount === 1 && !Object.keys(cacheOverflow).length) {
-      cacheOverflow = setStyle({
-        overflow: 'hidden',
-        overflowX: 'hidden',
-        overflowY: 'hidden',
-      });
-    } else if (!openCount) {
-      setStyle(cacheOverflow);
-      cacheOverflow = {};
-    }
-  };
-
-  const updateOpenCount = (prevVisible?: boolean) => {
-    const { visible, getContainer: getContainerProp } = props;
-
-    if (visible !== prevVisible && supportDom && getParent(getContainerProp) === document.body) {
-      if (visible && !prevVisible) {
-        openCount += 1;
-      } else if (prevVisible) {
-        openCount -= 1;
-      }
-    }
-  };
-
-  const updateScrollLocker = (prevVisible?: boolean) => {
-    const { visible, getContainer: getContainerProp } = props;
-
-    if (visible && visible !== prevVisible && supportDom && getParent(getContainerProp) !== scrollLocker.getContainer()) {
-      scrollLocker.reLock({
-        container: getParent(getContainerProp) as HTMLElement,
-      });
-    }
-  };
-
-  // 初始化
-  onMounted(() => {
-    updateOpenCount();
-
-    if (!attachToParent()) {
-      rafId = raf(() => {
-        // 强制更新
-      });
-    }
-  });
-
-  // 监听 visible 变化
-  let prevVisible = props.visible;
-  watch(
-    () => props.visible,
-    (newVisible) => {
-      updateOpenCount(prevVisible);
-      updateScrollLocker(prevVisible);
-      setWrapperClassName();
-      attachToParent();
-      prevVisible = newVisible;
-    },
-  );
-
-  // 监听 getContainer 变化
-  watch(
-    () => props.getContainer,
-    () => {
-      removeCurrentContainer();
-    },
-  );
-
-  onUnmounted(() => {
-    const { visible, getContainer: getContainerProp } = props;
-    if (supportDom && getParent(getContainerProp) === document.body) {
-      openCount = visible && openCount ? openCount - 1 : openCount;
-    }
-    removeCurrentContainer();
-    if (rafId) {
-      raf.cancel(rafId);
-    }
-  });
-
-  return () => {
-    const { forceRender, visible } = props;
-    let portal: VNode | null = null;
-
-    const childProps: PortalWrapperSlotProps = {
-      getOpenCount: () => openCount,
-      getContainer: getContainerElement,
-      switchScrollingEffect,
-      scrollLocker,
     };
 
-    if (forceRender || visible || portalRef.value) {
-      // @ts-ignore
-      portal = (
-        <Portal getContainer={getContainerElement as () => HTMLElement} ref={portalRef}>
-          <slots.default {...childProps} />
-        </Portal>
-      );
-    }
+    const attachToParent = (force = false): boolean => {
+      if (force || (container.value && !container.value.parentNode)) {
+        const parent = getParent(props.getContainer);
+        if (parent && container.value) {
+          parent.appendChild(container.value);
+          return true;
+        }
+        return false;
+      }
+      return true;
+    };
 
-    return portal;
-  };
-});
+    const getContainerElement = (): HTMLElement | null => {
+      if (!supportDom) {
+        return null;
+      }
+      if (!container.value) {
+        container.value = document.createElement('div');
+        attachToParent(true);
+      }
+      setWrapperClassName();
+      return container.value;
+    };
+
+    const removeCurrentContainer = () => {
+      container.value?.parentNode?.removeChild(container.value);
+    };
+
+    const switchScrollingEffect = () => {
+      if (openCount === 1 && !Object.keys(cacheOverflow).length) {
+        cacheOverflow = setStyle({
+          overflow: 'hidden',
+          overflowX: 'hidden',
+          overflowY: 'hidden',
+        });
+      } else if (!openCount) {
+        setStyle(cacheOverflow);
+        cacheOverflow = {};
+      }
+    };
+
+    const updateOpenCount = (prevVisible?: boolean) => {
+      const { visible, getContainer: getContainerProp } = props;
+
+      if (visible !== prevVisible && supportDom && getParent(getContainerProp) === document.body) {
+        if (visible && !prevVisible) {
+          openCount += 1;
+        } else if (prevVisible) {
+          openCount -= 1;
+        }
+      }
+    };
+
+    const updateScrollLocker = (prevVisible?: boolean) => {
+      const { visible, getContainer: getContainerProp } = props;
+
+      if (visible && visible !== prevVisible && supportDom && getParent(getContainerProp) !== scrollLocker.getContainer()) {
+        scrollLocker.reLock({
+          container: getParent(getContainerProp) as HTMLElement,
+        });
+      }
+    };
+
+    // 初始化
+    onMounted(() => {
+      updateOpenCount();
+
+      if (!attachToParent()) {
+        rafId = raf(() => {
+          // 强制更新
+        });
+      }
+    });
+
+    // 监听 visible 变化
+    let prevVisible = props.visible;
+    watch(
+      () => props.visible,
+      (newVisible) => {
+        updateOpenCount(prevVisible);
+        updateScrollLocker(prevVisible);
+        setWrapperClassName();
+        attachToParent();
+        prevVisible = newVisible;
+      },
+    );
+
+    // 监听 getContainer 变化
+    watch(
+      () => props.getContainer,
+      () => {
+        removeCurrentContainer();
+      },
+    );
+
+    onUnmounted(() => {
+      const { visible, getContainer: getContainerProp } = props;
+      if (supportDom && getParent(getContainerProp) === document.body) {
+        openCount = visible && openCount ? openCount - 1 : openCount;
+      }
+      removeCurrentContainer();
+      if (rafId) {
+        raf.cancel(rafId);
+      }
+    });
+
+    return () => {
+      const { forceRender, visible } = props;
+      let portal: VNode | null = null;
+
+      const childProps: PortalWrapperSlotProps = {
+        getOpenCount: () => openCount,
+        getContainer: getContainerElement,
+        switchScrollingEffect,
+        scrollLocker,
+      };
+
+      if (forceRender || visible || portalRef.value) {
+        // @ts-ignore
+        portal = (
+          <Portal getContainer={getContainerElement as () => HTMLElement} ref={portalRef}>
+            <slots.default {...childProps} />
+          </Portal>
+        );
+      }
+
+      return portal;
+    };
+  },
+  { inheritAttrs: false },
+);
 
 export { PortalWrapper };

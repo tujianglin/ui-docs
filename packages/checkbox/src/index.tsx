@@ -100,6 +100,7 @@ export const Checkbox = defineComponent(
       </span>
     );
   },
+  { inheritAttrs: false },
 );
 
 export default Checkbox;

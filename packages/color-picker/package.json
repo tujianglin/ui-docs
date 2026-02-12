@@ -18,10 +18,13 @@
     "prepublish": "pnpm build",
     "bump": "bumpp --release patch"
   },
-  "devDependencies": {
-    "@ant-design/fast-color": "^3.0.0",
+  "dependencies": {
     "@vc-com/trigger": "workspace:*",
-    "@vc-com/util": "workspace:*"
+    "@vc-com/util": "workspace:*",
+    "clsx": "catalog:"
+  },
+  "devDependencies": {
+    "@ant-design/fast-color": "^3.0.0"
   },
   "peerDependencies": {
     "vue": "catalog:"

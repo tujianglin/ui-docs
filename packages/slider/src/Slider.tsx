@@ -548,10 +548,7 @@ const Slider = defineComponent(
       </SliderContextProvider>
     );
   },
+  { inheritAttrs: false, name: process.env.NODE_ENV !== 'production' ? 'Slider' : undefined },
 );
-
-if (process.env.NODE_ENV !== 'production') {
-  Slider.displayName = 'Slider';
-}
 
 export default Slider;

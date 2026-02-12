@@ -17,8 +17,9 @@
     "prepublish": "pnpm build",
     "bump": "bumpp --release patch"
   },
-  "devDependencies": {
-    "@vc-com/util": "workspace:*"
+  "dependencies": {
+    "@vc-com/util": "workspace:*",
+    "clsx": "catalog:"
   },
   "peerDependencies": {
     "vue": "catalog:"

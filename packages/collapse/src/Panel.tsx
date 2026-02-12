@@ -139,6 +139,7 @@ const CollapsePanel = defineComponent(
       </div>
     );
   },
+  { inheritAttrs: false },
 );
 
 export default CollapsePanel;

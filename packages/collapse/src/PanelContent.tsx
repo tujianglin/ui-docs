@@ -57,10 +57,7 @@ const PanelContent = defineComponent(
       </div>
     );
   },
+  { inheritAttrs: false, name: process.env.NODE_ENV === 'development' ? 'PanelContent' : undefined },
 );
-
-if (process.env.NODE_ENV !== 'production') {
-  PanelContent.displayName = 'PanelContent';
-}
 
 export default PanelContent;

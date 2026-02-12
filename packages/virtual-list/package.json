@@ -17,9 +17,10 @@
     "prepublish": "pnpm build",
     "bump": "bumpp --release patch"
   },
-  "devDependencies": {
+  "dependencies": {
     "@vc-com/resize-observer": "workspace:*",
-    "@vc-com/util": "workspace:*"
+    "@vc-com/util": "workspace:*",
+    "clsx": "catalog:"
   },
   "peerDependencies": {
     "vue": "catalog:"

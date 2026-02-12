@@ -28,36 +28,39 @@ export interface CollectionProps {
 /**
  * Collect all the resize event from children ResizeObserver
  */
-export const Collection = defineComponent(({ onBatchResize }: CollectionProps) => {
-  const resizeIdRef = shallowRef(0);
-  const resizeInfosRef = shallowRef<ResizeInfo[]>([]);
+export const Collection = defineComponent(
+  ({ onBatchResize }: CollectionProps) => {
+    const resizeIdRef = shallowRef(0);
+    const resizeInfosRef = shallowRef<ResizeInfo[]>([]);
 
-  const onCollectionResize = useCollectionContextInject();
+    const onCollectionResize = useCollectionContextInject();
 
-  const onResize = (size, element, data) => {
-    resizeIdRef.value += 1;
-    const currentId = resizeIdRef.value;
+    const onResize = (size, element, data) => {
+      resizeIdRef.value += 1;
+      const currentId = resizeIdRef.value;
 
-    resizeInfosRef.value.push({
-      size,
-      element,
-      data,
-    });
+      resizeInfosRef.value.push({
+        size,
+        element,
+        data,
+      });
 
-    Promise.resolve().then(() => {
-      if (currentId === resizeIdRef.value) {
-        onBatchResize?.(resizeInfosRef.value);
-        resizeInfosRef.value = [];
-      }
-    });
+      Promise.resolve().then(() => {
+        if (currentId === resizeIdRef.value) {
+          onBatchResize?.(resizeInfosRef.value);
+          resizeInfosRef.value = [];
+        }
+      });
 
-    // Continue bubbling if parent exist
-    onCollectionResize?.(size, element, data);
-  };
+      // Continue bubbling if parent exist
+      onCollectionResize?.(size, element, data);
+    };
 
-  return () => (
-    <CollectionContextProvider value={onResize}>
-      <slot></slot>
-    </CollectionContextProvider>
-  );
-});
+    return () => (
+      <CollectionContextProvider value={onResize}>
+        <slot></slot>
+      </CollectionContextProvider>
+    );
+  },
+  { inheritAttrs: false },
+);

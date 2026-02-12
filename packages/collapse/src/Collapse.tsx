@@ -6,7 +6,6 @@ import { computed, defineComponent } from 'vue';
 import { useFullProps, useRef } from 'vue-jsx-vapor';
 import useItems from './hooks/useItems';
 import type { CollapseProps } from './interface';
-import CollapsePanel from './Panel';
 
 function getActiveKeysArray(activeKey: Key | Key[]): Key[] {
   let currentActiveKey = activeKey;
@@ -93,11 +92,7 @@ const Collapse = defineComponent(
       </div>
     );
   },
+  { inheritAttrs: false },
 );
 
-export default Object.assign(Collapse, {
-  /**
-   * @deprecated use `items` instead, will be removed in `v4.0.0`
-   */
-  Panel: CollapsePanel,
-});
+export default Collapse;

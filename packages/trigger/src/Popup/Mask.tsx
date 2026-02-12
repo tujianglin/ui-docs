@@ -15,22 +15,25 @@ export interface MaskProps {
   mobile?: boolean;
 }
 
-export default defineComponent((props: MaskProps) => {
-  const { prefixCls, open, zIndex, mask, motion, mobile } = $(props);
-  return () => {
-    if (!mask) {
-      return null;
-    }
-    return (
-      <CSSMotion {...motion} motionAppear visible={open} removeOnLeave>
-        {({ class: className, ref: motionRef }) => (
-          <div
-            style={{ zIndex }}
-            ref={motionRef}
-            class={clsx(`${prefixCls}-mask`, mobile && `${prefixCls}-mobile-mask`, className)}
-          />
-        )}
-      </CSSMotion>
-    );
-  };
-});
+export default defineComponent(
+  (props: MaskProps) => {
+    const { prefixCls, open, zIndex, mask, motion, mobile } = $(props);
+    return () => {
+      if (!mask) {
+        return null;
+      }
+      return (
+        <CSSMotion {...motion} motionAppear visible={open} removeOnLeave>
+          {({ class: className, ref: motionRef }) => (
+            <div
+              style={{ zIndex }}
+              ref={motionRef}
+              class={clsx(`${prefixCls}-mask`, mobile && `${prefixCls}-mobile-mask`, className)}
+            />
+          )}
+        </CSSMotion>
+      );
+    };
+  },
+  { inheritAttrs: false },
+);

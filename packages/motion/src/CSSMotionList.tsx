@@ -47,93 +47,96 @@ export interface CSSMotionListState {
  * @param CSSMotion CSSMotion component
  */
 export function genCSSMotionList(_transitionSupport: boolean, CSSMotion = OriginCSSMotion): CSSMotionListProps {
-  const CSSMotionList = defineComponent((props: CSSMotionListProps) => {
-    const slots = defineSlots<{
-      default: (_props: {
-        visible?: boolean;
-        class?: string;
-        style?: CSSProperties;
-        index?: number;
-        [key: string]: any;
-        ref: VNodeRef;
-      }) => any;
-    }>();
+  const CSSMotionList = defineComponent(
+    (props: CSSMotionListProps) => {
+      const slots = defineSlots<{
+        default: (_props: {
+          visible?: boolean;
+          class?: string;
+          style?: CSSProperties;
+          index?: number;
+          [key: string]: any;
+          ref: VNodeRef;
+        }) => any;
+      }>();
 
-    const state = reactive({
-      keyEntities: [] as KeyObject[],
-    });
+      const state = reactive({
+        keyEntities: [] as KeyObject[],
+      });
 
-    // Update keyEntities
-    watch(
-      () => props.keys,
-      (newKeys) => {
-        const parsedKeyObjects = parseKeys(newKeys as any);
-        const mixedKeyEntities = diffKeys(state.keyEntities, parsedKeyObjects);
+      // Update keyEntities
+      watch(
+        () => props.keys,
+        (newKeys) => {
+          const parsedKeyObjects = parseKeys(newKeys as any);
+          const mixedKeyEntities = diffKeys(state.keyEntities, parsedKeyObjects);
 
-        state.keyEntities = mixedKeyEntities.filter((entity) => {
-          const prevEntity = state.keyEntities.find(({ key }) => entity.key === key);
-          if (prevEntity && prevEntity.status === STATUS_REMOVED && entity.status === STATUS_REMOVE) {
-            return false;
-          }
-          return true;
+          state.keyEntities = mixedKeyEntities.filter((entity) => {
+            const prevEntity = state.keyEntities.find(({ key }) => entity.key === key);
+            if (prevEntity && prevEntity.status === STATUS_REMOVED && entity.status === STATUS_REMOVE) {
+              return false;
+            }
+            return true;
+          });
+        },
+        { immediate: true },
+      );
+
+      // Remove key
+      function removeKey(removedRowKey: PropertyKey) {
+        state.keyEntities = state.keyEntities.map((entity) => {
+          if (entity.key !== removedRowKey) return entity;
+          return { ...entity, status: STATUS_REMOVED };
         });
-      },
-      { immediate: true },
-    );
 
-    // Remove key
-    function removeKey(removedRowKey: PropertyKey) {
-      state.keyEntities = state.keyEntities.map((entity) => {
-        if (entity.key !== removedRowKey) return entity;
-        return { ...entity, status: STATUS_REMOVED };
-      });
+        const restKeysCount = state.keyEntities.filter(({ status }) => status !== STATUS_REMOVED).length;
 
-      const restKeysCount = state.keyEntities.filter(({ status }) => status !== STATUS_REMOVED).length;
-
-      if (restKeysCount === 0 && props.onAllRemoved) {
-        props.onAllRemoved();
-      }
-    }
-
-    return () => {
-      const children = slots.default;
-      const { keyEntities } = state;
-      const { component, onVisibleChanged, onAllRemoved: _, ...restProps } = props;
-      const Component = component || Fragment;
-      const motionProps: CSSMotionProps = {};
-      MOTION_PROP_NAMES.forEach((prop) => {
-        motionProps[prop] = restProps[prop];
-        delete restProps[prop];
-      });
-      delete restProps.keys;
-
-      const content = keyEntities.map(({ status, ...eventProps }, index) => {
-        const visible = status === STATUS_ADD || status === STATUS_KEEP;
-        return (
-          <CSSMotion
-            {...motionProps}
-            key={eventProps.key}
-            visible={visible}
-            eventProps={eventProps}
-            onVisibleChanged={(changedVisible) => {
-              onVisibleChanged?.(changedVisible, { key: eventProps.key });
-              if (!changedVisible) removeKey(eventProps.key);
-            }}
-          >
-            {(p) => children?.({ ...p, index })}
-          </CSSMotion>
-        );
-      });
-
-      // Fragment 分支：直接返回 children（最像“空标签”）
-      if (Component === Fragment) {
-        return content;
+        if (restKeysCount === 0 && props.onAllRemoved) {
+          props.onAllRemoved();
+        }
       }
 
-      // 非 Fragment：正常包一层
-      return <Component {...restProps}>{content}</Component>;
-    };
-  });
+      return () => {
+        const children = slots.default;
+        const { keyEntities } = state;
+        const { component, onVisibleChanged, onAllRemoved: _, ...restProps } = props;
+        const Component = component || Fragment;
+        const motionProps: CSSMotionProps = {};
+        MOTION_PROP_NAMES.forEach((prop) => {
+          motionProps[prop] = restProps[prop];
+          delete restProps[prop];
+        });
+        delete restProps.keys;
+
+        const content = keyEntities.map(({ status, ...eventProps }, index) => {
+          const visible = status === STATUS_ADD || status === STATUS_KEEP;
+          return (
+            <CSSMotion
+              {...motionProps}
+              key={eventProps.key}
+              visible={visible}
+              eventProps={eventProps}
+              onVisibleChanged={(changedVisible) => {
+                onVisibleChanged?.(changedVisible, { key: eventProps.key });
+                if (!changedVisible) removeKey(eventProps.key);
+              }}
+            >
+              {(p) => children?.({ ...p, index })}
+            </CSSMotion>
+          );
+        });
+
+        // Fragment 分支：直接返回 children（最像“空标签”）
+        if (Component === Fragment) {
+          return content;
+        }
+
+        // 非 Fragment：正常包一层
+        return <Component {...restProps}>{content}</Component>;
+      };
+    },
+    { inheritAttrs: false },
+  );
 
   return CSSMotionList;
 }

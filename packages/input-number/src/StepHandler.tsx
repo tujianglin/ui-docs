@@ -22,83 +22,86 @@ export interface StepHandlerProps {
   onStep: (up: boolean, emitter: 'handler' | 'keyboard' | 'wheel') => void;
 }
 
-const StepHandler = defineComponent(({ prefixCls, action, disabled, class: className, style, onStep }: StepHandlerProps) => {
-  // ======================== MISC ========================
-  const isUpAction = computed(() => action === 'up');
+const StepHandler = defineComponent(
+  ({ prefixCls, action, disabled, class: className, style, onStep }: StepHandlerProps) => {
+    // ======================== MISC ========================
+    const isUpAction = computed(() => action === 'up');
 
-  // ======================== Step ========================
-  const stepTimeoutRef = ref<any>();
-  const frameIds = ref<number[]>([]);
+    // ======================== Step ========================
+    const stepTimeoutRef = ref<any>();
+    const frameIds = ref<number[]>([]);
 
-  const onStopStep = () => {
-    clearTimeout(stepTimeoutRef.value);
-  };
+    const onStopStep = () => {
+      clearTimeout(stepTimeoutRef.value);
+    };
 
-  // We will interval update step when hold mouse down
-  const onStepMouseDown = (e: MouseEvent) => {
-    e.preventDefault();
-    onStopStep();
+    // We will interval update step when hold mouse down
+    const onStepMouseDown = (e: MouseEvent) => {
+      e.preventDefault();
+      onStopStep();
 
-    onStep(isUpAction.value, 'handler');
-
-    // Loop step for interval
-    function loopStep() {
       onStep(isUpAction.value, 'handler');
 
-      stepTimeoutRef.value = setTimeout(loopStep, STEP_INTERVAL);
-    }
+      // Loop step for interval
+      function loopStep() {
+        onStep(isUpAction.value, 'handler');
 
-    // First time press will wait some time to trigger loop step update
-    stepTimeoutRef.value = setTimeout(loopStep, STEP_DELAY);
-  };
+        stepTimeoutRef.value = setTimeout(loopStep, STEP_INTERVAL);
+      }
 
-  onUnmounted(() => {
-    onStopStep();
-    frameIds.value.forEach((id) => {
-      raf.cancel(id);
+      // First time press will wait some time to trigger loop step update
+      stepTimeoutRef.value = setTimeout(loopStep, STEP_DELAY);
+    };
+
+    onUnmounted(() => {
+      onStopStep();
+      frameIds.value.forEach((id) => {
+        raf.cancel(id);
+      });
     });
-  });
 
-  // ======================= Render =======================
-  const actionClassName = computed(() => `${prefixCls}-action`);
+    // ======================= Render =======================
+    const actionClassName = computed(() => `${prefixCls}-action`);
 
-  const mergedClassName = computed(() =>
-    clsx(
-      actionClassName.value,
-      `${actionClassName.value}-${action}`,
-      {
-        [`${actionClassName.value}-${action}-disabled`]: disabled,
-      },
-      className,
-    ),
-  );
+    const mergedClassName = computed(() =>
+      clsx(
+        actionClassName.value,
+        `${actionClassName.value}-${action}`,
+        {
+          [`${actionClassName.value}-${action}-disabled`]: disabled,
+        },
+        className,
+      ),
+    );
 
-  // fix: https://github.com/ant-design/ant-design/issues/43088
-  // In Safari, When we fire onmousedown and onmouseup events in quick succession,
-  // there may be a problem that the onmouseup events are executed first,
-  // resulting in a disordered program execution.
-  // So, we need to use requestAnimationFrame to ensure that the onmouseup event is executed after the onmousedown event.
-  const safeOnStopStep = () => frameIds.value.push(raf(onStopStep));
+    // fix: https://github.com/ant-design/ant-design/issues/43088
+    // In Safari, When we fire onmousedown and onmouseup events in quick succession,
+    // there may be a problem that the onmouseup events are executed first,
+    // resulting in a disordered program execution.
+    // So, we need to use requestAnimationFrame to ensure that the onmouseup event is executed after the onmousedown event.
+    const safeOnStopStep = () => frameIds.value.push(raf(onStopStep));
 
-  return () => (
-    <span
-      unselectable="on"
-      role="button"
-      onMouseup={safeOnStopStep}
-      onMouseleave={safeOnStopStep}
-      onMousedown={(e) => {
-        onStepMouseDown(e);
-      }}
-      aria-label={isUpAction.value ? 'Increase Value' : 'Decrease Value'}
-      aria-disabled={disabled}
-      class={mergedClassName.value}
-      style={style}
-    >
-      <slot>
-        <span unselectable="on" class={`${prefixCls}-action-${action}-inner`} />
-      </slot>
-    </span>
-  );
-});
+    return () => (
+      <span
+        unselectable="on"
+        role="button"
+        onMouseup={safeOnStopStep}
+        onMouseleave={safeOnStopStep}
+        onMousedown={(e) => {
+          onStepMouseDown(e);
+        }}
+        aria-label={isUpAction.value ? 'Increase Value' : 'Decrease Value'}
+        aria-disabled={disabled}
+        class={mergedClassName.value}
+        style={style}
+      >
+        <slot>
+          <span unselectable="on" class={`${prefixCls}-action-${action}-inner`} />
+        </slot>
+      </span>
+    );
+  },
+  { inheritAttrs: false },
+);
 
 export default StepHandler;

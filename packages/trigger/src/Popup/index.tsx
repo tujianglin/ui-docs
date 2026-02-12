@@ -83,228 +83,231 @@ export interface PopupProps {
   mobile?: MobileConfig;
 }
 
-const Popup = defineComponent((props: PopupProps) => {
-  const {
-    onEsc,
-    popup,
-    class: className,
-    prefixCls,
-    style,
-    target,
+const Popup = defineComponent(
+  (props: PopupProps) => {
+    const {
+      onEsc,
+      popup,
+      class: className,
+      prefixCls,
+      style,
+      target,
 
-    onVisibleChanged,
+      onVisibleChanged,
 
-    // Open
-    open,
-    keepDom,
-    fresh,
+      // Open
+      open,
+      keepDom,
+      fresh,
 
-    // Click
-    onClick,
+      // Click
+      onClick,
 
-    // Mask
-    mask,
+      // Mask
+      mask,
 
-    // Arrow
-    arrow,
-    arrowPos,
-    align,
+      // Arrow
+      arrow,
+      arrowPos,
+      align,
 
-    // Motion
-    motion,
-    maskMotion,
+      // Motion
+      motion,
+      maskMotion,
 
-    // Mobile
-    mobile,
+      // Mobile
+      mobile,
 
-    // Portal
-    forceRender,
-    getPopupContainer,
-    autoDestroy,
-    portal: Portal,
+      // Portal
+      forceRender,
+      getPopupContainer,
+      autoDestroy,
+      portal: Portal,
 
-    zIndex,
+      zIndex,
 
-    onMouseEnter,
-    onMouseLeave,
-    onPointerEnter,
-    onPointerDownCapture,
+      onMouseEnter,
+      onMouseLeave,
+      onPointerEnter,
+      onPointerDownCapture,
 
-    ready,
-    offsetX,
-    offsetY,
-    offsetR,
-    offsetB,
-    onAlign,
-    onPrepare,
+      ready,
+      offsetX,
+      offsetY,
+      offsetR,
+      offsetB,
+      onAlign,
+      onPrepare,
 
-    // Resize
-    onResize,
+      // Resize
+      onResize,
 
-    stretch,
-    targetWidth,
-    targetHeight,
-  } = $(props);
+      stretch,
+      targetWidth,
+      targetHeight,
+    } = $(props);
 
-  const popupContent = computed(() => (typeof popup === 'function' ? (popup as any)?.() : popup));
+    const popupContent = computed(() => (typeof popup === 'function' ? (popup as any)?.() : popup));
 
-  // We can not remove holder only when motion finished.
-  const isNodeVisible = computed(() => open || keepDom);
+    // We can not remove holder only when motion finished.
+    const isNodeVisible = computed(() => open || keepDom);
 
-  // ========================= Mobile =========================
-  const isMobile = computed(() => !!mobile);
+    // ========================= Mobile =========================
+    const isMobile = computed(() => !!mobile);
 
-  // ========================== Mask ==========================
-  const { mergedMask, mergedMaskMotion, mergedPopupMotion } = $(
-    reactiveComputed(() => {
-      if (mobile) {
-        return { mergedMask: mobile.mask, mergedMaskMotion: mobile.maskMotion, mergedPopupMotion: mobile.motion };
-      }
+    // ========================== Mask ==========================
+    const { mergedMask, mergedMaskMotion, mergedPopupMotion } = $(
+      reactiveComputed(() => {
+        if (mobile) {
+          return { mergedMask: mobile.mask, mergedMaskMotion: mobile.maskMotion, mergedPopupMotion: mobile.motion };
+        }
 
-      return { mergedMask: mask, mergedMaskMotion: maskMotion, mergedPopupMotion: motion };
-    }),
-  );
-
-  // ======================= Container ========================
-  const getPopupContainerNeedParams = computed(() => getPopupContainer?.length > 0);
-
-  const show = shallowRef(!getPopupContainer || !getPopupContainerNeedParams.value);
-
-  // Delay to show since `getPopupContainer` need target element
-  watch(
-    [show, getPopupContainerNeedParams, () => target],
-    async () => {
-      await nextTick();
-      if (!show.value && getPopupContainerNeedParams.value && target) {
-        show.value = true;
-      }
-    },
-    { flush: 'post', immediate: true },
-  );
-
-  // ========================= Resize =========================
-  const onInternalResize: ResizeObserverProps['onResize'] = (size, ele) => {
-    onResize?.(size, ele);
-    onAlign();
-  };
-
-  // ========================= Styles =========================
-  const offsetStyle = useOffsetStyle(
-    isMobile,
-    computed(() => ready),
-    computed(() => open),
-    computed(() => align),
-    computed(() => offsetR),
-    computed(() => offsetB),
-    computed(() => offsetX),
-    computed(() => offsetY),
-  );
-
-  const domRef = ref();
-
-  defineExpose({
-    nativeElement: domRef,
-  });
-  // >>>>> Misc
-  const miscStyle = computed(() => {
-    const result: CSSProperties = {};
-    if (stretch) {
-      if (stretch.includes('height') && targetHeight) {
-        result.height = `${targetHeight}px`;
-      } else if (stretch.includes('minHeight') && targetHeight) {
-        result.minHeight = `${targetHeight}px`;
-      }
-      if (stretch.includes('width') && targetWidth) {
-        result.width = `${targetWidth}px`;
-      } else if (stretch.includes('minWidth') && targetWidth) {
-        result.minWidth = `${targetWidth}px`;
-      }
-    }
-
-    if (!open) {
-      result.pointerEvents = 'none';
-    }
-    return result;
-  });
-
-  // ========================= Render =========================
-  return () => {
-    if (!show.value) {
-      return null;
-    }
-
-    return (
-      <Portal
-        open={forceRender || isNodeVisible.value}
-        getContainer={getPopupContainer && (() => getPopupContainer(target))}
-        autoDestroy={autoDestroy}
-        onEsc={onEsc}
-      >
-        <Mask
-          prefixCls={prefixCls}
-          open={open}
-          zIndex={zIndex}
-          mask={mergedMask}
-          motion={mergedMaskMotion}
-          mobile={isMobile.value}
-        />
-        <ResizeObserver onResize={onInternalResize} disabled={!open}>
-          <CSSMotion
-            motionAppear
-            motionEnter
-            motionLeave
-            removeOnLeave={false}
-            forceRender={forceRender}
-            leavedClassName={`${prefixCls}-hidden`}
-            {...mergedPopupMotion}
-            onAppearPrepare={onPrepare}
-            onEnterPrepare={onPrepare}
-            visible={open}
-            onVisibleChanged={(nextVisible) => {
-              motion?.onVisibleChanged?.(nextVisible);
-              onVisibleChanged(nextVisible);
-            }}
-          >
-            {({ class: motionClassName, style: motionStyle, ref: motionRef }) => {
-              const cls = clsx(prefixCls, motionClassName, className, {
-                [`${prefixCls}-mobile`]: isMobile.value,
-              });
-
-              return (
-                <div
-                  ref={composeRef(domRef, motionRef)}
-                  class={cls}
-                  style={
-                    {
-                      '--arrow-x': `${arrowPos.x || 0}px`,
-                      '--arrow-y': `${arrowPos.y || 0}px`,
-                      ...offsetStyle.value,
-                      ...miscStyle.value,
-                      ...motionStyle,
-                      boxSizing: 'border-box',
-                      zIndex,
-                      ...style,
-                    } as CSSProperties
-                  }
-                  onMouseenter={onMouseEnter}
-                  onMouseleave={onMouseLeave}
-                  onPointerenter={onPointerEnter}
-                  onClick={onClick}
-                  {...{
-                    onPointerdownCapture: onPointerDownCapture,
-                  }}
-                >
-                  {arrow && <Arrow prefixCls={prefixCls} arrow={arrow} arrowPos={arrowPos} align={align} />}
-                  <PopupContent cache={!open && !fresh}>{popupContent.value}</PopupContent>
-                </div>
-              );
-            }}
-          </CSSMotion>
-        </ResizeObserver>
-        <slot></slot>
-      </Portal>
+        return { mergedMask: mask, mergedMaskMotion: maskMotion, mergedPopupMotion: motion };
+      }),
     );
-  };
-});
+
+    // ======================= Container ========================
+    const getPopupContainerNeedParams = computed(() => getPopupContainer?.length > 0);
+
+    const show = shallowRef(!getPopupContainer || !getPopupContainerNeedParams.value);
+
+    // Delay to show since `getPopupContainer` need target element
+    watch(
+      [show, getPopupContainerNeedParams, () => target],
+      async () => {
+        await nextTick();
+        if (!show.value && getPopupContainerNeedParams.value && target) {
+          show.value = true;
+        }
+      },
+      { flush: 'post', immediate: true },
+    );
+
+    // ========================= Resize =========================
+    const onInternalResize: ResizeObserverProps['onResize'] = (size, ele) => {
+      onResize?.(size, ele);
+      onAlign();
+    };
+
+    // ========================= Styles =========================
+    const offsetStyle = useOffsetStyle(
+      isMobile,
+      computed(() => ready),
+      computed(() => open),
+      computed(() => align),
+      computed(() => offsetR),
+      computed(() => offsetB),
+      computed(() => offsetX),
+      computed(() => offsetY),
+    );
+
+    const domRef = ref();
+
+    defineExpose({
+      nativeElement: domRef,
+    });
+    // >>>>> Misc
+    const miscStyle = computed(() => {
+      const result: CSSProperties = {};
+      if (stretch) {
+        if (stretch.includes('height') && targetHeight) {
+          result.height = `${targetHeight}px`;
+        } else if (stretch.includes('minHeight') && targetHeight) {
+          result.minHeight = `${targetHeight}px`;
+        }
+        if (stretch.includes('width') && targetWidth) {
+          result.width = `${targetWidth}px`;
+        } else if (stretch.includes('minWidth') && targetWidth) {
+          result.minWidth = `${targetWidth}px`;
+        }
+      }
+
+      if (!open) {
+        result.pointerEvents = 'none';
+      }
+      return result;
+    });
+
+    // ========================= Render =========================
+    return () => {
+      if (!show.value) {
+        return null;
+      }
+
+      return (
+        <Portal
+          open={forceRender || isNodeVisible.value}
+          getContainer={getPopupContainer && (() => getPopupContainer(target))}
+          autoDestroy={autoDestroy}
+          onEsc={onEsc}
+        >
+          <Mask
+            prefixCls={prefixCls}
+            open={open}
+            zIndex={zIndex}
+            mask={mergedMask}
+            motion={mergedMaskMotion}
+            mobile={isMobile.value}
+          />
+          <ResizeObserver onResize={onInternalResize} disabled={!open}>
+            <CSSMotion
+              motionAppear
+              motionEnter
+              motionLeave
+              removeOnLeave={false}
+              forceRender={forceRender}
+              leavedClassName={`${prefixCls}-hidden`}
+              {...mergedPopupMotion}
+              onAppearPrepare={onPrepare}
+              onEnterPrepare={onPrepare}
+              visible={open}
+              onVisibleChanged={(nextVisible) => {
+                motion?.onVisibleChanged?.(nextVisible);
+                onVisibleChanged(nextVisible);
+              }}
+            >
+              {({ class: motionClassName, style: motionStyle, ref: motionRef }) => {
+                const cls = clsx(prefixCls, motionClassName, className, {
+                  [`${prefixCls}-mobile`]: isMobile.value,
+                });
+
+                return (
+                  <div
+                    ref={composeRef(domRef, motionRef)}
+                    class={cls}
+                    style={
+                      {
+                        '--arrow-x': `${arrowPos.x || 0}px`,
+                        '--arrow-y': `${arrowPos.y || 0}px`,
+                        ...offsetStyle.value,
+                        ...miscStyle.value,
+                        ...motionStyle,
+                        boxSizing: 'border-box',
+                        zIndex,
+                        ...style,
+                      } as CSSProperties
+                    }
+                    onMouseenter={onMouseEnter}
+                    onMouseleave={onMouseLeave}
+                    onPointerenter={onPointerEnter}
+                    onClick={onClick}
+                    {...{
+                      onPointerdownCapture: onPointerDownCapture,
+                    }}
+                  >
+                    {arrow && <Arrow prefixCls={prefixCls} arrow={arrow} arrowPos={arrowPos} align={align} />}
+                    <PopupContent cache={!open && !fresh}>{popupContent.value}</PopupContent>
+                  </div>
+                );
+              }}
+            </CSSMotion>
+          </ResizeObserver>
+          <slot></slot>
+        </Portal>
+      );
+    };
+  },
+  { inheritAttrs: false },
+);
 
 export default Popup;

@@ -17,11 +17,12 @@
     "prepublish": "pnpm build",
     "bump": "bumpp --release patch"
   },
-  "devDependencies": {
+  "dependencies": {
     "@vc-com/overflow": "workspace:*",
     "@vc-com/trigger": "workspace:*",
     "@vc-com/util": "workspace:*",
-    "@vc-com/virtual-list": "workspace:*"
+    "@vc-com/virtual-list": "workspace:*",
+    "clsx": "catalog:"
   },
   "peerDependencies": {
     "vue": "catalog:"

@@ -34,7 +34,7 @@
     "@vue-macros/reactivity-transform": "^3.1.2",
     "@vue/tsconfig": "^0.8.1",
     "@vueuse/core": "catalog:",
-    "clsx": "^2.1.1",
+    "clsx": "catalog:",
     "czg": "^1.12.0",
     "eslint": "^9.39.2",
     "eslint-plugin-unused-imports": "^4.3.0",
