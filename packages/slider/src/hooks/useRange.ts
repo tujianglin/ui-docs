@@ -1,6 +1,6 @@
+import { warning } from '@vc-com/util/lib/warning';
 import { reactiveComputed } from '@vueuse/core';
 import { type Reactive, type Ref } from 'vue';
-import { warning } from '../../../util/src/warning';
 import type { SliderProps } from '../Slider';
 
 export default function useRange(range?: Ref<SliderProps['range']>): Reactive<{

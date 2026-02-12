@@ -179,6 +179,22 @@ importers:
         specifier: workspace:*
         version: link:../util
 
+  packages/color-picker:
+    dependencies:
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.5(typescript@5.9.3)
+    devDependencies:
+      '@ant-design/fast-color':
+        specifier: ^3.0.0
+        version: 3.0.1
+      '@vc-com/trigger':
+        specifier: workspace:*
+        version: link:../trigger
+      '@vc-com/util':
+        specifier: workspace:*
+        version: link:../util
+
   packages/input:
     dependencies:
       vue:
@@ -367,6 +383,10 @@ packages:
   '@akryum/tinypool@0.3.1':
     resolution: {integrity: sha512-nznEC1ZA/m3hQDEnrGQ4c5gkaa9pcaVnw4LFJyzBAaR7E3nfiAPEHS3otnSafpZouVnoKeITl5D+2LsnwlnK8g==}
     engines: {node: '>=14.0.0'}
+
+  '@ant-design/fast-color@3.0.1':
+    resolution: {integrity: sha512-esKJegpW4nckh0o6kV3Tkb7NPIZYbPnnFxmQDUmL08ukXZAvV85TZBr70eGuke/CIArLaP6aw8lt9KILjnWuOw==}
+    engines: {node: '>=8.x'}
 
   '@asamuzakjp/css-color@4.1.1':
     resolution: {integrity: sha512-B0Hv6G3gWGMn0xKJ0txEi/jM5iFpT3MfDxmhZFb4W047GvytCf1DHQ1D69W3zHI4yWe2aTZAA0JnbMZ7Xc8DuQ==}
@@ -3044,6 +3064,8 @@ snapshots:
   '@acemir/cssom@0.9.31': {}
 
   '@akryum/tinypool@0.3.1': {}
+
+  '@ant-design/fast-color@3.0.1': {}
 
   '@asamuzakjp/css-color@4.1.1':
     dependencies:

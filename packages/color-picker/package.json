@@ -1,0 +1,29 @@
+{
+  "name": "@vc-com/color-picker",
+  "version": "1.0.0",
+  "description": "Vue 3 ColorPicker 组件",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build && pnpm build:types",
+    "build:types": "tsmc -p tsconfig.build.json",
+    "prepublish": "pnpm build",
+    "bump": "bumpp --release patch"
+  },
+  "devDependencies": {
+    "@ant-design/fast-color": "^3.0.0",
+    "@vc-com/trigger": "workspace:*",
+    "@vc-com/util": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  }
+}

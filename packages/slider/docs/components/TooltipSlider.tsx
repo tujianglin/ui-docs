@@ -3,10 +3,10 @@ import Slider from '@vc-com/slider';
 import type { TooltipRef } from '@vc-com/tooltip';
 import Tooltip from '@vc-com/tooltip';
 import raf from '@vc-com/util/lib/raf';
+import type { VueNode } from '@vc-com/util/lib/types';
 import { defineComponent, watch } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
 import '../../../tooltip/docs/assets/bootstrap.less';
-import type { VueNode } from '../../../util/src/types';
 
 interface HandleTooltipProps {
   value: number;

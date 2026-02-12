@@ -1,9 +1,9 @@
 import CSSMotion from '@vc-com/motion';
 import KeyCode from '@vc-com/util/lib/KeyCode';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent } from 'vue';
 import { useFullProps, useRef, type HTMLAttributes } from 'vue-jsx-vapor';
-import { resolveVNode } from '../../util/src/vnode';
 import type { CollapsePanelProps } from './interface';
 import PanelContent from './PanelContent';
 

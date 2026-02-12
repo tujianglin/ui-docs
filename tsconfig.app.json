@@ -41,7 +41,8 @@
       "@vc-com/checkbox/*": ["packages/checkbox/src/*"],
       "@vc-com/collapse/*": ["packages/collapse/src/*"],
       "@vc-com/slider/*": ["packages/slider/src/*"],
-      "@vc-com/input-number/*": ["packages/input-number/src/*"]
+      "@vc-com/input-number/*": ["packages/input-number/src/*"],
+      "@vc-com/color-picker/*": ["packages/color-picker/src/*"]
     }
   },
   "include": [

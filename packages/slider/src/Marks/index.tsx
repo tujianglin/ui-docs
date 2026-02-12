@@ -1,6 +1,6 @@
+import type { RenderNode } from '@vc-com/util/lib/types';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { computed, defineComponent, type CSSProperties } from 'vue';
-import type { RenderNode } from '../../../util/src/types';
-import { resolveVNode } from '../../../util/src/vnode';
 import Mark from './Mark';
 
 export interface MarkObj {

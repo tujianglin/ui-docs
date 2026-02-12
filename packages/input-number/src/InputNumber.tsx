@@ -7,6 +7,8 @@ import getMiniDecimal, {
   type ValueType,
 } from '@vc-com/mini-decimal';
 import { triggerFocus, type InputFocusOptions } from '@vc-com/util/lib/Dom/focus';
+import type { RenderNode } from '@vc-com/util/lib/types';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { watchOnce } from '@vueuse/core';
 import { clsx } from 'clsx';
 import { computed, defineComponent, nextTick, ref, shallowRef, watch, type CSSProperties } from 'vue';
@@ -18,8 +20,6 @@ import {
   type KeyboardEventHandler,
   type MouseEventHandler,
 } from 'vue-jsx-vapor';
-import type { RenderNode } from '../../util/src/types';
-import { resolveVNode } from '../../util/src/vnode';
 import useCursor from './hooks/useCursor';
 import useFrame from './hooks/useFrame';
 import StepHandler from './StepHandler';

@@ -1,4 +1,5 @@
 import KeyCode from '@vc-com/util/lib/KeyCode';
+import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent, getCurrentInstance, type ComponentInstance } from 'vue';
 import {
@@ -8,7 +9,6 @@ import {
   type KeyboardEventHandler,
   type MouseEvent,
 } from 'vue-jsx-vapor';
-import type { RenderNode, VueNode } from '../../../util/src/types';
 import { useSliderContextInject } from '../context';
 import type { OnStartMove } from '../interface';
 import { getDirectionStyle, getIndex } from '../util';

@@ -1,7 +1,7 @@
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { defineComponent, ref, watch } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
-import { resolveVNode } from '../../util/src/vnode';
 import type { CollapsePanelProps } from './interface';
 
 const PanelContent = defineComponent(

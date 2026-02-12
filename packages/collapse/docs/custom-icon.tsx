@@ -1,6 +1,6 @@
 import Collapse, { type CollapseProps } from '@vc-com/collapse';
+import type { Key } from '@vc-com/util/lib/types';
 import { defineComponent, ref } from 'vue';
-import type { Key } from '../../util/src/types';
 import motion from './_util/motionUtil';
 import './assets/index.less';
 

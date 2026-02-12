@@ -1,10 +1,10 @@
 import isEqual from '@vc-com/util/lib/isEqual';
+import type { RenderNode } from '@vc-com/util/lib/types';
 import { warning } from '@vc-com/util/lib/warning';
 import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
 import { computed, defineComponent, isVNode, onMounted, ref, watch, type CSSProperties } from 'vue';
 import { useRef, type FocusEvent, type MouseEvent } from 'vue-jsx-vapor';
-import type { RenderNode } from '../../util/src/types';
 import type { HandlesProps, HandlesRef } from './Handles';
 import Handles from './Handles';
 import type { InternalMarkObj, MarkObj } from './Marks';
