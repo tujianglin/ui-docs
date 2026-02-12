@@ -1,0 +1,68 @@
+/* eslint react/no-multi-comp: 0, no-console: 0 */
+import Slider, { UnstableContextProvider } from '@vc-com/slider';
+import { defineComponent, ref, type CSSProperties } from 'vue';
+import './assets/index.less';
+
+const style: CSSProperties = {
+  width: '400px',
+  margin: '50px',
+};
+
+export default defineComponent(() => {
+  const value = ref([0, 50, 80]);
+
+  const onDragStart = (info) => {
+    const { rawValues } = info;
+    console.log('Start:', rawValues);
+  };
+
+  const onDragChange = (info) => {
+    const { rawValues } = info;
+    console.log('Move:', rawValues);
+  };
+
+  return () => (
+    <div>
+      <div style={style}>
+        <UnstableContextProvider value={{ onDragStart, onDragChange }}>
+          <Slider
+            // range
+            range={{
+              editable: true,
+              minCount: 1,
+              maxCount: 4,
+            }}
+            // track={false}
+            min={0}
+            max={100}
+            value={value.value}
+            // defaultValue={null}
+            onChange={(nextValue) => {
+              console.error('Change:', nextValue);
+              value.value = nextValue as any;
+            }}
+            onChangeComplete={(nextValue) => {
+              console.log('Complete', nextValue);
+            }}
+            // handleRender={(ori, handleProps) => {
+            //   if (handleProps.index === 0) {
+            //     console.log('handleRender', ori, handleProps);
+            //   }
+            //   return ori;
+            // }}
+            styles={{
+              rail: {
+                background: `linear-gradient(to right, blue, red)`,
+              },
+              track: {
+                background: 'orange',
+              },
+            }}
+          />
+        </UnstableContextProvider>
+      </div>
+
+      <p>Here is a word that drag should not select it</p>
+    </div>
+  );
+});

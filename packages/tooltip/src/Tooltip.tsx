@@ -5,7 +5,7 @@ import { filterEmpty } from '@vc-com/util/lib/props-util';
 import type { VueNode } from '@vc-com/util/lib/types';
 import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
-import { computed, createVNode, defineComponent, shallowRef, type CSSProperties } from 'vue';
+import { computed, createVNode, defineComponent, getCurrentInstance, type CSSProperties } from 'vue';
 import { placements } from './placements';
 import Popup from './Popup';
 
@@ -82,13 +82,6 @@ const Tooltip = defineComponent(
     const slots = defineSlots<{ default: () => any }>();
 
     const mergedId = useId(id);
-    const triggerRef = shallowRef<TriggerRef>(null);
-
-    defineExpose({
-      get nativeElement() {
-        return triggerRef.value;
-      },
-    });
 
     // ========================= Arrow ==========================
     // Process arrow configuration
@@ -129,6 +122,13 @@ const Tooltip = defineComponent(
         return createVNode(child, childProps);
       };
 
+      const vm = getCurrentInstance();
+
+      const changeRef = (el) => {
+        vm.exposed = el || {};
+        vm.exposeProxy = el || {};
+      };
+
       return (
         <Trigger
           popupClassName={classNames?.root}
@@ -141,7 +141,7 @@ const Tooltip = defineComponent(
           action={trigger}
           builtinPlacements={placements}
           popupPlacement={placement}
-          ref={triggerRef}
+          ref={changeRef}
           popupAlign={align}
           getPopupContainer={getTooltipContainer}
           onOpenChange={onVisibleChange}
