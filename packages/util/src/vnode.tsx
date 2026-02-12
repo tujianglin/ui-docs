@@ -122,6 +122,7 @@ export function resolveToElement(node: any) {
 }
 
 export function resolveVNode<T = any>(vnode: ((_props: T) => VueNode) | VueNode, props?: T) {
+  if (!vnode) return <slot />;
   if ((vnode as any)?.default) {
     return (vnode as any).default?.(props);
   }

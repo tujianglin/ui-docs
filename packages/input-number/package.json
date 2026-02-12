@@ -1,7 +1,7 @@
 {
-  "name": "@vc-com/tooltip",
+  "name": "@vc-com/input-number",
   "version": "1.0.0",
-  "description": "Vue 3 Tooltip 组件",
+  "description": "Vue 3 InputNumber 组件",
   "files": [
     "dist",
     "package.json"
@@ -19,8 +19,6 @@
     "bump": "bumpp --release patch"
   },
   "devDependencies": {
-    "@vc-com/tooltip": "workspace:*",
-    "@vc-com/trigger": "workspace:*",
     "@vc-com/util": "workspace:*"
   },
   "peerDependencies": {

@@ -156,7 +156,40 @@ importers:
 
   packages/async-validator: {}
 
+  packages/checkbox:
+    dependencies:
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.5(typescript@5.9.3)
+    devDependencies:
+      '@vc-com/util':
+        specifier: workspace:*
+        version: link:../util
+
+  packages/collapse:
+    dependencies:
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.5(typescript@5.9.3)
+    devDependencies:
+      '@vc-com/motion':
+        specifier: workspace:*
+        version: link:../motion
+      '@vc-com/util':
+        specifier: workspace:*
+        version: link:../util
+
   packages/input:
+    dependencies:
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.5(typescript@5.9.3)
+    devDependencies:
+      '@vc-com/util':
+        specifier: workspace:*
+        version: link:../util
+
+  packages/input-number:
     dependencies:
       vue:
         specifier: 'catalog:'
@@ -242,6 +275,22 @@ importers:
       '@vc-com/virtual-list':
         specifier: workspace:*
         version: link:../virtual-list
+
+  packages/slider:
+    dependencies:
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.5(typescript@5.9.3)
+    devDependencies:
+      '@vc-com/tooltip':
+        specifier: workspace:*
+        version: link:../tooltip
+      '@vc-com/trigger':
+        specifier: workspace:*
+        version: link:../trigger
+      '@vc-com/util':
+        specifier: workspace:*
+        version: link:../util
 
   packages/tooltip:
     dependencies:
