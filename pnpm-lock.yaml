@@ -27,8 +27,8 @@ importers:
         specifier: ^1.43.0
         version: 1.43.0
       markdown-it:
-        specifier: ^14.1.0
-        version: 14.1.0
+        specifier: ^14.1.1
+        version: 14.1.1
       shiki:
         specifier: ^3.21.0
         version: 3.21.0
@@ -470,25 +470,21 @@ packages:
     resolution: {integrity: sha512-ILTv8stX3r2gK+pgSc2alJrbpI4i8zlLXzuuhUsjeEN/Ti//Z38MDi6kTov3pzcaBEnQ/xEMgQyczokp7jpyyQ==}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@oxfmt/linux-arm64-musl@0.21.0':
     resolution: {integrity: sha512-kFZ0vPJzsGjkrwq2MPEpp8TjV7/Znv9kCEwLF+HcFwvfcSt75dWloGmTRRrViH0ACaCM7YBSDUOV8E4nyLvxPA==}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@oxfmt/linux-x64-gnu@0.21.0':
     resolution: {integrity: sha512-VH8ZcS2TkTBE0v9cLxjNGX++vB9Xvx/7VTFrbwHYzY/fYypYTwQ+n1KplUQoU+LrMC0nKqwPWYzvA5/cAfo5zg==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@oxfmt/linux-x64-musl@0.21.0':
     resolution: {integrity: sha512-qleaVEFHw/kmbvNj3hjobX1kwbP2/d7SVJzQjyEFULou1v3EZj7jWbblIu7GmDCSspdiEk1j/pZDYH801Dn8QA==}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@oxfmt/win32-arm64@0.21.0':
     resolution: {integrity: sha512-JLZUo5qEyJfxhoj6KEU/CqI8FQlzIP8rBq7qGTq0kCJ2yZJC9tysBqJYZXvX88ShiNe89/T/H3khodaKGBBNgg==}
@@ -514,25 +510,21 @@ packages:
     resolution: {integrity: sha512-EMx92X5q+hHc3olTuj/kgkx9+yP0p/AVs4yvHbUfzZhBekXNpUWxWvg4hIKmQWn+Ee2j4o80/0ACGO0hDYJ9mg==}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@oxlint/linux-arm64-musl@1.36.0':
     resolution: {integrity: sha512-7YCxtrPIctVYLqWrWkk8pahdCxch6PtsaucfMLC7TOlDt4nODhnQd4yzEscKqJ8Gjrw1bF4g+Ngob1gB+Qr9Fw==}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@oxlint/linux-x64-gnu@1.36.0':
     resolution: {integrity: sha512-lnaJVlx5r3NWmoOMesfQXJSf78jHTn8Z+sdAf795Kgteo72+qGC1Uax2SToCJVN2J8PNG3oRV5bLriiCNR2i6Q==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@oxlint/linux-x64-musl@1.36.0':
     resolution: {integrity: sha512-AhuEU2Qdl66lSfTGu/Htirq8r/8q2YnZoG3yEXLMQWnPMn7efy8spD/N1NA7kH0Hll+cdfwgQkQqC2G4MS2lPQ==}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@oxlint/win32-arm64@1.36.0':
     resolution: {integrity: sha512-GlWCBjUJY2QgvBFuNRkiRJu7K/djLmM0UQKfZV8IN+UXbP/JbjZHWKRdd4LXlQmzoz7M5Hd6p+ElCej8/90FCg==}
@@ -579,28 +571,24 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@rolldown/binding-linux-arm64-musl@1.0.0-beta.59':
     resolution: {integrity: sha512-CCKEk+H+8c0WGe/8n1E20n85Tq4Pv+HNAbjP1KfUXW+01aCWSMjU56ChNrM2tvHnXicfm7QRNoZyfY8cWh7jLQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@rolldown/binding-linux-x64-gnu@1.0.0-beta.59':
     resolution: {integrity: sha512-VlfwJ/HCskPmQi8R0JuAFndySKVFX7yPhE658o27cjSDWWbXVtGkSbwaxstii7Q+3Rz87ZXN+HLnb1kd4R9Img==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@rolldown/binding-linux-x64-musl@1.0.0-beta.59':
     resolution: {integrity: sha512-kuO92hTRyGy0Ts3Nsqll0rfO8eFsEJe9dGQGktkQnZ2hrJrDVN0y419dMgKy/gB2S2o7F2dpWhpfQOBehZPwVA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@rolldown/binding-openharmony-arm64@1.0.0-beta.59':
     resolution: {integrity: sha512-PXAebvNL4sYfCqi8LdY4qyFRacrRoiPZLo3NoUmiTxm7MPtYYR8CNtBGNokqDmMuZIQIecRaD/jbmFAIDz7DxQ==}
@@ -729,28 +717,24 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@tailwindcss/oxide-linux-arm64-musl@4.1.18':
     resolution: {integrity: sha512-1px92582HkPQlaaCkdRcio71p8bc8i/ap5807tPRDK/uw953cauQBT8c5tVGkOwrHMfc2Yh6UuxaH4vtTjGvHg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@tailwindcss/oxide-linux-x64-gnu@4.1.18':
     resolution: {integrity: sha512-v3gyT0ivkfBLoZGF9LyHmts0Isc8jHZyVcbzio6Wpzifg/+5ZJpDiRiUhDLkcr7f/r38SWNe7ucxmGW3j3Kb/g==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@tailwindcss/oxide-linux-x64-musl@4.1.18':
     resolution: {integrity: sha512-bhJ2y2OQNlcRwwgOAGMY0xTFStt4/wyU6pvI6LSuZpRgKQwxTec0/3Scu91O8ir7qCR3AuepQKLU/kX99FouqQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@tailwindcss/oxide-wasm32-wasi@4.1.18':
     resolution: {integrity: sha512-LffYTvPjODiP6PT16oNeUQJzNVyJl1cjIebq/rWWBF+3eDst5JGEFSc5cWxyRCJ0Mxl+KyIkqRxk1XPEs9x8TA==}
@@ -985,25 +969,21 @@ packages:
     resolution: {integrity: sha512-QaD7gt0geae/5CvWD6hZKtAd62spEO6BG6xbnK3eH8oXmQm0UHf9LJ7nW2z73TIs6SmGmfnFVbOzDIzLMWQdmQ==}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@vue-jsx-vapor/compiler-rs-linux-arm64-musl@3.1.11':
     resolution: {integrity: sha512-PW+aTPdNXvN7bwigk+MYqwWU0Sjt6wZyxivnjiq2IsFc3WojwWIkusrCnNarLqbH8d6KtDY1+n8f8qCiAKFXWw==}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@vue-jsx-vapor/compiler-rs-linux-x64-gnu@3.1.11':
     resolution: {integrity: sha512-ABmAU/B+Zxoff2yFXm4VFOUJA72GlhsYVUWI2lj1hAEHV+OMCEVxz6VG+WuoDqSFvWbTqNEXF+kZA3b11f1EfQ==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@vue-jsx-vapor/compiler-rs-linux-x64-musl@3.1.11':
     resolution: {integrity: sha512-lf3+SZHFjWn/3T4f2UlyTnMkQKBUFDG2XsN2tWFWZz8ZEG/FSKOLPx+W5lLmIHDAbAZTiVOduGDBJ62lu8t+Cg==}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@vue-jsx-vapor/compiler-rs-wasm32-wasi@3.1.11':
     resolution: {integrity: sha512-KEY4Rjed96jGx0hhm8Zyed5NijDMbm1pQt+hPjUbVUCtXvNwJ9u1sX5sdX/DydL/nGpv25WjUBAnmEcm2jAdPQ==}
@@ -1410,8 +1390,8 @@ packages:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
     engines: {node: '>=0.12'}
 
-  entities@7.0.0:
-    resolution: {integrity: sha512-FDWG5cmEYf2Z00IkYRhbFrwIwvdFKH07uV8dvNy0omp/Qb1xcyCWp2UDtcwJF4QZZvk0sLudP6/hAu42TaqVhQ==}
+  entities@7.0.1:
+    resolution: {integrity: sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA==}
     engines: {node: '>=0.12'}
 
   env-paths@2.2.1:
@@ -1852,28 +1832,24 @@ packages:
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   lightningcss-linux-arm64-musl@1.30.2:
     resolution: {integrity: sha512-5Vh9dGeblpTxWHpOx8iauV02popZDsCYMPIgiuw97OJ5uaDsL86cnqSFs5LZkG3ghHoX5isLgWzMs+eD1YzrnA==}
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   lightningcss-linux-x64-gnu@1.30.2:
     resolution: {integrity: sha512-Cfd46gdmj1vQ+lR6VRTTadNHu6ALuw2pKR9lYq4FnhvgBc4zWY1EtZcAc6EffShbb1MFrIPfLDXD6Xprbnni4w==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   lightningcss-linux-x64-musl@1.30.2:
     resolution: {integrity: sha512-XJaLUUFXb6/QG2lGIW6aIk6jKdtjtcffUT0NKvIqhSBY3hh9Ch+1LCeH80dR9q9LBjG3ewbDjnumefsLsP6aiA==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   lightningcss-win32-arm64-msvc@1.30.2:
     resolution: {integrity: sha512-FZn+vaj7zLv//D/192WFFVA0RgHawIcHqLX9xuWiQt7P0PtdFEVaxgF9rjM/IRYHQXNnk61/H/gb2Ei+kUQ4xQ==}
@@ -1950,8 +1926,8 @@ packages:
     resolution: {integrity: sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA==}
     engines: {node: '>=6'}
 
-  markdown-it@14.1.0:
-    resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
+  markdown-it@14.1.1:
+    resolution: {integrity: sha512-BuU2qnTti9YKgK5N+IeMubp14ZUKUUw7yeJbkjtosvHiP0AZ5c8IAgEMk79D0eC8F23r4Ac/q8cAIFdm2FtyoA==}
     hasBin: true
 
   mdast-util-to-hast@13.2.1:
@@ -3488,7 +3464,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.28.5
       '@vue/shared': 3.5.26
-      entities: 7.0.0
+      entities: 7.0.1
       estree-walker: 2.0.2
       source-map-js: 1.2.1
 
@@ -3496,7 +3472,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.28.5
       '@vue/shared': 3.6.0-beta.2
-      entities: 7.0.0
+      entities: 7.0.1
       estree-walker: 2.0.2
       source-map-js: 1.2.1
 
@@ -3862,7 +3838,7 @@ snapshots:
 
   entities@4.5.0: {}
 
-  entities@7.0.0: {}
+  entities@7.0.1: {}
 
   env-paths@2.2.1: {}
 
@@ -4354,7 +4330,7 @@ snapshots:
       semver: 5.7.2
     optional: true
 
-  markdown-it@14.1.0:
+  markdown-it@14.1.1:
     dependencies:
       argparse: 2.0.1
       entities: 4.5.0
