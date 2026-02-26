@@ -114,19 +114,9 @@ export default defineComponent(
     }>();
     const props = useFullProps() as unknown as ListProps<any>;
 
-    // Keep `itemKey` in a plain variable to avoid triggering Vue reactivity tracking
-    // for every `getKey` call (which can be extremely hot for large lists).
-    let itemKeyProp = itemKey;
-    watch(
-      () => itemKey,
-      (val) => {
-        itemKeyProp = val;
-      },
-    );
-
     // =============================== Item PropertyKey ===============================
     const getKey = (item: any): PropertyKey => {
-      const _itemKey = itemKeyProp;
+      const _itemKey = itemKey;
       if (typeof _itemKey === 'function') {
         return _itemKey(item);
       }
@@ -276,7 +266,6 @@ export default defineComponent(
         }
 
         endIndex = Math.min(endIndex + 1, data.length - 1);
-
         scrollHeight.value = itemTop;
         start.value = startIndex;
         end.value = endIndex;
