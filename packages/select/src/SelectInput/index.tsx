@@ -7,7 +7,7 @@ import { composeRef } from '@vc-com/util/lib/ref';
 import type { RenderNode } from '@vc-com/util/lib/types';
 import { resolveToElement, resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
-import { cloneVNode, computed, defineComponent, isVNode, toRefs } from 'vue';
+import { cloneVNode, computed, defineComponent, isVNode } from 'vue';
 import {
   useFullProps,
   useRef,
@@ -121,7 +121,7 @@ export default defineComponent(
     ...restProps
   }: SelectInputProps) => {
     const props = useFullProps() as unknown as SelectInputProps;
-    const { triggerOpen, toggleOpen, showSearch, disabled, loading, classNames, styles } = toRefs(useBaseSelectContextInject());
+    const { triggerOpen, toggleOpen, showSearch, disabled, loading, classNames, styles } = $(useBaseSelectContextInject());
 
     const rootRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -134,7 +134,7 @@ export default defineComponent(
       const isTextAreaElement = inputRef.value instanceof HTMLTextAreaElement;
 
       // Prevent default behavior for up/down arrows when dropdown is open
-      if (!isTextAreaElement && triggerOpen?.value && (which === KeyCode.UP || which === KeyCode.DOWN)) {
+      if (!isTextAreaElement && triggerOpen && (which === KeyCode.UP || which === KeyCode.DOWN)) {
         event.preventDefault();
       }
 
@@ -144,14 +144,14 @@ export default defineComponent(
       }
 
       // Move within the text box for TextArea
-      if (isTextAreaElement && !triggerOpen?.value && ~[KeyCode.UP, KeyCode.DOWN, KeyCode.LEFT, KeyCode.RIGHT].indexOf(which)) {
+      if (isTextAreaElement && !triggerOpen && ~[KeyCode.UP, KeyCode.DOWN, KeyCode.LEFT, KeyCode.RIGHT].indexOf(which)) {
         return;
       }
 
       // Open dropdown when a valid open key is pressed
       const isModifier = event.ctrlKey || event.altKey || event.metaKey;
       if (!isModifier && isValidateOpenKey(which)) {
-        toggleOpen?.value?.(true);
+        toggleOpen?.(true);
       }
     };
 
@@ -165,13 +165,13 @@ export default defineComponent(
         (inputRef.value || rootRef.value).blur?.();
       },
       get nativeElement() {
-        return rootRef.value;
+        return getDOM(rootRef.value);
       },
     });
 
     // ====================== Open ======================
     const onInternalMouseDown: SelectInputProps['onMousedown'] = (event) => {
-      if (!disabled?.value) {
+      if (!disabled) {
         const inputDOM = getDOM(inputRef.value);
         // https://github.com/ant-design/ant-design/issues/56002
         // Tell `useSelectTriggerControl` to ignore this event
@@ -179,32 +179,36 @@ export default defineComponent(
         // so we need to mark the event directly
         (event as any)!._ori_target = inputDOM;
 
-        if (inputDOM && event.target !== inputDOM && !inputDOM.contains(event.target as Node)) {
+        const isClickOnInput = inputDOM === event.target || inputDOM?.contains(event.target as Node);
+
+        if (inputDOM && !isClickOnInput) {
           event.preventDefault();
         }
 
         // Check if we should prevent closing when clicking on selector
         // Don't close if: open && not multiple && (combobox mode || showSearch)
-        const shouldPreventClose = triggerOpen?.value && !multiple && (mode === 'combobox' || showSearch?.value);
+        const shouldPreventCloseOnSingle = triggerOpen && !multiple && (mode === 'combobox' || showSearch);
+
+        // Don't close if: open && multiple && click on input
+        const shouldPreventCloseOnMultipleInput = triggerOpen && multiple && isClickOnInput;
+
+        const shouldPreventClose = shouldPreventCloseOnSingle || shouldPreventCloseOnMultipleInput;
 
         if (!(event as any)._select_lazy) {
           inputRef.value?.focus();
 
           // Only toggle open if we should not prevent close
           if (!shouldPreventClose) {
-            toggleOpen?.value?.();
+            toggleOpen?.();
           }
-        } else if (triggerOpen?.value) {
+        } else if (triggerOpen) {
           // Lazy should also close when click clear icon
-          toggleOpen?.value?.(false);
+          toggleOpen?.(false);
         }
       }
 
       onMousedown?.(event);
     };
-
-    // =================== Components ===================
-    const RootComponent = computed(() => components?.root);
 
     // ===================== Render =====================
     const domProps = computed(() => omit(restProps, DEFAULT_OMIT_PROPS as any));
@@ -218,15 +222,30 @@ export default defineComponent(
     }));
 
     return () => {
-      if (RootComponent.value) {
-        if (isVNode(RootComponent.value)) {
-          return cloneVNode(RootComponent.value, {
-            ...domProps.value,
-            ref: composeRef(RootComponent.value.ref, rootRef),
+      const RootComponent = components?.root;
+      if (RootComponent) {
+        const originProps = (RootComponent as any).props || {};
+        const mergedProps = { ...originProps, ...domProps };
+
+        Object.keys(originProps).forEach((key) => {
+          const originVal = originProps[key];
+          const domVal = domProps[key];
+
+          if (typeof originVal === 'function' && typeof domVal === 'function') {
+            mergedProps[key] = (...args: any[]) => {
+              domVal(...args);
+              originVal(...args);
+            };
+          }
+        });
+        if (isVNode(RootComponent)) {
+          return cloneVNode(RootComponent, {
+            ...mergedProps,
+            ref: composeRef(RootComponent.ref, rootRef),
           });
         }
 
-        return <RootComponent.value {...domProps.value} ref={rootRef} />;
+        return <RootComponent {...mergedProps} ref={rootRef} />;
       }
       return (
         <SelectInputContextProvider value={contextValue.value}>
@@ -240,7 +259,7 @@ export default defineComponent(
             onMousedown={onInternalMouseDown}
           >
             {/* Prefix */}
-            <Affix class={clsx(`${prefixCls}-prefix`, classNames?.value?.prefix)} style={styles?.value?.prefix}>
+            <Affix class={clsx(`${prefixCls}-prefix`, classNames?.prefix)} style={styles?.prefix}>
               {resolveVNode(prefix)}
             </Affix>
 
@@ -252,19 +271,19 @@ export default defineComponent(
               class={clsx(
                 `${prefixCls}-suffix`,
                 {
-                  [`${prefixCls}-suffix-loading`]: loading.value,
+                  [`${prefixCls}-suffix-loading`]: loading,
                 },
-                classNames?.value?.suffix,
+                classNames?.suffix,
               )}
-              style={styles?.value?.suffix}
+              style={styles?.suffix}
             >
               {resolveVNode(suffix)}
             </Affix>
             {/* Clear Icon */}
             <Affix
               v-if={clearIcon}
-              class={clsx(`${prefixCls}-clear`, classNames?.value?.clear)}
-              style={styles?.value?.clear}
+              class={clsx(`${prefixCls}-clear`, classNames?.clear)}
+              style={styles?.clear}
               onMousedown={(e) => {
                 // Mark to tell not trigger open or focus
                 (e as any)._select_lazy = true;

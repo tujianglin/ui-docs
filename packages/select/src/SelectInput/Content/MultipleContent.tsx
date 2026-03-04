@@ -66,7 +66,6 @@ export default defineComponent(
     const inputEditable = computed<boolean>(() => showSearch && !disabled);
 
     // Props from context with safe defaults
-    // @ts-ignore
     const removeIcon = computed(() => removeIconFromContext ?? '×');
     const maxTagPlaceholder = computed(
       () => maxTagPlaceholderFromContext ?? ((omittedValues: DisplayValueType[]) => `+ ${omittedValues.length} ...`),
@@ -163,6 +162,7 @@ export default defineComponent(
       }
 
       const onClose = (event?: MouseEvent) => {
+        console.log(1);
         if (event) {
           event.stopPropagation();
         }

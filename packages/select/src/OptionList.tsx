@@ -277,7 +277,7 @@ const OptionList = defineComponent(
         return null;
       }
       const itemData = item.data || {};
-      const { value } = itemData;
+      const { value, disabled } = itemData;
       const { group } = item;
       const attrs = pickAttrs(itemData, true);
       const mergedLabel = getLabel(item);
@@ -288,6 +288,7 @@ const OptionList = defineComponent(
           key={index}
           {...getItemAriaProps(item, index)}
           aria-selected={isAriaSelected(value)}
+          aria-disabled={disabled}
         >
           {value}
         </div>
@@ -383,6 +384,7 @@ const OptionList = defineComponent(
                   {...pickAttrs(passedProps)}
                   {...(!virtual ? getItemAriaProps(item, itemIndex) : {})}
                   aria-selected={virtual ? undefined : isAriaSelected(value)}
+                  aria-disabled={mergedDisabled}
                   class={optionClassName}
                   title={optionTitle}
                   onMousemove={() => {

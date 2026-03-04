@@ -1,7 +1,7 @@
 {
-  "name": "@vc-com/trigger",
+  "name": "@vc-com/tree",
   "version": "1.0.0",
-  "description": "Vue 3 Trigger 组件",
+  "description": "Vue 3 Tree 组件",
   "files": [
     "dist",
     "package.json"

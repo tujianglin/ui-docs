@@ -4,7 +4,7 @@ import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
 import { resolveToElement } from '@vc-com/util/lib/vnode';
 import type { ScrollConfig, ScrollTo } from '@vc-com/virtual-list';
 import { clsx } from 'clsx';
-import { computed, defineComponent, ref, watch, type CSSProperties } from 'vue';
+import { computed, defineComponent, ref, toRaw, watch, type CSSProperties } from 'vue';
 import {
   useFullProps,
   useRef,
@@ -461,10 +461,13 @@ const BaseSelect = defineComponent(
       const { key } = event;
 
       const isEnterKey = key === 'Enter';
+      const isSpaceKey = key === ' ';
 
-      if (isEnterKey) {
-        // Do not submit form when type in the input
-        if (mode !== 'combobox') {
+      if (isEnterKey || isSpaceKey) {
+        // Do not submit form when type in the input; prevent Space from scrolling page
+        const isCombobox = mode === 'combobox';
+        const isEditable = isCombobox || showSearch;
+        if ((isSpaceKey && !isEditable) || (isEnterKey && !isCombobox)) {
           event.preventDefault();
         }
 
@@ -523,8 +526,7 @@ const BaseSelect = defineComponent(
 
     // ============================ Selector ============================
     const onSelectorRemove = (val: DisplayValueType) => {
-      const newValues = displayValues.filter((i) => i !== val);
-
+      const newValues = displayValues.filter((i) => i !== toRaw(val));
       onDisplayValuesChange(newValues, {
         type: 'remove',
         values: [val],

@@ -2,8 +2,9 @@ import type { TreeProps } from './Tree';
 import Tree from './Tree';
 import TreeNode from './TreeNode';
 import { UnstableContextProvider, useUnstableContextInject } from './contextTypes';
-import type { BasicDataNode, FieldDataNode, TreeNodeProps } from './interface';
-
+import type { BasicDataNode, DataEntity, DataNode, FieldDataNode, SafeKey, TreeNodeProps } from './interface';
+export { conductCheck } from './utils/conductUtil';
+export { convertDataToEntities } from './utils/treeUtil';
 export { TreeNode, UnstableContextProvider, useUnstableContextInject };
-export type { BasicDataNode, FieldDataNode, TreeNodeProps, TreeProps };
+export type { BasicDataNode, DataEntity, DataNode, FieldDataNode, SafeKey, TreeNodeProps, TreeProps };
 export default Tree;

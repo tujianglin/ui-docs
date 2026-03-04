@@ -19,6 +19,7 @@
     "strictNullChecks": false,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
+    "maxNodeModuleJsDepth": 0,
 
     "baseUrl": ".",
     "paths": {
@@ -42,7 +43,8 @@
       "@vc-com/collapse/*": ["packages/collapse/src/*"],
       "@vc-com/slider/*": ["packages/slider/src/*"],
       "@vc-com/input-number/*": ["packages/input-number/src/*"],
-      "@vc-com/color-picker/*": ["packages/color-picker/src/*"]
+      "@vc-com/color-picker/*": ["packages/color-picker/src/*"],
+      "@vc-com/tree/*": ["packages/tree/src/*"]
     }
   },
   "include": [

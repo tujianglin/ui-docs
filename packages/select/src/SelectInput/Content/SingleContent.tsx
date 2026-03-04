@@ -12,7 +12,7 @@ import Placeholder from './Placeholder';
 
 const SingleContent = defineComponent(
   ({ inputProps }: SharedContentProps) => {
-    const { prefixCls, searchValue, activeValue, displayValues, maxLength, mode } = $(useSelectInputContextInject());
+    const { prefixCls, searchValue, activeValue, displayValues, maxLength, mode, components } = $(useSelectInputContextInject());
     const { triggerOpen, title: rootTitle, showSearch, classNames, styles } = $(useBaseSelectContextInject());
     const selectContext = useSelectContextInject();
 
@@ -75,6 +75,18 @@ const SingleContent = defineComponent(
       { immediate: true },
     );
 
+    // ========================== Render ==========================
+    const showHasValueCls = computed(
+      () =>
+        displayValue.value &&
+        // @ts-ignore
+        displayValue.value.label !== null &&
+        displayValue.value.label !== undefined &&
+        String(displayValue.value.label).trim() !== '',
+    );
+
+    const shouldRenderValue = computed(() => !(combobox.value && components?.input));
+
     const domRef = useRef(null);
 
     defineExpose({
@@ -87,7 +99,7 @@ const SingleContent = defineComponent(
       <div
         class={clsx(
           `${prefixCls}-content`,
-          displayValue.value && `${prefixCls}-content-has-value`,
+          showHasValueCls.value && `${prefixCls}-content-has-value`,
           mergedSearchValue.value && `${prefixCls}-content-has-search-value`,
           hasOptionStyle && `${prefixCls}-content-has-option-style`,
           classNames?.content,
@@ -95,25 +107,27 @@ const SingleContent = defineComponent(
         style={styles?.content}
         title={hasOptionStyle ? undefined : optionTitle}
       >
-        {displayValue.value ? (
-          hasOptionStyle ? (
-            <div
-              class={clsx(`${prefixCls}-content-value`, optionClassName)}
-              style={{
-                ...(mergedSearchValue.value ? { visibility: 'hidden' } : {}),
-                ...optionStyle,
-              }}
-              title={optionTitle}
-            >
-              {/* @ts-ignore */}
-              {displayValue.value.label}
-            </div>
+        {shouldRenderValue.value ? (
+          displayValue.value ? (
+            hasOptionStyle ? (
+              <div
+                class={clsx(`${prefixCls}-content-value`, optionClassName)}
+                style={{
+                  ...(mergedSearchValue.value ? { visibility: 'hidden' } : {}),
+                  ...optionStyle,
+                }}
+                title={optionTitle}
+              >
+                {/* @ts-ignore */}
+                {displayValue.value.label}
+              </div>
+            ) : (
+              displayValue.value.label
+            )
           ) : (
-            displayValue.value.label
+            <Placeholder show={!mergedSearchValue.value} />
           )
-        ) : (
-          <Placeholder show={!mergedSearchValue.value} />
-        )}
+        ) : null}
         <Input
           ref={domRef}
           {...(inputProps as any)}
