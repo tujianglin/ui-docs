@@ -1,0 +1,125 @@
+import type { CSSProperties, Ref, TransitionGroupProps, TransitionProps } from 'vue';
+import { nextTick } from 'vue';
+const tuple = <T extends string[]>(...args: T) => args;
+
+const SelectPlacements = tuple('bottomLeft', 'bottomRight', 'topLeft', 'topRight');
+export type SelectCommonPlacement = (typeof SelectPlacements)[number];
+
+function getTransitionDirection(placement: SelectCommonPlacement | undefined) {
+  if (placement !== undefined && (placement === 'topLeft' || placement === 'topRight')) {
+    return `slide-down`;
+  }
+  return `slide-up`;
+}
+
+export function getTransitionProps(transitionName?: string, opt: TransitionProps = {}) {
+  if (!transitionName) {
+    return {};
+  }
+  const transitionProps: TransitionProps = transitionName
+    ? {
+        name: transitionName,
+        appear: true,
+        // type: 'animation',
+        // appearFromClass: `${transitionName}-appear ${transitionName}-appear-prepare`,
+        // appearActiveClass: `antdv-base-transtion`,
+        // appearToClass: `${transitionName}-appear ${transitionName}-appear-active`,
+        enterFromClass: `${transitionName} ${transitionName}-enter ${transitionName}-appear ${transitionName}-appear-prepare ${transitionName}-enter-prepare ${transitionName}-enter-start`,
+        enterActiveClass: `${transitionName} ${transitionName}-enter ${transitionName}-appear ${transitionName}-appear-prepare ${transitionName}-enter-prepare `,
+        enterToClass: `${transitionName} ${transitionName}-enter ${transitionName}-appear ${transitionName}-appear-active ${transitionName}-enter-active`,
+        leaveFromClass: `${transitionName} ${transitionName}-leave`,
+        leaveActiveClass: `${transitionName} ${transitionName}-leave ${transitionName}-leave-active`,
+        leaveToClass: `${transitionName} ${transitionName}-leave ${transitionName}-leave-active`,
+        ...opt,
+      }
+    : { css: false, ...opt };
+  return transitionProps;
+}
+
+export function getTransitionGroupProps(transitionName?: string, opt: TransitionProps = {}) {
+  if (!transitionName) {
+    return { css: false, ...opt };
+  }
+  const transitionProps: TransitionGroupProps = {
+    name: transitionName,
+    appear: true,
+    // Enter 阶段（包含首次渲染的 appear）
+    enterFromClass: `${transitionName} ${transitionName}-enter ${transitionName}-appear ${transitionName}-appear-prepare ${transitionName}-appear-start ${transitionName}-enter-prepare ${transitionName}-enter-start`,
+    enterActiveClass: `${transitionName} ${transitionName}-enter ${transitionName}-appear ${transitionName}-appear-prepare ${transitionName}-enter-prepare`,
+    enterToClass: `${transitionName} ${transitionName}-enter ${transitionName}-appear ${transitionName}-appear-active ${transitionName}-enter-active`,
+    // Leave 阶段（元素离开）
+    leaveFromClass: `${transitionName} ${transitionName}-leave`,
+    leaveActiveClass: `${transitionName} ${transitionName}-leave ${transitionName}-leave-active`,
+    leaveToClass: `${transitionName} ${transitionName}-leave ${transitionName}-leave-active`,
+    // Move 阶段（元素位置移动，TransitionGroup 特有）
+    moveClass: `${transitionName} ${transitionName}-move`,
+    ...opt,
+  };
+  return transitionProps;
+}
+
+export declare type MotionEvent = (TransitionEvent | AnimationEvent) & {
+  deadline?: boolean;
+};
+
+export declare type MotionEventHandler = (element: Element, done?: () => void) => CSSProperties;
+
+export declare type MotionEndEventHandler = (element: Element, done?: () => void) => boolean | void;
+
+// ================== Collapse Motion ==================
+const getCollapsedHeight: MotionEventHandler = () => ({ height: 0, opacity: 0 });
+const getRealHeight: MotionEventHandler = (node) => ({
+  height: `${node.scrollHeight}px`,
+  opacity: 1,
+});
+const getCurrentHeight: MotionEventHandler = (node: any) => ({ height: `${node.offsetHeight}px` });
+// const skipOpacityTransition: MotionEndEventHandler = (_, event) =>
+//   (event as TransitionEvent).propertyName === 'height';
+
+export interface CSSMotionProps extends Partial<TransitionProps> {
+  name?: string;
+  css?: boolean;
+}
+
+function collapseMotion(name = 'ant-motion-collapse', style: Ref<CSSProperties>, className: Ref<string>): CSSMotionProps {
+  return {
+    name,
+    appear: true,
+    css: true,
+    onBeforeEnter: (node) => {
+      className.value = name;
+      style.value = getCollapsedHeight(node);
+    },
+    onEnter: (node) => {
+      nextTick(() => {
+        style.value = getRealHeight(node);
+      });
+    },
+    onAfterEnter: () => {
+      className.value = '';
+      style.value = {};
+    },
+    onBeforeLeave: (node) => {
+      className.value = name;
+      style.value = getCurrentHeight(node);
+    },
+    onLeave: (node) => {
+      setTimeout(() => {
+        style.value = getCollapsedHeight(node);
+      });
+    },
+    onAfterLeave: () => {
+      className.value = '';
+      style.value = {};
+    },
+  };
+}
+
+function getTransitionName(rootPrefixCls: string, motion: string, transitionName?: string) {
+  if (transitionName !== undefined) {
+    return transitionName;
+  }
+  return `${rootPrefixCls}-${motion}`;
+}
+
+export { collapseMotion, getTransitionDirection, getTransitionName };

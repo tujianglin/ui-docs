@@ -1,4 +1,5 @@
-import { defineComponent, shallowRef } from 'vue';
+import { filterEmpty } from '@vc-com/util/lib/props-util';
+import { cloneVNode, defineComponent, shallowRef } from 'vue';
 
 export interface ItemProps {
   setRef: (element: HTMLElement) => void;
@@ -6,7 +7,7 @@ export interface ItemProps {
 
 export const Item = defineComponent(
   ({ setRef }: ItemProps) => {
-    const slots = defineSlots({ default: () => <></> });
+    const slots = defineSlots();
     const currentElement = shallowRef<HTMLElement | null>(null);
 
     const refFunc = (node) => {
@@ -16,7 +17,12 @@ export const Item = defineComponent(
       }
     };
 
-    return () => <slots.default ref={refFunc} />;
+    return () => {
+      const child = filterEmpty(slots.default?.())[0];
+      if (!child) return null;
+
+      return cloneVNode(child, { ref: refFunc });
+    };
   },
   { inheritAttrs: false },
 );
