@@ -64,27 +64,21 @@ const ComboboxDemo = defineComponent({
         text: '不选择',
       },
       {
-        value: '01',
+        value: 'jack',
         label: <b style={{ color: 'red' }}>jack</b>,
-        text: 'jack',
-        title: 'jack',
       },
       {
-        value: '11',
+        value: 'lucy',
         label: 'lucy',
-        text: 'lucy',
       },
       {
-        value: '21',
+        value: 'disabled',
         label: 'disabled',
-        text: 'disabled',
         disabled: true,
       },
       {
-        value: '31',
+        value: 'yiminghe',
         label: 'yiminghe',
-        text: 'yiminghe',
-        className: 'test-option',
         style: { background: 'yellow' },
       },
       ...Array.from({ length: 10 }, (_, i) => ({

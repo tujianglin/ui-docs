@@ -180,6 +180,7 @@ const Input = defineComponent(
       autocomplete: autoComplete || 'off',
       class: inputCls,
       disabled,
+      value: value.value || '',
       onInput: handleChange,
       onKeydown: handleKeyDown,
       onBlur: handleBlur,

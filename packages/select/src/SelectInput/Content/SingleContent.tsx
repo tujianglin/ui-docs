@@ -26,7 +26,6 @@ const SingleContent = defineComponent(
       if (combobox.value && activeValue && !inputChanged.value && triggerOpen) {
         return activeValue;
       }
-
       return showSearch ? searchValue : '';
     });
 
@@ -87,6 +86,30 @@ const SingleContent = defineComponent(
 
     const shouldRenderValue = computed(() => !(combobox.value && components?.input));
 
+    const RenderValue = () => {
+      return shouldRenderValue.value ? (
+        displayValue.value ? (
+          hasOptionStyle ? (
+            <div
+              class={clsx(`${prefixCls}-content-value`, optionClassName)}
+              style={{
+                ...(mergedSearchValue.value ? { visibility: 'hidden' } : {}),
+                ...optionStyle,
+              }}
+              title={optionTitle}
+            >
+              {/* @ts-ignore */}
+              {displayValue.value.label}
+            </div>
+          ) : (
+            displayValue.value.label
+          )
+        ) : (
+          <Placeholder show={!mergedSearchValue.value} />
+        )
+      ) : null;
+    };
+
     const domRef = useRef(null);
 
     defineExpose({
@@ -107,27 +130,7 @@ const SingleContent = defineComponent(
         style={styles?.content}
         title={hasOptionStyle ? undefined : optionTitle}
       >
-        {shouldRenderValue.value ? (
-          displayValue.value ? (
-            hasOptionStyle ? (
-              <div
-                class={clsx(`${prefixCls}-content-value`, optionClassName)}
-                style={{
-                  ...(mergedSearchValue.value ? { visibility: 'hidden' } : {}),
-                  ...optionStyle,
-                }}
-                title={optionTitle}
-              >
-                {/* @ts-ignore */}
-                {displayValue.value.label}
-              </div>
-            ) : (
-              displayValue.value.label
-            )
-          ) : (
-            <Placeholder show={!mergedSearchValue.value} />
-          )
-        ) : null}
+        <RenderValue></RenderValue>
         <Input
           ref={domRef}
           {...(inputProps as any)}
