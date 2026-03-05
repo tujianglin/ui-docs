@@ -22,7 +22,7 @@ const BaseInput = defineComponent(
     class: className,
     style,
     disabled,
-    readOnly,
+    readonly,
     focused,
     triggerFocus,
     allowClear,
@@ -37,10 +37,6 @@ const BaseInput = defineComponent(
     const slots = defineSlots<{ default: () => any }>();
     const props = useFullProps();
     const value = defineModel<ValueType>('value');
-    const AffixWrapperComponent = computed(() => components?.affixWrapper || 'span');
-    const GroupWrapperComponent = computed(() => components?.groupWrapper || 'span');
-    const WrapperComponent = computed(() => components?.wrapper || 'span');
-    const GroupAddonComponent = computed(() => components?.groupAddon || 'span');
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -63,6 +59,10 @@ const BaseInput = defineComponent(
 
     // `className` and `style` are always on the root element
     return () => {
+      const AffixWrapperComponent = components?.affixWrapper || 'span';
+      const GroupWrapperComponent = components?.groupWrapper || 'span';
+      const WrapperComponent = components?.wrapper || 'span';
+      const GroupAddonComponent = components?.groupAddon || 'span';
       const inputElement = filterEmpty(slots.default?.())[0];
       let element: VueNode = createVNode(inputElement, {
         value: value.value,
@@ -74,7 +74,7 @@ const BaseInput = defineComponent(
         // ================== Clear Icon ================== //
         let clearIcon = null;
         if (allowClear) {
-          const needClear = !disabled && !readOnly && value.value;
+          const needClear = !disabled && !readonly && value.value;
           const clearIconCls = `${prefixCls}-clear-icon`;
           const iconNode = typeof allowClear === 'object' && allowClear?.clearIcon ? allowClear.clearIcon : '✖';
 
@@ -106,7 +106,7 @@ const BaseInput = defineComponent(
             [`${prefixCls}-disabled`]: disabled,
             [`${affixWrapperPrefixCls}-disabled`]: disabled, // Not used, but keep it
             [`${affixWrapperPrefixCls}-focused`]: focused, // Not used, but keep it
-            [`${affixWrapperPrefixCls}-readonly`]: readOnly,
+            [`${affixWrapperPrefixCls}-readonly`]: readonly,
             [`${affixWrapperPrefixCls}-input-with-clear-btn`]: suffix && allowClear && value.value,
           },
           classNames?.affixWrapper,
@@ -121,7 +121,7 @@ const BaseInput = defineComponent(
         );
 
         element = (
-          <AffixWrapperComponent.value
+          <AffixWrapperComponent
             class={affixWrapperCls}
             style={styles?.affixWrapper}
             onClick={onInputClick}
@@ -135,7 +135,7 @@ const BaseInput = defineComponent(
             )}
             {element}
             {suffixNode}
-          </AffixWrapperComponent.value>
+          </AffixWrapperComponent>
         );
       }
 
@@ -158,13 +158,13 @@ const BaseInput = defineComponent(
         // Need another wrapper for changing display:table to display:inline-block
         // and put style prop in wrapper
         element = (
-          <GroupWrapperComponent.value class={mergedGroupClassName} ref={groupRef}>
-            <WrapperComponent.value class={mergedWrapperClassName}>
-              {addonBefore && <GroupAddonComponent.value class={addonCls}>{resolveVNode(addonBefore)}</GroupAddonComponent.value>}
+          <GroupWrapperComponent class={mergedGroupClassName} ref={groupRef}>
+            <WrapperComponent class={mergedWrapperClassName}>
+              {addonBefore && <GroupAddonComponent class={addonCls}>{resolveVNode(addonBefore)}</GroupAddonComponent>}
               {element}
-              {addonAfter && <GroupAddonComponent.value class={addonCls}>{resolveVNode(addonAfter)}</GroupAddonComponent.value>}
-            </WrapperComponent.value>
-          </GroupWrapperComponent.value>
+              {addonAfter && <GroupAddonComponent class={addonCls}>{resolveVNode(addonAfter)}</GroupAddonComponent>}
+            </WrapperComponent>
+          </GroupWrapperComponent>
         );
       }
 

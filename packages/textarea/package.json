@@ -1,0 +1,29 @@
+{
+  "name": "@vc-com/textarea",
+  "version": "1.0.0",
+  "description": "Vue 3 Textarea 组件",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build",
+    "prepublish": "pnpm build",
+    "bump": "bumpp --release patch"
+  },
+  "dependencies": {
+    "@vc-com/input": "workspace:*",
+    "@vc-com/resize-observer": "workspace:*",
+    "@vc-com/util": "workspace:*",
+    "clsx": "catalog:"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  }
+}

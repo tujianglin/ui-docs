@@ -36,7 +36,7 @@ export interface BaseInputProps extends CommonInputProps {
   disabled?: boolean;
   focused?: boolean;
   triggerFocus?: () => void;
-  readOnly?: boolean;
+  readonly?: boolean;
   handleReset?: MouseEventHandler;
   onClear?: () => void;
   hidden?: boolean;
@@ -51,7 +51,7 @@ export interface BaseInputProps extends CommonInputProps {
   };
 }
 
-export type ShowCountFormatter = (args: { value: string; count: number; maxLength?: number }) => (() => VueNode) | VueNode;
+export type ShowCountFormatter = (args: { value: string; count: number; maxlength?: number }) => (() => VueNode) | VueNode;
 
 export type ExceedFormatter = (value: string, config: { max: number }) => string;
 

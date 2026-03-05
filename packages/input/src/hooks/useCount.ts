@@ -1,4 +1,5 @@
-import { computed, type Ref } from 'vue';
+import { reactiveComputed } from '@vueuse/core';
+import { type Ref } from 'vue';
 import type { InputProps } from '..';
 import type { CountConfig, ShowCountFormatter } from '../interface';
 
@@ -21,7 +22,7 @@ export function inCountRange(value: string, countConfig: ForcedCountConfig) {
 }
 
 export default function useCount(count?: Ref<CountConfig>, showCount?: Ref<InputProps['showCount']>) {
-  return computed<ForcedCountConfig>(() => {
+  return reactiveComputed<ForcedCountConfig>(() => {
     let mergedConfig: CountConfig = {};
 
     if (showCount.value) {
@@ -40,7 +41,7 @@ export default function useCount(count?: Ref<CountConfig>, showCount?: Ref<Input
       ...rest,
       show: !!show,
       showFormatter: typeof show === 'function' ? show : undefined,
-      strategy: rest.strategy || ((value) => value.length),
+      strategy: rest.strategy || ((value) => value?.length),
     };
   });
 }

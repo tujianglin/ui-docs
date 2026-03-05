@@ -68,8 +68,8 @@ const Input = defineComponent(
       computed(() => count),
       computed(() => showCount),
     );
-    const mergedMax = computed(() => countConfig.value.max || (maxlength as number));
-    const valueLength = computed(() => countConfig.value.strategy(formatValue.value));
+    const mergedMax = computed(() => countConfig.max || (maxlength as number));
+    const valueLength = computed(() => countConfig.strategy(formatValue.value));
 
     const isOutOfRange = computed(() => !!mergedMax.value && valueLength.value > mergedMax.value);
 
@@ -113,12 +113,12 @@ const Input = defineComponent(
 
       if (
         !compositionRef.value &&
-        countConfig.value.exceedFormatter &&
-        countConfig.value.max &&
-        countConfig.value.strategy(currentValue) > countConfig.value.max
+        countConfig.exceedFormatter &&
+        countConfig.max &&
+        countConfig.strategy(currentValue) > countConfig.max
       ) {
-        cutValue = countConfig.value.exceedFormatter(currentValue, {
-          max: countConfig.value.max,
+        cutValue = countConfig.exceedFormatter(currentValue, {
+          max: countConfig.max,
         });
 
         if (currentValue !== cutValue) {
@@ -251,18 +251,18 @@ const Input = defineComponent(
       // Max length value
       const hasMaxLength = Number(mergedMax.value) > 0;
 
-      if (suffix || countConfig.value.show) {
-        const dataCount = countConfig.value.showFormatter
-          ? countConfig.value.showFormatter({
+      if (suffix || countConfig.show) {
+        const dataCount = countConfig.showFormatter
+          ? countConfig.showFormatter({
               value: formatValue.value,
               count: valueLength.value,
-              maxLength: mergedMax.value,
+              maxlength: mergedMax.value,
             })
           : `${valueLength.value}${hasMaxLength ? ` / ${mergedMax.value}` : ''}`;
 
         return (
           <>
-            {countConfig.value.show && (
+            {countConfig.show && (
               <span
                 class={clsx(
                   `${prefixCls}-show-count-suffix`,
