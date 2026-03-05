@@ -254,7 +254,7 @@ const OptionList = defineComponent(
     const activeKey = ref<Key>(null);
     const activeEntity = computed(() => keyEntities[activeKey.value as SafeKey]);
 
-    watch([[() => open, () => searchValue]], () => {
+    watch([() => open, () => searchValue], () => {
       if (!open) {
         return;
       }

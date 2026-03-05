@@ -1,7 +1,7 @@
 {
-  "name": "@vc-com/resize-observer",
+  "name": "@vc-com/select",
   "version": "1.0.0",
-  "description": "Vue 3 ResizeObserver 组件",
+  "description": "Vue 3 Select 组件",
   "files": [
     "dist",
     "package.json"
