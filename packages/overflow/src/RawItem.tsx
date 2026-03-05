@@ -1,4 +1,5 @@
 import { clsx } from 'clsx';
+import { isEmpty } from 'es-toolkit/compat';
 import { defineComponent } from 'vue';
 import { useRef, type HTMLAttributes } from 'vue-jsx-vapor';
 import Item from './Item';
@@ -21,18 +22,24 @@ const RawItem = defineComponent(
 
     // Render directly when context not provided
     return () => {
-      if (!context) {
+      if (isEmpty(context)) {
         const { component: Component = 'div', ...restProps } = props;
-        return <Component {...restProps} ref={domRef} />;
+        return (
+          <Component {...restProps} ref={domRef}>
+            <slot></slot>
+          </Component>
+        );
       }
 
-      const { class: contextClassName, ...restContext } = context;
+      const { class: contextClassName, ...restContext } = context as any;
       const { class: className, ...restProps } = props;
 
       // Do not pass context to sub item to avoid multiple measure
       return (
         <OverflowContextProvider value={null}>
-          <Item ref={domRef} class={clsx(contextClassName, className)} {...restContext} {...restProps} />
+          <Item ref={domRef} class={clsx(contextClassName, className)} {...restContext} {...restProps}>
+            <slot></slot>
+          </Item>
         </OverflowContextProvider>
       );
     };

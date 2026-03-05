@@ -21,13 +21,13 @@ type OverflowContextProps = {
 const OverflowContext: InjectionKey<Reactive<OverflowContextProps>> = Symbol('OverflowContext');
 
 export const useOverflowContextInject = () => {
-  return inject(OverflowContext, reactive(null));
+  return inject(OverflowContext, reactive({} as OverflowContextProps));
 };
 
 export const OverflowContextProvider = defineComponent((props: { value?: OverflowContextProps }) => {
   provide(
     OverflowContext,
-    reactiveComputed(() => props.value || ({} as any)),
+    reactiveComputed(() => props.value ?? ({} as any)),
   );
   return () => <slot></slot>;
 });

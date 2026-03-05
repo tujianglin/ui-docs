@@ -46,7 +46,9 @@
       "@vc-com/color-picker/*": ["packages/color-picker/src/*"],
       "@vc-com/tree/*": ["packages/tree/src/*"],
       "@vc-com/tree-select/*": ["packages/tree-select/src/*"],
-      "@vc-com/textarea/*": ["packages/textarea/src/*"]
+      "@vc-com/textarea/*": ["packages/textarea/src/*"],
+      "@vc-com/dropdown/*": ["packages/dropdown/src/*"],
+      "@vc-com/menu/*": ["packages/menu/src/*"]
     }
   },
   "include": [
