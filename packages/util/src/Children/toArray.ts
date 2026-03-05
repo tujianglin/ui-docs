@@ -1,4 +1,4 @@
-import type { VNode, VNodeArrayChildren, VNodeChild } from 'vue';
+import type { VNode, VNodeArrayChildren } from 'vue';
 import { isVNode } from 'vue';
 import { isFragment } from '../Vue/isFragment';
 
@@ -45,7 +45,7 @@ export interface Option {
  * @param option.keepEmpty - 是否保留 null/undefined 值，默认 false
  * @returns 扁平化后的 VNode 数组
  */
-export default function toArray(children: VNodeChild | VNodeArrayChildren | undefined, option: Option = {}): VNode[] {
+export default function toArray(children: any, option: Option = {}): VNode[] {
   let ret: VNode[] = [];
 
   // 处理 undefined 或 null

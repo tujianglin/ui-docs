@@ -1,8 +1,10 @@
+import type { Key, VueNode } from '@vc-com/util/lib/types';
 import type { CSSProperties, Ref } from 'vue';
 import type { MouseEventHandler } from 'vue-jsx-vapor';
-import type { Key, VueNode } from '../../util/src/types';
 
 export type { Key };
+
+export type { ScrollTo } from '@vc-com/virtual-list';
 
 export interface TreeNodeProps<TreeDataType extends BasicDataNode = DataNode> {
   eventKey?: Key; // Pass by parent `cloneElement`

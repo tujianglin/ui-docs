@@ -1,0 +1,148 @@
+import { isVNode } from 'vue';
+import toArray from '../../../util/src/Children/toArray';
+import type { VueNode } from '../../../util/src/types';
+import { warning } from '../../../util/src/warning';
+import type { ChangeEventExtra, DataNode, FieldNames, SafeKey } from '../interface';
+
+export function convertChildrenToData(nodes: VueNode[]): DataNode[] {
+  return toArray(nodes)
+    .map((node) => {
+      if (!isVNode(node) || !node.type) {
+        return null;
+      }
+
+      const {
+        key,
+        props: { children, value, ...restProps },
+      } = node;
+
+      const data: any = {
+        key,
+        value,
+        ...restProps,
+      };
+
+      const childData = convertChildrenToData(children);
+      if (childData.length) {
+        data.children = childData;
+      }
+
+      return data;
+    })
+    .filter((data) => data);
+}
+
+export function fillLegacyProps(dataNode: DataNode) {
+  if (!dataNode) {
+    return dataNode;
+  }
+
+  const cloneNode = { ...dataNode };
+
+  if (!('props' in cloneNode)) {
+    Object.defineProperty(cloneNode, 'props', {
+      get() {
+        warning(
+          false,
+          'New `rc-tree-select` not support return node instance as argument anymore. Please consider to remove `props` access.',
+        );
+        return cloneNode;
+      },
+    });
+  }
+
+  return cloneNode;
+}
+
+export function fillAdditionalInfo(
+  extra: ChangeEventExtra,
+  triggerValue: SafeKey,
+  checkedValues: SafeKey[],
+  treeData: DataNode[],
+  showPosition: boolean,
+  fieldNames: FieldNames,
+) {
+  let triggerNode: VueNode = null;
+  let nodeList = null;
+
+  function generateMap() {
+    function dig(list: DataNode[], level = '0', parentIncluded = false) {
+      return list
+        .map((option, index) => {
+          const pos = `${level}-${index}`;
+          const value = option[fieldNames.value];
+          const included = checkedValues.includes(value);
+          const children = dig(option[fieldNames.children] || [], pos, included);
+          const node = children.map((child) => child.node);
+
+          // Link with trigger node
+          if (triggerValue === value) {
+            triggerNode = node;
+          }
+
+          if (included) {
+            const checkedNode = {
+              pos,
+              node,
+              children,
+            };
+
+            if (!parentIncluded) {
+              nodeList.push(checkedNode);
+            }
+
+            return checkedNode;
+          }
+          return null;
+        })
+        .filter((node) => node);
+    }
+
+    if (!nodeList) {
+      nodeList = [];
+
+      dig(treeData);
+
+      // Sort to keep the checked node length
+      nodeList.sort(
+        (
+          {
+            node: {
+              props: { value: val1 },
+            },
+          },
+          {
+            node: {
+              props: { value: val2 },
+            },
+          },
+        ) => {
+          const index1 = checkedValues.indexOf(val1);
+          const index2 = checkedValues.indexOf(val2);
+          return index1 - index2;
+        },
+      );
+    }
+  }
+
+  Object.defineProperty(extra, 'triggerNode', {
+    get() {
+      warning(false, '`triggerNode` is deprecated. Please consider decoupling data with node.');
+      generateMap();
+
+      return triggerNode;
+    },
+  });
+  Object.defineProperty(extra, 'allCheckedNodes', {
+    get() {
+      warning(false, '`allCheckedNodes` is deprecated. Please consider decoupling data with node.');
+      generateMap();
+
+      if (showPosition) {
+        return nodeList;
+      }
+
+      return nodeList.map(({ node }) => node);
+    },
+  });
+}
