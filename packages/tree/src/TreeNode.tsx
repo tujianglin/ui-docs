@@ -301,7 +301,7 @@ const TreeNode = defineComponent(
     });
 
     // =================== Drop Indicator ===================
-    const dropIndicatorNode = computed<VueNode>(() => {
+    const DropIndicatorNode = () => {
       const rootDraggable = Boolean(context.draggable);
       // allowDrop is calculated in Tree.tsx, there is no need for calc it here
       const showIndicator = !props.disabled && rootDraggable && context.dragOverNodeKey === eventKey;
@@ -314,8 +314,8 @@ const TreeNode = defineComponent(
         indent: context.indent,
         prefixCls: context.prefixCls,
         direction: context.direction,
-      });
-    });
+      }) as JSX.Element;
+    };
 
     // Icon + Title
     const SelectorNode = () => {
@@ -371,7 +371,7 @@ const TreeNode = defineComponent(
           <span class={clsx(`${context.prefixCls}-title`, treeClassNames?.itemTitle)} style={styles?.itemTitle}>
             {titleNode}
           </span>
-          {dropIndicatorNode.value}
+          <DropIndicatorNode></DropIndicatorNode>
         </span>
       );
     };
