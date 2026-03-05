@@ -5,7 +5,13 @@
 import { getId, useId } from '@vc-com/util/lib/hooks/useId';
 import VirtualList, { type ListRef, type ScrollTo } from '@vc-com/virtual-list';
 import { computed, defineComponent, nextTick, ref, toRaw, watch, type CSSProperties } from 'vue';
-import { useRef, type FocusEventHandler, type KeyboardEventHandler } from 'vue-jsx-vapor';
+import {
+  useRef,
+  type FocusEventHandler,
+  type KeyboardEventHandler,
+  type MouseEventHandler,
+  type UIEventHandler,
+} from 'vue-jsx-vapor';
 import MotionTreeNode from './MotionTreeNode';
 import type { BasicDataNode, DataEntity, DataNode, FlattenNode, Key, KeyEntities } from './interface';
 import { findExpandedKeys, getExpandRange } from './utils/diffUtil';
@@ -80,6 +86,9 @@ interface NodeListProps<TreeDataType extends BasicDataNode = any> {
 
   onListChangeStart: () => void;
   onListChangeEnd: () => void;
+
+  onContextmenu?: MouseEventHandler<HTMLDivElement>;
+  onScroll?: UIEventHandler<HTMLElement>;
 }
 
 /**

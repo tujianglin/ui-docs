@@ -389,7 +389,9 @@ export default defineComponent(
     // When data size reduce. It may trigger native scroll event back to fit scroll position
     function onFallbackScroll(e: UIEvent<HTMLDivElement>) {
       const { scrollTop: newScrollTop } = e.currentTarget;
-      if (newScrollTop !== offsetTop.value) {
+      if (!useVirtual.value || !inVirtual.value) {
+        offsetTop.value = newScrollTop;
+      } else if (newScrollTop !== offsetTop.value) {
         syncScrollTop(newScrollTop);
       }
 
