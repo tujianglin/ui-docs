@@ -41,25 +41,28 @@ export default defineComponent(
       { immediate: true },
     );
 
-    // ================================= Render =================================
-    return () => {
-      const mergedMotion = { ...getMotion(fixedMode, motion, defaultMotions) };
+    const mergedMotion = computed(() => {
+      const result = { ...getMotion(fixedMode, motion, defaultMotions) };
 
       // No need appear since nest inlineCollapse changed
       if (keyPath.length > 1) {
-        mergedMotion.motionAppear = false;
+        result.motionAppear = false;
       }
 
       // Hide inline list when mode changed and motion end
-      const originOnVisibleChanged = mergedMotion.onVisibleChanged;
-      mergedMotion.onVisibleChanged = (newVisible) => {
+      const originOnVisibleChanged = result.onVisibleChanged;
+      result.onVisibleChanged = (newVisible) => {
         if (!sameModeRef.value && !newVisible) {
           destroy.value = true;
         }
 
         return originOnVisibleChanged?.(newVisible);
       };
+      return result;
+    });
 
+    // ================================= Render =================================
+    return () => {
       if (destroy.value) {
         return null;
       }
@@ -68,7 +71,7 @@ export default defineComponent(
         <MenuContextProvider mode={fixedMode} locked={!sameModeRef.value}>
           <CSSMotion
             visible={mergedOpen.value}
-            {...mergedMotion}
+            {...mergedMotion.value}
             forceRender={forceSubMenuRender}
             removeOnLeave={false}
             leavedClassName={`${prefixCls}-hidden`}

@@ -1,4 +1,3 @@
-import Overflow from '@vc-com/overflow';
 import KeyCode from '@vc-com/util/lib/KeyCode';
 import omit from '@vc-com/util/lib/omit';
 import { clsx } from 'clsx';
@@ -13,6 +12,7 @@ import {
   type MouseEvent,
   type MouseEventHandler,
 } from 'vue-jsx-vapor';
+import Overflow from '../../overflow/src';
 import { warning } from '../../util/src/warning';
 import { useMenuId } from './context/IdContext';
 import { useMenuContextInject } from './context/MenuContext';
@@ -98,6 +98,7 @@ const InternalMenuItem = defineComponent(
       overflowDisabled,
 
       // Icon
+      // @ts-ignore
       itemIcon: contextItemIcon,
 
       // Select
@@ -183,7 +184,6 @@ const InternalMenuItem = defineComponent(
       onActive(eventKey);
       onFocus?.(e);
     };
-
     // ============================ Render ============================
     return () => {
       const optionRoleProps: HTMLAttributes<HTMLDivElement> & { component: string } = {
@@ -205,7 +205,7 @@ const InternalMenuItem = defineComponent(
           {...optionRoleProps}
           aria-disabled={disabled}
           style={{
-            ...directionStyle,
+            ...directionStyle.value,
             ...style,
           }}
           class={clsx(

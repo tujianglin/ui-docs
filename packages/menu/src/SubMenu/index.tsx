@@ -1,7 +1,7 @@
 import Overflow from '@vc-com/overflow';
 import { warning } from '@vc-com/util/lib/warning';
 import { clsx } from 'clsx';
-import { computed, defineComponent, ref, shallowRef, watch, type CSSProperties } from 'vue';
+import { computed, defineComponent, ref, shallowRef, watch, watchEffect, type CSSProperties } from 'vue';
 import { useFullProps, useRef, type FocusEventHandler, type MouseEventHandler } from 'vue-jsx-vapor';
 import type { VueNode } from '../../../util/src/types';
 import { resolveVNode } from '../../../util/src/vnode';
@@ -229,24 +229,57 @@ const InternalSubMenu = defineComponent(
     const triggerModeRef = shallowRef(mode);
 
     // =============================== Render ===============================
-    return () => {
-      const popupId = domDataId.value && `${domDataId.value}-popup`;
+    const popupId = computed(() => domDataId.value && `${domDataId.value}-popup`);
 
-      const expandIconNode = (
-        <Icon
-          icon={mode !== 'horizontal' ? mergedExpandIcon.value : undefined}
-          props={{
-            ...props,
-            isOpen: open.value,
-            // [Legacy] Not sure why need this mark
-            isSubMenu: true,
-          }}
+    const ExpandIconNode = () => (
+      <Icon
+        icon={mode !== 'horizontal' ? mergedExpandIcon.value : undefined}
+        props={{
+          ...props,
+          isOpen: open.value,
+          // [Legacy] Not sure why need this mark
+          isSubMenu: true,
+        }}
+      >
+        <i class={`${subMenuPrefixCls.value}-arrow`} />
+      </Icon>
+    );
+
+    watchEffect(() => {
+      if (mode !== 'inline' && connectedPath.value.length > 1) {
+        triggerModeRef.value = 'vertical';
+      } else {
+        triggerModeRef.value = mode;
+      }
+    });
+
+    const popupContentTriggerMode = computed(() => triggerModeRef.value);
+
+    const renderPopupContent = () => {
+      const originNode = (
+        <MenuContextProvider
+          classNames={menuClassNames}
+          styles={styles}
+          mode={popupContentTriggerMode.value === 'horizontal' ? 'vertical' : popupContentTriggerMode.value}
         >
-          <i class={`${subMenuPrefixCls.value}-arrow`} />
-        </Icon>
+          <SubMenuList id={popupId.value} ref={popupRef}>
+            <slot></slot>
+          </SubMenuList>
+        </MenuContextProvider>
       );
+      const mergedPopupRender = propsPopupRender || contextPopupRender;
+      if (mergedPopupRender) {
+        const node = mergedPopupRender(originNode, {
+          item: props,
+          keys: connectedPath.value,
+        });
+        return node;
+      }
+      return originNode;
+    };
 
-      // >>>>> Title
+    // >>>>> Title
+    const TitleNode = () => {
       let titleNode = (
         <div
           role="menuitem"
@@ -258,7 +291,7 @@ const InternalSubMenu = defineComponent(
           data-menu-id={overflowDisabled && domDataId.value ? null : domDataId.value}
           aria-expanded={open.value}
           aria-haspopup
-          aria-controls={popupId}
+          aria-controls={popupId.value}
           aria-disabled={mergedDisabled.value}
           onClick={onInternalTitleClick}
           onFocus={onInternalFocus}
@@ -267,38 +300,9 @@ const InternalSubMenu = defineComponent(
           {resolveVNode(title)}
 
           {/* Only non-horizontal mode shows the icon */}
-          {expandIconNode}
+          <ExpandIconNode></ExpandIconNode>
         </div>
       );
-
-      if (mode !== 'inline' && connectedPath.value.length > 1) {
-        triggerModeRef.value = 'vertical';
-      } else {
-        triggerModeRef.value = mode;
-      }
-      const popupContentTriggerMode = triggerModeRef.value;
-      const renderPopupContent = () => {
-        const originNode = (
-          <MenuContextProvider
-            classNames={menuClassNames}
-            styles={styles}
-            mode={popupContentTriggerMode === 'horizontal' ? 'vertical' : popupContentTriggerMode}
-          >
-            <SubMenuList id={popupId} ref={popupRef}>
-              <slot></slot>
-            </SubMenuList>
-          </MenuContextProvider>
-        );
-        const mergedPopupRender = propsPopupRender || contextPopupRender;
-        if (mergedPopupRender) {
-          const node = mergedPopupRender(originNode, {
-            item: props,
-            keys: connectedPath.value,
-          });
-          return node;
-        }
-        return originNode;
-      };
 
       if (!overflowDisabled) {
         const triggerMode = triggerModeRef.value;
@@ -317,12 +321,34 @@ const InternalSubMenu = defineComponent(
             disabled={mergedDisabled.value}
             onVisibleChange={onPopupVisibleChange}
           >
-            {titleNode}
+            <div
+              role="menuitem"
+              style={directionStyle.value}
+              class={`${subMenuPrefixCls.value}-title`}
+              tabindex={mergedDisabled.value ? null : -1}
+              ref={elementRef}
+              title={typeof title === 'string' ? title : null}
+              data-menu-id={overflowDisabled && domDataId.value ? null : domDataId.value}
+              aria-expanded={open.value}
+              aria-haspopup
+              aria-controls={popupId.value}
+              aria-disabled={mergedDisabled.value}
+              onClick={onInternalTitleClick}
+              onFocus={onInternalFocus}
+              {...activeProps}
+            >
+              {resolveVNode(title)}
+
+              {/* Only non-horizontal mode shows the icon */}
+              <ExpandIconNode></ExpandIconNode>
+            </div>
           </PopupTrigger>
         );
       }
-
-      // >>>>> List node
+      return titleNode;
+    };
+    // >>>>> List node
+    const ListNode = () => {
       let listNode = (
         <Overflow.Item
           role="none"
@@ -338,10 +364,10 @@ const InternalSubMenu = defineComponent(
           onMouseenter={onInternalMouseEnter}
           onMouseleave={onInternalMouseLeave}
         >
-          {titleNode}
+          <TitleNode></TitleNode>
 
           {/* Inline mode */}
-          <InlineSubMenuList v-if={!overflowDisabled} id={popupId} open={open.value} keyPath={connectedPath.value}>
+          <InlineSubMenuList v-if={!overflowDisabled} id={popupId.value} open={open.value} keyPath={connectedPath.value}>
             <slot></slot>
           </InlineSubMenuList>
         </Overflow.Item>
@@ -355,7 +381,9 @@ const InternalSubMenu = defineComponent(
           disabled: mergedDisabled.value,
         }) as JSX.Element;
       }
-
+      return listNode;
+    };
+    return () => {
       // >>>>> Render
       return (
         <MenuContextProvider
@@ -366,7 +394,9 @@ const InternalSubMenu = defineComponent(
           itemIcon={mergedItemIcon.value}
           expandIcon={mergedExpandIcon.value}
         >
-          {listNode}
+          <ListNode>
+            <slot></slot>
+          </ListNode>
         </MenuContextProvider>
       );
     };
@@ -401,16 +431,12 @@ const SubMenu = defineComponent(
 
     return () => {
       const children = slots.default?.();
-      const childList = computed(() => parseChildren(children, connectedKeyPath.value));
+      const childList = parseChildren(children, connectedKeyPath.value);
       let renderNode;
       if (measure) {
         renderNode = childList;
       } else {
-        renderNode = (
-          <InternalSubMenu ref={ref} {...props}>
-            {childList}
-          </InternalSubMenu>
-        );
+        renderNode = <InternalSubMenu {...props}>{childList}</InternalSubMenu>;
       }
       return <PathTrackerContextProvider value={connectedKeyPath.value}>{renderNode}</PathTrackerContextProvider>;
     };

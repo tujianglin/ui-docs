@@ -1,5 +1,4 @@
 import { clsx } from 'clsx';
-import { isEmpty } from 'es-toolkit/compat';
 import { defineComponent } from 'vue';
 import { useRef, type HTMLAttributes } from 'vue-jsx-vapor';
 import Item from './Item';
@@ -22,7 +21,7 @@ const RawItem = defineComponent(
 
     // Render directly when context not provided
     return () => {
-      if (isEmpty(context)) {
+      if (!context) {
         const { component: Component = 'div', ...restProps } = props;
         return (
           <Component {...restProps} ref={domRef}>

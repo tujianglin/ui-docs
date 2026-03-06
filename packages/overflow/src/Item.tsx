@@ -66,8 +66,6 @@ const Item = defineComponent(
 
     // ================================ Render ================================
 
-    const childNode = () => (renderItem && item !== UNDEFINED ? renderItem(item, { index: order }) : slots.default?.());
-
     let overflowStyle = computed(() => {
       let result: CSSProperties | undefined;
       if (!invalidate) {
@@ -102,7 +100,7 @@ const Item = defineComponent(
         {...restProps}
         ref={domRef}
       >
-        {childNode()}
+        {renderItem && item !== UNDEFINED ? renderItem(item, { index: order }) : slots.default?.()}
       </Component>
     );
 
