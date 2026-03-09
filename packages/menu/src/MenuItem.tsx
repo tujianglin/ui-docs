@@ -1,5 +1,7 @@
+import Overflow from '@vc-com/overflow';
 import KeyCode from '@vc-com/util/lib/KeyCode';
 import omit from '@vc-com/util/lib/omit';
+import { warning } from '@vc-com/util/lib/warning';
 import { clsx } from 'clsx';
 import { computed, defineComponent, watch } from 'vue';
 import {
@@ -12,8 +14,6 @@ import {
   type MouseEvent,
   type MouseEventHandler,
 } from 'vue-jsx-vapor';
-import Overflow from '../../overflow/src';
-import { warning } from '../../util/src/warning';
 import { useMenuId } from './context/IdContext';
 import { useMenuContextInject } from './context/MenuContext';
 import { useFullPath, usePathRegisterContextInject } from './context/PathContext';
@@ -198,7 +198,7 @@ const InternalMenuItem = defineComponent(
           ref={legacyMenuItemRef}
           elementRef={elementRef}
           role={role === null ? 'none' : role || 'menuitem'}
-          tabIndex={disabled ? null : -1}
+          tabindex={disabled ? null : -1}
           data-menu-id={overflowDisabled && domDataId.value ? null : domDataId.value}
           {...omit(restProps, ['extra'])}
           {...omit(activeProps, ['active'])}

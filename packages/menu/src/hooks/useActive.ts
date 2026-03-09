@@ -6,15 +6,15 @@ import type { MenuHoverEventHandler } from '../interface';
 
 interface ActiveObj {
   active: boolean;
-  onMouseEnter?: MouseEventHandler<HTMLElement>;
-  onMouseLeave?: MouseEventHandler<HTMLElement>;
+  onMouseenter?: MouseEventHandler<HTMLElement>;
+  onMouseleave?: MouseEventHandler<HTMLElement>;
 }
 
 export default function useActive(
   eventKey: Ref<string>,
   disabled: Ref<boolean>,
-  onMouseEnter?: MenuHoverEventHandler,
-  onMouseLeave?: MenuHoverEventHandler,
+  onMouseenter?: MenuHoverEventHandler,
+  onMouseleave?: MenuHoverEventHandler,
 ): ActiveObj {
   const {
     // Active
@@ -29,15 +29,15 @@ export default function useActive(
       active: activeKey === eventKey.value,
     };
     if (!disabled.value) {
-      ret.onMouseEnter = (domEvent) => {
-        onMouseEnter?.({
+      ret.onMouseenter = (domEvent) => {
+        onMouseenter?.({
           key: eventKey.value,
           domEvent,
         });
         onActive(eventKey.value);
       };
-      ret.onMouseLeave = (domEvent) => {
-        onMouseLeave?.({
+      ret.onMouseleave = (domEvent) => {
+        onMouseleave?.({
           key: eventKey.value,
           domEvent,
         });

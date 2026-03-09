@@ -5,8 +5,8 @@ import type { MenuItemProps } from './MenuItem';
 import MenuItem from './MenuItem';
 import type { MenuItemGroupProps } from './MenuItemGroup';
 import MenuItemGroup from './MenuItemGroup';
-import type { SubMenuProps } from './SubMenu';
-import SubMenu from './SubMenu';
+import type { SubMenuProps } from './SubMenu/index.tsx';
+import SubMenu from './SubMenu/index.tsx';
 import { useFullPath } from './context/PathContext';
 import type { MenuRef } from './interface';
 

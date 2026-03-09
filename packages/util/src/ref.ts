@@ -75,9 +75,12 @@ export function composeRef(...refs) {
  * 使用 useMemo 缓存 composeRef 的结果，避免不必要的重新创建。
  */
 export const useComposeRef = <T>(...refs: (Ref<T> | ((val: T) => void))[]): ((val: T) => void) => {
+  // @ts-ignore
   return useMemo(
     () => composeRef(...refs),
+    // @ts-ignore
     refs,
+    // @ts-ignore
     (prev, next) => prev.length !== next.length || prev.every((ref, i) => ref !== next[i]),
   );
 };

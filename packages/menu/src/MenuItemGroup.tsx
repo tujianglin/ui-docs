@@ -1,9 +1,9 @@
+import { filterEmpty } from '@vc-com/util/lib/props-util';
+import type { VueNode } from '@vc-com/util/lib/types';
+import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { omit } from 'es-toolkit';
 import { computed, defineComponent, getCurrentInstance } from 'vue';
-import { filterEmpty } from '../../util/src/props-util';
-import type { VueNode } from '../../util/src/types';
-import { resolveVNode } from '../../util/src/vnode';
 import { useMenuContextInject } from './context/MenuContext';
 import { useFullPath, usePathRegisterContextInject } from './context/PathContext';
 import type { MenuItemGroupType } from './interface';

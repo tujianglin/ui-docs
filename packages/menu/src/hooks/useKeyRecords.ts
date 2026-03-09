@@ -1,5 +1,5 @@
+import { warning } from '@vc-com/util/lib/warning';
 import { onBeforeUnmount, ref, shallowRef } from 'vue';
-import { warning } from '../../../util/src/warning';
 import { nextSlice } from '../utils/timeUtil';
 
 const PATH_SPLIT = '__RC_UTIL_PATH_SPLIT__';

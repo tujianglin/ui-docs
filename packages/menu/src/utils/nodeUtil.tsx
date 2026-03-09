@@ -3,7 +3,7 @@ import Divider from '../Divider';
 import type { Components, ItemType } from '../interface';
 import MenuItem from '../MenuItem';
 import MenuItemGroup from '../MenuItemGroup';
-import SubMenu from '../SubMenu';
+import SubMenu from '../SubMenu/index.tsx';
 import { parseChildren } from './commonUtil';
 
 function convertItemsToNodes(list: ItemType[], components: Required<Components>, prefixCls?: string) {

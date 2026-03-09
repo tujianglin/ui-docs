@@ -1,5 +1,5 @@
+import toArray from '@vc-com/util/lib/Children/toArray';
 import { createVNode, isVNode, type VNode } from 'vue';
-import toArray from '../../../util/src/Children/toArray';
 export function parseChildren(children: VNode | undefined, keyPath: string[]) {
   return toArray(children).map((child, index) => {
     if (isVNode(child)) {

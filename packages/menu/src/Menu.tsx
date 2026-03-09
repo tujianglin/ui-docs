@@ -30,7 +30,7 @@ import type {
   TriggerSubMenuAction,
 } from './interface';
 import MenuItem from './MenuItem';
-import SubMenu, { type SemanticName } from './SubMenu';
+import SubMenu, { type SemanticName } from './SubMenu/index.tsx';
 import { parseItems } from './utils/nodeUtil';
 import { warnItemProp } from './utils/warnUtil';
 
@@ -313,7 +313,7 @@ const Menu = defineComponent(
           return;
         }
         // Synchronously update MergedOpenKeys
-        if (isInlineMode) {
+        if (isInlineMode.value) {
           setMergedOpenKeys(inlineCacheOpenKeys.value);
         } else {
           // Trigger open event in case its in control
@@ -391,7 +391,9 @@ const Menu = defineComponent(
     });
 
     defineExpose({
-      list: containerRef.value,
+      get list() {
+        return containerRef.value;
+      },
       focus: (options) => {
         const keys = getKeys();
         const { elements, key2element, element2key } = refreshElements(keys, uuid.value);
@@ -535,77 +537,78 @@ const Menu = defineComponent(
     }));
 
     // ======================== Render ========================
+
+    // >>>>> Children
+    const wrappedChildList = () =>
+      internalMode.value !== 'horizontal' || disabledOverflow
+        ? childList.value
+        : // Need wrap for overflow dropdown that do not response for open
+          childList.value.map((child, index) => (
+            // Always wrap provider to avoid sub node re-mount
+            <MenuContextProvider
+              key={child.key}
+              overflowDisabled={index > lastVisibleIndex.value}
+              classNames={menuClassNames}
+              styles={styles}
+            >
+              {child}
+            </MenuContextProvider>
+          ));
+
+    // >>>>> Container
+    const Container = () => (
+      <Overflow
+        id={id}
+        ref={containerRef as any}
+        prefixCls={`${prefixCls}-overflow`}
+        component="ul"
+        itemComponent={MenuItem}
+        class={clsx(
+          prefixCls,
+          `${prefixCls}-root`,
+          `${prefixCls}-${internalMode.value}`,
+          className,
+          {
+            [`${prefixCls}-inline-collapsed`]: internalInlineCollapsed.value,
+            [`${prefixCls}-rtl`]: isRtl.value,
+          },
+          rootClassName,
+        )}
+        dir={direction}
+        style={style}
+        role="menu"
+        tabindex={tabindex}
+        data={wrappedChildList()}
+        renderRawItem={(node) => node}
+        renderRawRest={(omitItems) => {
+          // We use origin list since wrapped list use context to prevent open
+          const len = omitItems.length;
+
+          const originOmitItems = len ? childList.value.slice(-len) : null;
+
+          return (
+            <SubMenu
+              eventKey={OVERFLOW_KEY}
+              title={overflowedIndicator}
+              disabled={allVisible.value}
+              internalPopupClose={len === 0}
+              popupClassName={overflowedIndicatorPopupClassName}
+            >
+              {originOmitItems}
+            </SubMenu>
+          );
+        }}
+        maxCount={internalMode.value !== 'horizontal' || disabledOverflow ? Overflow.INVALIDATE : Overflow.RESPONSIVE}
+        ssr="full"
+        data-menu-list
+        onVisibleChange={(newLastIndex) => {
+          lastVisibleIndex.value = newLastIndex;
+        }}
+        onKeydown={onInternalKeyDown}
+        {...restProps}
+      />
+    );
     return () => {
-      // >>>>> Children
-      const wrappedChildList =
-        internalMode.value !== 'horizontal' || disabledOverflow
-          ? childList.value
-          : // Need wrap for overflow dropdown that do not response for open
-            childList.value.map((child, index) => (
-              // Always wrap provider to avoid sub node re-mount
-              <MenuContextProvider
-                key={child.key}
-                overflowDisabled={index > lastVisibleIndex.value}
-                classNames={menuClassNames}
-                styles={styles}
-              >
-                {child}
-              </MenuContextProvider>
-            ));
-
-      // >>>>> Container
-      const container = (
-        <Overflow
-          id={id}
-          ref={containerRef as any}
-          prefixCls={`${prefixCls}-overflow`}
-          component="ul"
-          itemComponent={MenuItem}
-          class={clsx(
-            prefixCls,
-            `${prefixCls}-root`,
-            `${prefixCls}-${internalMode.value}`,
-            className,
-            {
-              [`${prefixCls}-inline-collapsed`]: internalInlineCollapsed.value,
-              [`${prefixCls}-rtl`]: isRtl.value,
-            },
-            rootClassName,
-          )}
-          dir={direction}
-          style={style}
-          role="menu"
-          tabindex={tabindex}
-          data={wrappedChildList}
-          renderRawItem={(node) => node}
-          renderRawRest={(omitItems) => {
-            // We use origin list since wrapped list use context to prevent open
-            const len = omitItems.length;
-
-            const originOmitItems = len ? childList.value.slice(-len) : null;
-
-            return (
-              <SubMenu
-                eventKey={OVERFLOW_KEY}
-                title={overflowedIndicator}
-                disabled={allVisible.value}
-                internalPopupClose={len === 0}
-                popupClassName={overflowedIndicatorPopupClassName}
-              >
-                {originOmitItems}
-              </SubMenu>
-            );
-          }}
-          maxCount={internalMode.value !== 'horizontal' || disabledOverflow ? Overflow.INVALIDATE : Overflow.RESPONSIVE}
-          ssr="full"
-          data-menu-list
-          onVisibleChange={(newLastIndex) => {
-            lastVisibleIndex.value = newLastIndex;
-          }}
-          onKeydown={onInternalKeyDown}
-          {...restProps}
-        />
-      );
       // >>>>> Render
       return (
         <PrivateContextProvider value={privateContext.value}>
@@ -646,7 +649,9 @@ const Menu = defineComponent(
               onOpenChange={onInternalOpenChange}
               popupRender={popupRender}
             >
-              <PathUserContextProvider value={pathUserContext.value}>{container}</PathUserContextProvider>
+              <PathUserContextProvider value={pathUserContext.value}>
+                <Container></Container>
+              </PathUserContextProvider>
 
               {/* Measure menu keys. Add `display: none` to avoid some developer miss use the Menu */}
               <div style={{ display: 'none' }} aria-hidden>

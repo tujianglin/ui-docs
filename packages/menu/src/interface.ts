@@ -1,7 +1,7 @@
+import type { Key, RenderNode, VueNode } from '@vc-com/util/lib/types';
 import type { CSSProperties } from 'vue';
 import type { KeyboardEvent, MouseEvent } from 'vue-jsx-vapor';
-import type { Key, RenderNode, VueNode } from '../../util/src/types';
-import type { SubMenuProps } from './SubMenu';
+import type { SubMenuProps } from './SubMenu/index.tsx';
 
 // ========================= Options =========================
 interface ItemSharedProps {
@@ -27,8 +27,8 @@ export interface SubMenuType extends ItemSharedProps {
   expandIcon?: RenderIconType;
 
   // >>>>> Active
-  onMouseEnter?: MenuHoverEventHandler;
-  onMouseLeave?: MenuHoverEventHandler;
+  onMouseenter?: MenuHoverEventHandler;
+  onMouseleave?: MenuHoverEventHandler;
 
   // >>>>> Popup
   popupClassName?: string;

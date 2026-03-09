@@ -1,4 +1,4 @@
-import { warning } from '../../../util/src/warning';
+import { warning } from '@vc-com/util/lib/warning';
 
 /**
  * `onClick` event return `info.item` which point to react node directly.

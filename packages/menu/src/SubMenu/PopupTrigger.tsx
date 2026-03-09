@@ -2,7 +2,7 @@ import type { CSSMotionProps } from '@vc-com/motion';
 import Trigger from '@vc-com/trigger';
 import raf from '@vc-com/util/lib/raf';
 import { clsx } from 'clsx';
-import { computed, defineComponent, ref, shallowRef, watch, type CSSProperties } from 'vue';
+import { computed, defineComponent, ref, shallowRef, watch, watchEffect, type CSSProperties } from 'vue';
 import type { VueNode } from '../../../util/src/types';
 import { useMenuContextInject } from '../context/MenuContext';
 import type { MenuMode } from '../interface';
@@ -65,6 +65,9 @@ export default defineComponent(
 
     const targetMotion = computed(() => getMotion(mode, motion, defaultMotions));
     const targetMotionRef = shallowRef(targetMotion.value);
+    watchEffect(() => {
+      targetMotionRef.value = targetMotion.value;
+    });
 
     watch(
       () => mode,
@@ -101,7 +104,6 @@ export default defineComponent(
       },
       { immediate: true },
     );
-
     return () => (
       <Trigger
         prefixCls={prefixCls}
