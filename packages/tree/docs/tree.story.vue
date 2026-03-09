@@ -1,10 +1,10 @@
 <script lang="tsx" setup>
-// import basic from './basic';
-// import animation from './animation';
+import animation from './animation';
+import basic from './basic';
 import draggable from './draggable';
 </script>
 <template>
-  <!-- <basic /> -->
-  <!-- <animation /> -->
+  <basic />
+  <animation />
   <draggable />
 </template>

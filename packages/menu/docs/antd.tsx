@@ -89,7 +89,7 @@ const children1 = [
 ];
 
 const children2 = [
-  <SubMenu title={<span class="submenu-title-wrapper">sub menu</span>} key="1">
+  <SubMenu title={<span class="submenu-title-wrapper">sub menu1</span>} key="1">
     <MenuItem key="1-1">0-1</MenuItem>
     <MenuItem key="1-2">0-2</MenuItem>
   </SubMenu>,
@@ -142,101 +142,15 @@ export const CommonMenu = defineComponent((props: CommonMenuProps) => {
         selectedKeys={['3']}
         overflowedIndicator={state.overflowedIndicator}
         {...props}
-        items={[
-          {
-            type: 'submenu',
-            label: 'sub menu',
-            key: '1',
-            children: [
-              {
-                key: '1-1',
-                label: '0-1',
-              },
-              {
-                key: '1-2',
-                label: '0-2',
-              },
-            ],
-          },
-          {
-            type: 'submenu',
-            label: 'offset sub menu 2',
-            key: '4',
-            popupOffset: [10, 15],
-            children: [
-              {
-                key: '4-1',
-                label: 'inner inner',
-              },
-              {
-                type: 'divider',
-              },
-              {
-                type: 'submenu',
-                key: '4-2',
-                label: 'sub menu 1',
-                children: [
-                  {
-                    type: 'submenu',
-                    key: '4-2-0',
-                    label: 'sub 4-2-0',
-                    children: [
-                      {
-                        key: '4-2-0-1',
-                        label: 'inner inner',
-                      },
-                      {
-                        key: '4-2-0-2',
-                        label: 'inner inner2',
-                      },
-                    ],
-                  },
-                  {
-                    key: '4-2-1',
-                    label: 'inn',
-                  },
-                  {
-                    type: 'submenu',
-                    key: '4-2-2',
-                    label: 'sub menu 4',
-                    children: [
-                      {
-                        key: '4-2-2-1',
-                        label: 'inner inner',
-                      },
-                      {
-                        key: '4-2-2-2',
-                        label: 'inner inner2',
-                      },
-                    ],
-                  },
-                  {
-                    type: 'submenu',
-                    key: '4-2-3',
-                    label: 'sub menu 3',
-                    children: [
-                      {
-                        key: '4-2-3-1',
-                        label: 'inner inner',
-                      },
-                      {
-                        key: '4-2-3-2',
-                        label: 'inner inner2',
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ]}
-      ></Menu>
+      >
+        {state.children}
+      </Menu>
     </div>
   );
 });
 
 const Demo = defineComponent(() => {
-  const HorizontalMenu = () => (
+  const horizontalMenu = (
     <CommonMenu
       mode="horizontal"
       // use openTransition for antd
@@ -264,9 +178,7 @@ const Demo = defineComponent(() => {
       <div>
         <h3>horizontal</h3>
 
-        <div style={{ margin: '20px' }}>
-          <HorizontalMenu></HorizontalMenu>
-        </div>
+        <div style={{ margin: '20px' }}>{horizontalMenu}</div>
         <h3>horizontal and click</h3>
 
         <div style={{ margin: '20px' }}>{horizontalMenu2}</div>

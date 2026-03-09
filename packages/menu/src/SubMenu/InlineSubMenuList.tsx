@@ -1,4 +1,4 @@
-import CSSMotion from '@vc-com/motion';
+import CSSMotion, { type CSSMotionProps } from '@vc-com/motion';
 import { computed, defineComponent, ref, shallowRef, watch, watchEffect } from 'vue';
 import MenuContextProvider, { useMenuContextInject } from '../context/MenuContext';
 import type { MenuMode } from '../interface';
@@ -16,7 +16,6 @@ export default defineComponent(
     const fixedMode: MenuMode = 'inline';
 
     const { prefixCls, forceSubMenuRender, motion, defaultMotions, mode } = $(useMenuContextInject());
-
     // Always use latest mode check
     const sameModeRef = shallowRef(false);
     watchEffect(() => {
@@ -41,7 +40,7 @@ export default defineComponent(
       { immediate: true },
     );
 
-    const mergedMotion = computed(() => {
+    const mergedMotion = computed<CSSMotionProps>(() => {
       const result = { ...getMotion(fixedMode, motion, defaultMotions) };
 
       // No need appear since nest inlineCollapse changed
@@ -62,31 +61,32 @@ export default defineComponent(
     });
 
     // ================================= Render =================================
-    return () => {
-      if (destroy.value) {
-        return null;
-      }
-
-      return (
-        <MenuContextProvider mode={fixedMode} locked={!sameModeRef.value}>
-          <CSSMotion
-            visible={mergedOpen.value}
-            {...mergedMotion.value}
-            forceRender={forceSubMenuRender}
-            removeOnLeave={false}
-            leavedClassName={`${prefixCls}-hidden`}
-          >
-            {({ class: motionClassName, style: motionStyle, ref: motionRef }) => {
-              return (
-                <SubMenuList id={id} class={motionClassName} style={motionStyle} ref={motionRef}>
-                  <slot></slot>
-                </SubMenuList>
-              );
-            }}
-          </CSSMotion>
-        </MenuContextProvider>
-      );
-    };
+    return () => (
+      <MenuContextProvider v-if={!destroy.value} mode={fixedMode} locked={!sameModeRef.value}>
+        <CSSMotion
+          visible={mergedOpen.value}
+          motionAppear={mergedMotion.value.motionAppear}
+          motionName={mergedMotion.value.motionName}
+          onAppearActive={mergedMotion.value.onAppearActive}
+          onAppearStart={mergedMotion.value.onAppearStart}
+          onEnterActive={mergedMotion.value.onEnterActive}
+          onEnterStart={mergedMotion.value.onEnterStart}
+          onLeaveActive={mergedMotion.value.onLeaveActive}
+          onLeaveStart={mergedMotion.value.onLeaveStart}
+          forceRender={forceSubMenuRender}
+          removeOnLeave={false}
+          leavedClassName={`${prefixCls}-hidden`}
+        >
+          {({ class: motionClassName, style: motionStyle, ref: motionRef }) => {
+            return (
+              <SubMenuList id={id} class={motionClassName} style={motionStyle} ref={motionRef}>
+                <slot></slot>
+              </SubMenuList>
+            );
+          }}
+        </CSSMotion>
+      </MenuContextProvider>
+    );
   },
   { inheritAttrs: false },
 );

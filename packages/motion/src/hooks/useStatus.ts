@@ -4,7 +4,6 @@ import {
   onMounted,
   ref,
   shallowRef,
-  toRefs,
   watch,
   type ComputedRef,
   type CSSProperties,
@@ -54,7 +53,7 @@ export default function useStatus(
     onEnterEnd,
     onLeaveEnd,
     onVisibleChanged,
-  } = toRefs(props);
+  } = $(props);
 
   const motionEnter = computed(() => props.motionEnter ?? true);
   const motionAppear = computed(() => props.motionAppear ?? true);
@@ -103,11 +102,11 @@ export default function useStatus(
 
     let canEnd: boolean | void;
     if (status.value === STATUS_APPEAR && currentActive) {
-      canEnd = onAppearEnd?.value?.(element, event);
+      canEnd = onAppearEnd?.(element, event);
     } else if (status.value === STATUS_ENTER && currentActive) {
-      canEnd = onEnterEnd?.value?.(element, event);
+      canEnd = onEnterEnd?.(element, event);
     } else if (status.value === STATUS_LEAVE && currentActive) {
-      canEnd = onLeaveEnd?.value?.(element, event);
+      canEnd = onLeaveEnd?.(element, event);
     }
 
     // Only update status when `canEnd` and not destroyed
@@ -123,23 +122,23 @@ export default function useStatus(
     switch (targetStatus) {
       case STATUS_APPEAR:
         return {
-          [STEP_PREPARE]: onAppearPrepare?.value,
-          [STEP_START]: onAppearStart?.value,
-          [STEP_ACTIVE]: onAppearActive?.value,
+          [STEP_PREPARE]: onAppearPrepare,
+          [STEP_START]: onAppearStart,
+          [STEP_ACTIVE]: onAppearActive,
         };
 
       case STATUS_ENTER:
         return {
-          [STEP_PREPARE]: onEnterPrepare?.value,
-          [STEP_START]: onEnterStart?.value,
-          [STEP_ACTIVE]: onEnterActive?.value,
+          [STEP_PREPARE]: onEnterPrepare,
+          [STEP_START]: onEnterStart,
+          [STEP_ACTIVE]: onEnterActive,
         };
 
       case STATUS_LEAVE:
         return {
-          [STEP_PREPARE]: onLeavePrepare?.value,
-          [STEP_START]: onLeaveStart?.value,
-          [STEP_ACTIVE]: onLeaveActive?.value,
+          [STEP_PREPARE]: onLeavePrepare,
+          [STEP_START]: onLeaveStart,
+          [STEP_ACTIVE]: onLeaveActive,
         };
 
       default:
@@ -176,13 +175,13 @@ export default function useStatus(
         // Patch events when motion needed
         patchMotionEvents(getDomElement());
 
-        if (motionDeadline?.value > 0) {
+        if (motionDeadline > 0) {
           clearTimeout(deadlineRef.value);
           deadlineRef.value = setTimeout(() => {
             onInternalMotionEnd({
               deadline: true,
             } as MotionEvent);
-          }, motionDeadline?.value);
+          }, motionDeadline);
         }
       }
 
@@ -238,7 +237,7 @@ export default function useStatus(
         // Leave
         if (
           (isMounted && !visible.value && motionLeave.value) ||
-          (!isMounted && motionLeaveImmediately?.value && !visible.value && motionLeave.value)
+          (!isMounted && motionLeaveImmediately && !visible.value && motionLeave.value)
         ) {
           nextStatus = STATUS_LEAVE;
         }
@@ -291,7 +290,7 @@ export default function useStatus(
     if (asyncVisible.value !== undefined && status.value === STATUS_NONE) {
       // Skip first render is invisible since it's nothing changed
       if (firstMountChangeRef.value || asyncVisible.value) {
-        onVisibleChanged?.value?.(asyncVisible.value);
+        onVisibleChanged?.(asyncVisible.value);
       }
       firstMountChangeRef.value = true;
     }

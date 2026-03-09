@@ -1,6 +1,6 @@
 import type { CSSMotionProps } from '@vc-com/motion';
 import { reactiveComputed } from '@vueuse/core';
-import { computed, defineComponent, inject, provide, reactive, type InjectionKey, type Reactive } from 'vue';
+import { defineComponent, inject, provide, reactive, type InjectionKey, type Reactive } from 'vue';
 import type { SubMenuProps } from '..';
 import type {
   BuiltinPlacements,
@@ -81,32 +81,23 @@ export const useMenuContextInject = () => {
   return inject(MenuContext, reactive({} as MenuContextProps));
 };
 
-export const MenuContextProvider = defineComponent((props: { value: MenuContextProps }) => {
-  provide(
-    MenuContext,
-    reactiveComputed(() => props.value),
-  );
-  return () => <slot></slot>;
-});
-
 export interface InheritableContextProps extends Partial<MenuContextProps> {
   locked?: boolean;
 }
 
-const InheritableContextProvider = defineComponent(
+const MenuContextProvider = defineComponent(
   ({ locked: _, ...restProps }: InheritableContextProps) => {
     const context = useMenuContextInject();
-    // @ts-ignore
-    const inheritContext = computed(() => mergeProps(context, restProps));
-    return () => (
-      <MenuContextProvider value={inheritContext.value}>
-        <slot></slot>
-      </MenuContextProvider>
+    provide(
+      MenuContext,
+      // @ts-ignore
+      reactiveComputed(() => mergeProps(context, restProps)),
     );
+    return () => <slot></slot>;
   },
   {
     inheritAttrs: false,
   },
 );
 
-export default InheritableContextProvider;
+export default MenuContextProvider;

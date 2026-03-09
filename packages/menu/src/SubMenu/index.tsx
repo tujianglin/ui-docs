@@ -349,14 +349,6 @@ const InternalSubMenu = defineComponent(
       return originNode;
     };
 
-    const domRef = ref();
-
-    defineExpose({
-      get el() {
-        return domRef.value || {};
-      },
-    });
-
     // >>>>> List node
     const ListNode = () => {
       let listNode = (

@@ -1,18 +1,7 @@
 import { findDOMNode } from '@vc-com/util/lib/Dom/findDOMNode';
 import { getNodeRef, supportRef } from '@vc-com/util/lib/ref';
 import { clsx } from 'clsx';
-import {
-  cloneVNode,
-  computed,
-  defineComponent,
-  isVNode,
-  ref,
-  toRefs,
-  unref,
-  watch,
-  type CSSProperties,
-  type VNodeRef,
-} from 'vue';
+import { cloneVNode, computed, defineComponent, isVNode, ref, unref, watch, type CSSProperties, type VNodeRef } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
 import { useMotionContext } from './context';
 import useStatus from './hooks/useStatus';
@@ -134,9 +123,9 @@ export function genCSSMotion(config: CSSMotionConfig) {
         eventProps,
       } = $(props);
 
-      const { motion: contextMotion } = toRefs(useMotionContext());
+      const { motion: contextMotion } = $(useMotionContext());
 
-      const supportMotion = computed(() => isSupportTransition(props, contextMotion?.value));
+      const supportMotion = computed(() => isSupportTransition(props, contextMotion));
 
       // Ref to the react node, it may be a HTMLElement
       const nodeRef = useRef();
