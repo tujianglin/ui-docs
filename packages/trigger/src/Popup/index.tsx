@@ -84,71 +84,67 @@ export interface PopupProps {
 }
 
 const Popup = defineComponent(
-  (props: PopupProps) => {
-    const {
-      onEsc,
-      popup,
-      class: className,
-      prefixCls,
-      style,
-      target,
+  ({
+    onEsc,
+    popup,
+    class: className,
+    prefixCls,
+    style,
+    target,
 
-      onVisibleChanged,
+    onVisibleChanged,
 
-      // Open
-      open,
-      keepDom,
-      fresh,
+    // Open
+    open,
+    keepDom,
+    fresh,
 
-      // Click
-      onClick,
+    // Click
+    onClick,
 
-      // Mask
-      mask,
+    // Mask
+    mask,
 
-      // Arrow
-      arrow,
-      arrowPos,
-      align,
+    // Arrow
+    arrow,
+    arrowPos,
+    align,
 
-      // Motion
-      motion,
-      maskMotion,
+    // Motion
+    motion,
+    maskMotion,
 
-      // Mobile
-      mobile,
+    // Mobile
+    mobile,
 
-      // Portal
-      forceRender,
-      getPopupContainer,
-      autoDestroy,
-      portal: Portal,
+    // Portal
+    forceRender,
+    getPopupContainer,
+    autoDestroy,
+    portal: Portal,
 
-      zIndex,
+    zIndex,
 
-      onMouseEnter,
-      onMouseLeave,
-      onPointerEnter,
-      onPointerDownCapture,
+    onMouseEnter,
+    onMouseLeave,
+    onPointerEnter,
+    onPointerDownCapture,
 
-      ready,
-      offsetX,
-      offsetY,
-      offsetR,
-      offsetB,
-      onAlign,
-      onPrepare,
+    ready,
+    offsetX,
+    offsetY,
+    offsetR,
+    offsetB,
+    onAlign,
+    onPrepare,
 
-      // Resize
-      onResize,
+    // Resize
+    onResize,
 
-      stretch,
-      targetWidth,
-      targetHeight,
-    } = $(props);
-
-    const popupContent = computed(() => (typeof popup === 'function' ? (popup as any)?.() : popup));
-
+    stretch,
+    targetWidth,
+    targetHeight,
+  }: PopupProps) => {
     // We can not remove holder only when motion finished.
     const isNodeVisible = computed(() => open || keepDom);
 
@@ -230,12 +226,11 @@ const Popup = defineComponent(
 
     // ========================= Render =========================
     return () => {
-      if (!show.value) {
-        return null;
-      }
+      const popupContent = typeof popup === 'function' ? (popup as any)?.() : popup;
 
       return (
         <Portal
+          v-if={show.value}
           open={forceRender || isNodeVisible.value}
           getContainer={getPopupContainer && (() => getPopupContainer(target))}
           autoDestroy={autoDestroy}
@@ -295,8 +290,8 @@ const Popup = defineComponent(
                       onPointerdownCapture: onPointerDownCapture,
                     }}
                   >
-                    {arrow && <Arrow prefixCls={prefixCls} arrow={arrow} arrowPos={arrowPos} align={align} />}
-                    <PopupContent cache={!open && !fresh}>{popupContent.value}</PopupContent>
+                    <Arrow v-if={arrow} prefixCls={prefixCls} arrow={arrow} arrowPos={arrowPos} align={align} />
+                    <PopupContent cache={!open && !fresh}>{popupContent}</PopupContent>
                   </div>
                 );
               }}

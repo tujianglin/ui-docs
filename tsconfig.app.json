@@ -26,6 +26,7 @@
       "@vc-com/*": ["packages/*/src/index.ts", "packages/*/src/index.tsx", "packages/*/src"],
       "@/*": ["playground/*"],
       "@vc-com/util/lib/*": ["packages/util/src/*"],
+      "@vc-com/render/*": ["packages/render/src/*"],
       "@vc-com/resize-observer/*": ["packages/resize-observer/src/*"],
       "@vc-com/motion/*": ["packages/motion/src/*"],
       "@vc-com/portal/*": ["packages/portal/src/*"],

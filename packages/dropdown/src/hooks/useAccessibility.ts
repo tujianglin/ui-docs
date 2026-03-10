@@ -1,6 +1,6 @@
+import KeyCode from '@vc-com/util/lib/KeyCode';
+import raf from '@vc-com/util/lib/raf';
 import { shallowRef, watch, type Ref } from 'vue';
-import KeyCode from '../../../util/src/KeyCode';
-import raf from '../../../util/src/raf';
 
 const { ESC, TAB } = KeyCode;
 

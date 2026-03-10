@@ -1,11 +1,11 @@
 import type { TriggerProps } from '@vc-com/trigger';
 import Trigger from '@vc-com/trigger';
 import type { ActionType, AlignType, AnimationType, BuildInPlacements } from '@vc-com/trigger/interface';
+import { filterEmpty } from '@vc-com/util/lib/props-util';
+import type { RenderNode } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, createVNode, defineComponent, ref, type CSSProperties } from 'vue';
 import { useFullProps, useRef } from 'vue-jsx-vapor';
-import { filterEmpty } from '../../util/src/props-util';
-import type { RenderNode } from '../../util/src/types';
 import useAccessibility from './hooks/useAccessibility';
 import Overlay from './Overlay';
 import Placements from './placements';
@@ -94,15 +94,6 @@ const Dropdown = defineComponent(
       }
     };
 
-    const getMenuElement = () => <Overlay ref={overlayRef} overlay={overlay} prefixCls={prefixCls} arrow={arrow} />;
-
-    const getMenuElementOrLambda = () => {
-      if (typeof overlay === 'function') {
-        return getMenuElement;
-      }
-      return getMenuElement();
-    };
-
     const getMinOverlayWidthMatchTrigger = () => {
       const { minOverlayWidthMatchTrigger, alignPoint } = props;
       if ('minOverlayWidthMatchTrigger' in props) {
@@ -120,12 +111,16 @@ const Dropdown = defineComponent(
       return `${prefixCls}-open`;
     };
 
-    let triggerHideAction = hideAction;
-    if (!triggerHideAction && trigger.indexOf('contextmenu') !== -1) {
-      triggerHideAction = ['click'];
-    }
-
     return () => {
+      const getMenuElement = () => <Overlay ref={overlayRef} overlay={overlay} prefixCls={prefixCls} arrow={arrow} />;
+
+      const getMenuElementOrLambda = () => {
+        if (typeof overlay === 'function') {
+          return getMenuElement;
+        }
+        return getMenuElement();
+      };
+
       const children = filterEmpty(slots?.default?.() ?? [])[0];
       const childrenNode = createVNode(children, {
         class: clsx(mergedVisible.value && getOpenClassName()),

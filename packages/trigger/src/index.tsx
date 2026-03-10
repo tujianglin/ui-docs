@@ -338,6 +338,9 @@ export function generateTrigger(PortalComponent: Component = Portal) {
       });
 
       const openRef = shallowRef(mergedOpen.value);
+      watch(mergedOpen, () => {
+        openRef.value = mergedOpen.value;
+      });
 
       const internalTriggerOpen = (nextOpen: boolean) => {
         nextTick(() => {
@@ -433,10 +436,14 @@ export function generateTrigger(PortalComponent: Component = Portal) {
 
       useWatch(mergedOpen, targetEle, popupEle, triggerAlign, onScroll);
 
-      watch([mousePos, () => popupPlacement], async () => {
-        await nextTick();
-        triggerAlign();
-      });
+      watch(
+        [mousePos, () => popupPlacement],
+        async () => {
+          await nextTick();
+          triggerAlign();
+        },
+        { deep: true, immediate: true },
+      );
 
       // When no builtinPlacements and popupAlign changed
       watch(
