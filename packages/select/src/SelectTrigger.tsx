@@ -68,7 +68,7 @@ export interface SelectTriggerProps {
   popupClassName: string;
   direction: string;
   popupMatchSelectWidth?: boolean | number;
-  popupRender?: (menu: VueNode) => VueNode;
+  popupRender?: (menu: VueNode) => any;
   getPopupContainer?: RenderDOMFunc;
   popupAlign: AlignType;
   empty: boolean;

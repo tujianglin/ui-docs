@@ -1,5 +1,5 @@
 import KeyCode from '@vc-com/util/lib/KeyCode';
-import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
+import type { VueNode } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent, getCurrentInstance, type ComponentInstance } from 'vue';
 import {
@@ -33,7 +33,7 @@ export interface HandleProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onFoc
   onOffsetChange: (value: number | 'min' | 'max', valueIndex: number) => void;
   onFocus: (e: FocusEvent<HTMLDivElement>, index: number) => void;
   onMouseEnter: (e: MouseEvent<HTMLDivElement>, index: number) => void;
-  render?: (origin: RenderNode, props: RenderProps) => VueNode;
+  render?: (origin: VueNode, props: RenderProps) => VueNode;
   onChangeComplete?: () => void;
   mock?: boolean;
 }
@@ -195,36 +195,39 @@ const Handle = defineComponent(
         };
       }
 
-      let handleNode: any = (
-        <div
-          ref={changeRef}
-          class={clsx(
-            handlePrefixCls.value,
-            {
-              [`${handlePrefixCls.value}-${valueIndex + 1}`]: valueIndex !== null && range,
-              [`${handlePrefixCls.value}-dragging`]: dragging,
-              [`${handlePrefixCls.value}-dragging-delete`]: draggingDelete,
-            },
-            classNames.handle,
-          )}
-          style={{ ...positionStyle.value, ...style, ...styles.handle }}
-          {...divProps}
-          {...restProps}
-        />
-      );
+      const HandleNode = () => {
+        let handleNode = (
+          <div
+            ref={changeRef}
+            class={clsx(
+              handlePrefixCls.value,
+              {
+                [`${handlePrefixCls.value}-${valueIndex + 1}`]: valueIndex !== null && range,
+                [`${handlePrefixCls.value}-dragging`]: dragging,
+                [`${handlePrefixCls.value}-dragging-delete`]: draggingDelete,
+              },
+              classNames.handle,
+            )}
+            style={{ ...positionStyle.value, ...style, ...styles.handle }}
+            {...divProps}
+            {...restProps}
+          />
+        );
 
-      // Customize
-      if (render) {
-        handleNode = render(handleNode, {
-          index: valueIndex,
-          prefixCls,
-          value,
-          dragging,
-          draggingDelete,
-        });
-      }
+        // Customize
+        if (render) {
+          handleNode = render(handleNode, {
+            index: valueIndex,
+            prefixCls,
+            value,
+            dragging,
+            draggingDelete,
+          }) as JSX.Element;
+        }
+        return handleNode;
+      };
 
-      return handleNode;
+      return <HandleNode></HandleNode>;
     };
   },
   { inheritAttrs: false, name: process.env.NODE_ENV !== 'production' ? 'Handle' : undefined },

@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
 import trigger from './trigger';
 
-// import basic from './basic';
+import basic from './basic';
 </script>
 <template>
-  <!-- <basic /> -->
+  <basic />
   <trigger />
 </template>

@@ -714,7 +714,7 @@ const BaseSelect = defineComponent(
           disabled={disabled}
           prefixCls={prefixCls}
           visible={mergedOpen.value}
-          popupElement={<OptionList ref={listRef} />}
+          popupElement={() => <OptionList ref={listRef} />}
           animation={animation}
           transitionName={transitionName}
           popupStyle={popupStyle}
