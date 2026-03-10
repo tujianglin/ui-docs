@@ -1,6 +1,6 @@
+import Render from '@vc-com/render';
 import { triggerFocus, type InputFocusOptions } from '@vc-com/util/lib/Dom/focus';
 import omit from '@vc-com/util/lib/omit';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent, ref, watch } from 'vue';
 import {
@@ -262,23 +262,22 @@ const Input = defineComponent(
 
         return (
           <>
-            {countConfig.show && (
-              <span
-                class={clsx(
-                  `${prefixCls}-show-count-suffix`,
-                  {
-                    [`${prefixCls}-show-count-has-suffix`]: !!suffix,
-                  },
-                  classNames?.count,
-                )}
-                style={{
-                  ...styles?.count,
-                }}
-              >
-                {dataCount}
-              </span>
-            )}
-            {resolveVNode(suffix)}
+            <span
+              v-if={countConfig.show}
+              class={clsx(
+                `${prefixCls}-show-count-suffix`,
+                {
+                  [`${prefixCls}-show-count-has-suffix`]: !!suffix,
+                },
+                classNames?.count,
+              )}
+              style={{
+                ...styles?.count,
+              }}
+            >
+              {dataCount}
+            </span>
+            <Render content={suffix}></Render>
           </>
         );
       }

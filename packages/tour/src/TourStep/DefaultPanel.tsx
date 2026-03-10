@@ -1,5 +1,5 @@
+import Render from '@vc-com/render';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { defineComponent } from 'vue';
 import type { TourStepProps } from '../interface';
@@ -43,7 +43,7 @@ export default defineComponent(
             </button>
             <div class={clsx(`${prefixCls}-header`, tourClassNames?.header)} style={styles?.header}>
               <div class={clsx(`${prefixCls}-title`, tourClassNames?.title)} style={styles?.title} key={`title-${current}`}>
-                {resolveVNode(title)}
+                <Render content={title}></Render>
               </div>
             </div>
             <div
@@ -51,7 +51,7 @@ export default defineComponent(
               style={styles?.description}
               key={`desc-${current}`}
             >
-              {resolveVNode(description)}
+              <Render content={description}></Render>
             </div>
             <div class={clsx(`${prefixCls}-footer`, tourClassNames?.footer)} style={styles?.footer}>
               <div class={`${prefixCls}-sliders`}>

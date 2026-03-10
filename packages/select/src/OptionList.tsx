@@ -1,8 +1,8 @@
+import Render from '@vc-com/render';
 import KeyCode from '@vc-com/util/lib/KeyCode';
 import useMemo from '@vc-com/util/lib/hooks/useMemo';
 import omit from '@vc-com/util/lib/omit';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import type { ListRef, ScrollConfig } from '@vc-com/virtual-list';
 import List from '@vc-com/virtual-list';
 import { clsx } from 'clsx';
@@ -300,7 +300,7 @@ const OptionList = defineComponent(
         return (
           <div role="listbox" id={`${id}_list`} class={`${itemPrefixCls}-empty`} onMousedown={onListMouseDown}>
             {/* @ts-ignore */}
-            {resolveVNode(notFoundContent)}
+            <Render content={notFoundContent}></Render>
           </div>
         );
       }
@@ -401,7 +401,11 @@ const OptionList = defineComponent(
                   style={{ ...contextStyles?.popup?.listItem, ...style }}
                 >
                   <div class={`${optionPrefixCls}-content`}>
-                    {typeof optionRender === 'function' ? optionRender(item, { index: itemIndex }) : resolveVNode(content)}
+                    {typeof optionRender === 'function' ? (
+                      optionRender(item, { index: itemIndex })
+                    ) : (
+                      <Render content={content}></Render>
+                    )}
                   </div>
                   {isVNode(menuItemSelectedIcon) || selected}
                   <TransBtn

@@ -1,3 +1,5 @@
+import Render from '@vc-com/render';
+import { useBaseSelectContextInject } from '@vc-com/select';
 import type { RefOptionListProps } from '@vc-com/select/OptionList';
 import type { TreeProps } from '@vc-com/tree';
 import Tree, { UnstableContextProvider } from '@vc-com/tree';
@@ -5,8 +7,6 @@ import type { EventDataNode, ScrollTo } from '@vc-com/tree/interface';
 import KeyCode from '@vc-com/util/lib/KeyCode';
 import { computed, defineComponent, ref, watch } from 'vue';
 import { useRef, type KeyboardEvent, type MouseEventHandler } from 'vue-jsx-vapor';
-import { useBaseSelectContextInject } from '../../select/src';
-import { resolveVNode } from '../../util/src/vnode';
 import { useLegacySelectContextInject } from './LegacyContext';
 import { useTreeSelectContextInject } from './TreeSelectContext';
 import type { DataNode, Key, SafeKey } from './interface';
@@ -324,7 +324,7 @@ const OptionList = defineComponent(
         return (
           <div role="listbox" class={`${prefixCls}-empty`} onMousedown={onListMouseDown}>
             {/* @ts-ignore */}
-            {resolveVNode(notFoundContent)}
+            <Render content={notFoundContent}></Render>
           </div>
         );
       }

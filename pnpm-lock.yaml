@@ -318,6 +318,12 @@ importers:
         specifier: 'catalog:'
         version: 3.6.0-beta.7(typescript@5.9.3)
 
+  packages/render:
+    dependencies:
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.7(typescript@5.9.3)
+
   packages/resize-observer:
     dependencies:
       '@vc-com/util':

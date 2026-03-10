@@ -1,6 +1,6 @@
+import Render from '@vc-com/render';
 import { filterEmpty } from '@vc-com/util/lib/props-util';
 import type { VueNode } from '@vc-com/util/lib/types';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { omit } from 'es-toolkit';
 import { computed, defineComponent, getCurrentInstance } from 'vue';
@@ -45,7 +45,7 @@ const InternalMenuItemGroup = defineComponent(
           style={styles?.listTitle}
           title={typeof title === 'string' ? title : undefined}
         >
-          {resolveVNode(title)}
+          <Render content={title}></Render>
         </div>
         <ul role="group" class={clsx(`${groupPrefixCls}-list`, menuClassNames?.list)} style={styles?.list}>
           <slot></slot>

@@ -1,5 +1,5 @@
+import Render from '@vc-com/render';
 import type { RenderNode } from '@vc-com/util/lib/types';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { computed, defineComponent, type CSSProperties } from 'vue';
 import Mark from './Mark';
 
@@ -22,21 +22,20 @@ const Marks = defineComponent(
   ({ prefixCls, marks, onClick }: MarksProps) => {
     const markPrefixCls = computed(() => `${prefixCls}-mark`);
 
-    return () => {
-      // Not render mark if empty
-      if (!marks.length) {
-        return null;
-      }
-      return (
-        <div class={markPrefixCls.value}>
-          {marks.map(({ value, style, label }) => (
-            <Mark key={value} prefixCls={markPrefixCls.value} style={style} value={value} onClick={onClick}>
-              {resolveVNode(label)}
-            </Mark>
-          ))}
-        </div>
-      );
-    };
+    return () => (
+      <div v-if={marks.length} class={markPrefixCls.value}>
+        <Mark
+          v-for={{ value, style, label } in marks}
+          key={value}
+          prefixCls={markPrefixCls.value}
+          style={style}
+          value={value}
+          onClick={onClick}
+        >
+          <Render content={label}></Render>
+        </Mark>
+      </div>
+    );
   },
   { inheritAttrs: false },
 );

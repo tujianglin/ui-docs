@@ -1,6 +1,6 @@
+import Render from '@vc-com/render';
 import ResizeObserver from '@vc-com/resize-observer';
 import type { VueNode } from '@vc-com/util/lib/types';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent, type CSSProperties } from 'vue';
 import { useRef, type HTMLAttributes } from 'vue-jsx-vapor';
@@ -81,7 +81,7 @@ const Filler = defineComponent(
         >
           <div style={innerStyle.value} class={clsx({ [`${prefixCls}-holder-inner`]: prefixCls })} ref={domRef} {...innerProps}>
             <slot></slot>
-            {resolveVNode(extra)}
+            <Render content={extra}></Render>
           </div>
         </ResizeObserver>
       </div>

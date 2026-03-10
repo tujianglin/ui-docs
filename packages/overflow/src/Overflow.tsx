@@ -1,6 +1,6 @@
+import Render from '@vc-com/render';
 import ResizeObserver from '@vc-com/resize-observer';
 import type { VueNode } from '@vc-com/util/lib/types';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent, nextTick, ref, watch, type CSSProperties } from 'vue';
 import type { HTMLAttributes } from 'vue-jsx-vapor';
@@ -345,7 +345,7 @@ const Overflow = defineComponent(
           registerSize={registerPrefixSize}
           display
         >
-          {resolveVNode(prefix)}
+          <Render content={prefix}></Render>
         </Item>
 
         {mergedData.value.map(internalRenderItemNode)}
@@ -365,7 +365,7 @@ const Overflow = defineComponent(
           display
           style={suffixStyle.value}
         >
-          {resolveVNode(suffix)}
+          <Render content={prefix}></Render>
         </Item>
       </Component>
     );

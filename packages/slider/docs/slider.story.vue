@@ -1,14 +1,14 @@
 <script lang="tsx" setup>
 import editable from './editable';
 
-// import vertical from './vertical';
+import vertical from './vertical';
 
-// import handle from './handle';
-// import marks from './marks';
+import handle from './handle';
+import marks from './marks';
 </script>
 <template>
-  <!-- <handle /> -->
-  <!-- <marks /> -->
-  <!-- <vertical /> -->
+  <handle />
+  <marks />
+  <vertical />
   <editable />
 </template>

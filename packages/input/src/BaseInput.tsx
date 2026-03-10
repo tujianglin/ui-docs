@@ -1,6 +1,6 @@
+import Render from '@vc-com/render';
 import { filterEmpty } from '@vc-com/util/lib/props-util';
 import type { VueNode } from '@vc-com/util/lib/types';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, createVNode, defineComponent, type VNode } from 'vue';
 import { useFullProps, useRef, type MouseEventHandler } from 'vue-jsx-vapor';
@@ -113,10 +113,10 @@ const BaseInput = defineComponent(
           classNames?.variant,
         );
 
-        const suffixNode = (suffix || allowClear) && (
-          <span class={clsx(`${prefixCls}-suffix`, classNames?.suffix)} style={styles?.suffix}>
+        const suffixNode = (
+          <span v-if={suffix || allowClear} class={clsx(`${prefixCls}-suffix`, classNames?.suffix)} style={styles?.suffix}>
             {clearIcon}
-            {suffix}
+            <Render content={suffix}></Render>
           </span>
         );
 
@@ -128,11 +128,9 @@ const BaseInput = defineComponent(
             {...dataAttrs?.affixWrapper}
             ref={containerRef}
           >
-            {prefix && (
-              <span class={clsx(`${prefixCls}-prefix`, classNames?.prefix)} style={styles?.prefix}>
-                {resolveVNode(prefix)}
-              </span>
-            )}
+            <span v-if={prefix} class={clsx(`${prefixCls}-prefix`, classNames?.prefix)} style={styles?.prefix}>
+              <Render content={prefix}></Render>
+            </span>
             {element}
             {suffixNode}
           </AffixWrapperComponent>
@@ -160,9 +158,13 @@ const BaseInput = defineComponent(
         element = (
           <GroupWrapperComponent class={mergedGroupClassName} ref={groupRef}>
             <WrapperComponent class={mergedWrapperClassName}>
-              {addonBefore && <GroupAddonComponent class={addonCls}>{resolveVNode(addonBefore)}</GroupAddonComponent>}
+              <GroupAddonComponent v-if={addonBefore} class={addonCls}>
+                <Render content={addonBefore}></Render>
+              </GroupAddonComponent>
               {element}
-              {addonAfter && <GroupAddonComponent class={addonCls}>{resolveVNode(addonAfter)}</GroupAddonComponent>}
+              <GroupAddonComponent v-if={addonAfter} class={addonCls}>
+                <Render content={addonAfter}></Render>
+              </GroupAddonComponent>
             </WrapperComponent>
           </GroupWrapperComponent>
         );

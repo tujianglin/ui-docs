@@ -1,9 +1,9 @@
+import Render from '@vc-com/render';
 import type { ActionType, AlignType, ArrowType, TriggerProps, TriggerRef } from '@vc-com/trigger';
 import Trigger from '@vc-com/trigger';
 import { useId } from '@vc-com/util/lib/hooks/useId';
 import { filterEmpty } from '@vc-com/util/lib/props-util';
 import type { VueNode } from '@vc-com/util/lib/types';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, createVNode, defineComponent, getCurrentInstance, type CSSProperties } from 'vue';
 import { placements } from './placements';
@@ -135,7 +135,7 @@ const Tooltip = defineComponent(
           prefixCls={prefixCls}
           popup={() => (
             <Popup key="content" prefixCls={prefixCls} id={mergedId.value} classNames={classNames} styles={styles}>
-              {resolveVNode(overlay)}
+              <Render content={overlay}></Render>
             </Popup>
           )}
           action={trigger}

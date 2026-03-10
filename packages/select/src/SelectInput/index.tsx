@@ -1,11 +1,12 @@
 // oxlint-disable no-unused-vars
+import Render from '@vc-com/render';
 import { getDOM } from '@vc-com/util/lib/Dom/findDOMNode';
 import { omit } from '@vc-com/util/lib/index';
 import KeyCode from '@vc-com/util/lib/KeyCode';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
 import { composeRef } from '@vc-com/util/lib/ref';
 import type { RenderNode } from '@vc-com/util/lib/types';
-import { resolveToElement, resolveVNode } from '@vc-com/util/lib/vnode';
+import { resolveToElement } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { cloneVNode, computed, defineComponent, isVNode } from 'vue';
 import {
@@ -260,7 +261,7 @@ export default defineComponent(
           >
             {/* Prefix */}
             <Affix class={clsx(`${prefixCls}-prefix`, classNames?.prefix)} style={styles?.prefix}>
-              {resolveVNode(prefix)}
+              <Render content={prefix}></Render>
             </Affix>
 
             {/* Content */}
@@ -277,7 +278,7 @@ export default defineComponent(
               )}
               style={styles?.suffix}
             >
-              {resolveVNode(suffix)}
+              <Render content={suffix}></Render>
             </Affix>
             {/* Clear Icon */}
             <Affix
@@ -290,7 +291,7 @@ export default defineComponent(
                 onClearMouseDown?.(e);
               }}
             >
-              {resolveVNode(clearIcon)}
+              <Render content={clearIcon}></Render>
             </Affix>
             <slot></slot>
           </div>

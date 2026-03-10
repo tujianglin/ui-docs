@@ -1,6 +1,6 @@
 import Overflow from '@vc-com/overflow';
+import Render from '@vc-com/render';
 import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent } from 'vue';
 import { useRef, type MouseEvent, type MouseEventHandler } from 'vue-jsx-vapor';
@@ -101,7 +101,7 @@ export default defineComponent(
         style={styles?.item}
       >
         <span class={clsx(`${selectionItemPrefixCls.value}-content`, classNames?.itemContent)} style={styles?.itemContent}>
-          {resolveVNode(content)}
+          <Render content={content}></Render>
         </span>
         <TransBtn
           v-if={closable}

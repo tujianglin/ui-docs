@@ -1,12 +1,10 @@
 import type { Slots, VNode, VNodeArrayChildren, VNodeProps } from 'vue';
 import { cloneVNode, Comment, Fragment, isRef, isVNode, render as VueRender } from 'vue';
-import type { RefObject } from './createRef';
 import { isDOM } from './Dom/findDOMNode';
 import { filterEmpty } from './props-util';
-import type { VueNode } from './types';
 import { warning } from './warning';
 
-type NodeProps = Record<string, any> & Omit<VNodeProps, 'ref'> & { ref?: VNodeProps['ref'] | RefObject };
+type NodeProps = Record<string, any> & Omit<VNodeProps, 'ref'> & { ref?: VNodeProps['ref'] };
 
 export function cloneElement<T, U>(
   vnode: VNode<T, U> | VNode<T, U>[],
@@ -119,12 +117,4 @@ export function resolveToElement(node: any) {
     if ((node as any).parentElement instanceof HTMLElement) return (node as any).parentElement;
   }
   return null;
-}
-
-export function resolveVNode<T = any>(vnode: ((_props: T) => VueNode) | VueNode, props?: T) {
-  if (vnode === undefined) return null;
-  else if (!vnode) return <slot />;
-  else if ((vnode as any)?.default) {
-    return (vnode as any).default?.(props);
-  } else return typeof vnode === 'function' ? vnode(props) : vnode;
 }

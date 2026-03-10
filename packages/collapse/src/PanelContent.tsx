@@ -1,4 +1,4 @@
-import { resolveVNode } from '@vc-com/util/lib/vnode';
+import Render from '@vc-com/render';
 import { clsx } from 'clsx';
 import { defineComponent, ref, watch } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
@@ -52,7 +52,7 @@ const PanelContent = defineComponent(
         role={role}
       >
         <div class={clsx(`${prefixCls}-body`, customizeClassNames?.body)} style={styles?.body}>
-          {resolveVNode(children)}
+          <Render content={children}></Render>
         </div>
       </div>
     );

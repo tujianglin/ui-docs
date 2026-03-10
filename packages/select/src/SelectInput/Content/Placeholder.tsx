@@ -1,4 +1,4 @@
-import { resolveVNode } from '@vc-com/util/lib/vnode';
+import Render from '@vc-com/render';
 import { clsx } from 'clsx';
 import { defineComponent } from 'vue';
 import { useBaseSelectContextInject } from '../../hooks/useBaseProps';
@@ -26,7 +26,7 @@ export default defineComponent(
             ...styles?.placeholder,
           }}
         >
-          {resolveVNode(placeholder)}
+          <Render content={placeholder}></Render>
         </div>
       );
     };

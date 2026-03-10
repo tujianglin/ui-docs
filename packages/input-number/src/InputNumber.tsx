@@ -6,9 +6,9 @@ import getMiniDecimal, {
   type DecimalClass,
   type ValueType,
 } from '@vc-com/mini-decimal';
+import Render from '@vc-com/render';
 import { triggerFocus, type InputFocusOptions } from '@vc-com/util/lib/Dom/focus';
 import type { RenderNode } from '@vc-com/util/lib/types';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { watchOnce } from '@vueuse/core';
 import { clsx } from 'clsx';
 import { computed, defineComponent, nextTick, ref, shallowRef, watch, type CSSProperties } from 'vue';
@@ -648,13 +648,13 @@ const InputNumber = defineComponent(
 
     const UpNode = () => (
       <StepHandler {...sharedHandlerProps.value} action="up" disabled={upDisabled.value}>
-        {resolveVNode(upHandler)}
+        <Render content={upHandler}></Render>
       </StepHandler>
     );
 
     const DownNode = () => (
       <StepHandler {...sharedHandlerProps.value} action="down" disabled={downDisabled.value}>
-        {resolveVNode(downHandler)}
+        <Render content={downHandler}></Render>
       </StepHandler>
     );
 
@@ -686,7 +686,7 @@ const InputNumber = defineComponent(
         <DownNode v-if={mode === 'spinner' && controls}></DownNode>
 
         <div v-if={prefix !== undefined} class={clsx(`${prefixCls}-prefix`, classNames?.prefix)} style={styles?.prefix}>
-          {resolveVNode(prefix)}
+          <Render content={prefix}></Render>
         </div>
 
         <input
@@ -711,7 +711,7 @@ const InputNumber = defineComponent(
         />
 
         <div v-if={suffix !== undefined} class={clsx(`${prefixCls}-suffix`, classNames?.suffix)} style={styles?.suffix}>
-          {resolveVNode(suffix)}
+          <Render content={suffix}></Render>
         </div>
 
         <UpNode v-if={mode === 'spinner' && controls}></UpNode>

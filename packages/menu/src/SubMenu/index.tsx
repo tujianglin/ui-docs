@@ -1,6 +1,6 @@
 import Overflow from '@vc-com/overflow';
+import Render from '@vc-com/render';
 import type { VueNode } from '@vc-com/util/lib/types';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { warning } from '@vc-com/util/lib/warning';
 import { clsx } from 'clsx';
 import { omit } from 'es-toolkit';
@@ -264,7 +264,7 @@ const InternalSubMenu = defineComponent(
           onFocus={onInternalFocus}
           {...omit(activeProps, ['active'])}
         >
-          {resolveVNode(title)}
+          <Render content={title}></Render>
           {/* Only non-horizontal mode shows the icon */}
           <ExpandIconNode></ExpandIconNode>
         </div>
@@ -302,8 +302,7 @@ const InternalSubMenu = defineComponent(
               onFocus={onInternalFocus}
               {...activeProps}
             >
-              {resolveVNode(title)}
-
+              <Render content={title}></Render>
               {/* Only non-horizontal mode shows the icon */}
               <ExpandIconNode></ExpandIconNode>
             </div>

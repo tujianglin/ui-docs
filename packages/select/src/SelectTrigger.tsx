@@ -1,7 +1,7 @@
+import Render from '@vc-com/render';
 import Trigger, { type TriggerRef } from '@vc-com/trigger';
 import type { AlignType, BuildInPlacements } from '@vc-com/trigger/interface';
 import type { VueNode } from '@vc-com/util/lib/types';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent, type CSSProperties } from 'vue';
 import { useRef, type FocusEventHandler, type MouseEventHandler } from 'vue-jsx-vapor';
@@ -164,7 +164,7 @@ const SelectTrigger = defineComponent(
         popupMotion={{ motionName: mergedTransitionName.value }}
         popup={() => (
           <div onMouseenter={onPopupMouseEnter} onMousedown={onPopupMouseDown} onBlur={onPopupBlur}>
-            {resolveVNode(popupNode.value)}
+            <Render content={popupNode.value}></Render>
           </div>
         )}
         ref={triggerPopupRef}

@@ -85,6 +85,7 @@ const App = defineComponent(() => {
     {
       key: String(initLength + 2),
       label: `This is panel header ${initLength + 2}`,
+      extra: () => <div>111</div>,
       children: (
         <Collapse
           activeKey={['1']}
@@ -100,6 +101,7 @@ const App = defineComponent(() => {
                   </form>
                 </div>
               ),
+              extra: () => <div>111</div>,
             },
           ]}
         />

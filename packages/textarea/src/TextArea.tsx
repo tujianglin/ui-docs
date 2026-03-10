@@ -2,6 +2,7 @@ import { BaseInput } from '@vc-com/input';
 import { type HolderRef } from '@vc-com/input/BaseInput';
 import useCount from '@vc-com/input/hooks/useCount';
 import { resolveOnChange } from '@vc-com/input/utils/commonUtils';
+import Render from '@vc-com/render';
 import { clsx } from 'clsx';
 import { computed, defineComponent, ref, shallowRef, watch } from 'vue';
 import {
@@ -12,7 +13,6 @@ import {
   type FocusEventHandler,
   type KeyboardEvent,
 } from 'vue-jsx-vapor';
-import { resolveVNode } from '../../util/src/vnode';
 import ResizableTextArea from './ResizableTextArea';
 import type { ResizableTextAreaRef, TextAreaProps } from './interface';
 
@@ -197,7 +197,7 @@ const TextArea = defineComponent(
       if (countConfig.show) {
         suffixNode = (
           <>
-            {resolveVNode(suffixNode)}
+            <Render content={suffixNode}></Render>
             <span class={clsx(`${prefixCls}-data-count`, classNames?.count)} style={styles?.count}>
               <DataNode></DataNode>
             </span>

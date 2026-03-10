@@ -1,6 +1,6 @@
 import CSSMotion from '@vc-com/motion';
+import Render from '@vc-com/render';
 import KeyCode from '@vc-com/util/lib/KeyCode';
-import { resolveVNode } from '@vc-com/util/lib/vnode';
 import { clsx } from 'clsx';
 import { computed, defineComponent } from 'vue';
 import { useFullProps, useRef, type HTMLAttributes } from 'vue-jsx-vapor';
@@ -108,9 +108,13 @@ const CollapsePanel = defineComponent(
             style={styles?.title}
             {...(collapsible === 'header' ? collapsibleProps.value : {})}
           >
-            {resolveVNode(header)}
+            <Render content={header}></Render>
           </span>
-          {ifExtraExist.value && <div class={`${prefixCls}-extra`}>{resolveVNode(extra)}</div>}
+          {ifExtraExist.value && (
+            <div class={`${prefixCls}-extra`}>
+              <Render content={extra}></Render>
+            </div>
+          )}
         </div>
         <CSSMotion
           visible={isActive}
