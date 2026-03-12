@@ -1,10 +1,10 @@
 /* eslint-disable default-case */
+import Render from '@vc-com/render';
 import type { useBaseSelectContextInject } from '@vc-com/select';
 import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
 import { computed, defineComponent, ref, watch } from 'vue';
 import { useFullProps, useRef } from 'vue-jsx-vapor';
-import Render from '../../../render/src/render';
 import type { DefaultOptionType, LegacyKey, SingleValueType } from '../Cascader';
 import { useCascaderContextInject } from '../context';
 import { getFullPathKeys, isLeaf, scrollIntoParentView, toPathKey, toPathKeys, toPathValueStr } from '../utils/commonUtil';

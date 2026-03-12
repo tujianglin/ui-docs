@@ -22,8 +22,8 @@ catalogs:
       specifier: ^3.6.0-beta.7
       version: 3.6.0-beta.7
     vue-jsx-vapor:
-      specifier: ^3.2.2
-      version: 3.2.2
+      specifier: 3.2.3
+      version: 3.2.3
     vue-tsc:
       specifier: ^3.2.2
       version: 3.2.2
@@ -152,12 +152,30 @@ importers:
         version: 10.2.0(eslint@9.39.2(jiti@2.6.1))
       vue-jsx-vapor:
         specifier: 'catalog:'
-        version: 3.2.2(csstype@3.2.3)(vite@8.0.0-beta.15(@types/node@24.10.4)(jiti@2.6.1)(less@4.5.1))(vue@3.6.0-beta.7(typescript@5.9.3))
+        version: 3.2.3(csstype@3.2.3)(vite@8.0.0-beta.15(@types/node@24.10.4)(jiti@2.6.1)(less@4.5.1))(vue@3.6.0-beta.7(typescript@5.9.3))
       vue-tsc:
         specifier: 'catalog:'
         version: 3.2.2(typescript@5.9.3)
 
   packages/async-validator: {}
+
+  packages/cascader:
+    dependencies:
+      '@vc-com/select':
+        specifier: workspace:*
+        version: link:../select
+      '@vc-com/tree':
+        specifier: workspace:*
+        version: link:../tree
+      '@vc-com/util':
+        specifier: workspace:*
+        version: link:../util
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.7(typescript@5.9.3)
 
   packages/checkbox:
     dependencies:
@@ -1289,85 +1307,85 @@ packages:
   '@volar/typescript@2.4.27':
     resolution: {integrity: sha512-eWaYCcl/uAPInSK2Lze6IqVWaBu/itVqR5InXcHXFyles4zO++Mglt3oxdgj75BDcv1Knr9Y93nowS8U3wqhxg==}
 
-  '@vue-jsx-vapor/compiler-rs-android-arm-eabi@3.2.2':
-    resolution: {integrity: sha512-1UZljBviPaGppWgjLR4dT7B6FsErFMc78p+h76XH4jqPPkGuDq0itRjE6YYNeUCEmgpFC01Rwyjsko0hiCBMgQ==}
+  '@vue-jsx-vapor/compiler-rs-android-arm-eabi@3.2.3':
+    resolution: {integrity: sha512-wdX0OHecwaNDNUbgIKVZYDyNT5GyZ3NanC7enuJbtOOMra5unt4dMOP/LFTg+SdrZx1vTG3qwIBhioiqtlzQnA==}
     cpu: [arm]
     os: [android]
 
-  '@vue-jsx-vapor/compiler-rs-android-arm64@3.2.2':
-    resolution: {integrity: sha512-uC4yGpzNsV8WTPnA36kQCZhuhb204WOTkDdrEBI+QUU4hx1fqPKpdIMkAoOx7dfU2SfyyXwnhZklL3PdBzOPvQ==}
+  '@vue-jsx-vapor/compiler-rs-android-arm64@3.2.3':
+    resolution: {integrity: sha512-N67EtXXN3m4r3V8d7CVNE67IN6HpafmFxRrC2EbdP3TDvbdFdSZP0shqyPdOsEFcLbxhU2XvfQDbqksQoFHZtA==}
     cpu: [arm64]
     os: [android]
 
-  '@vue-jsx-vapor/compiler-rs-darwin-arm64@3.2.2':
-    resolution: {integrity: sha512-9aF0LDmi3VZDEyXXxcIMU5jusRanUhYfkjfg0p3NCfDkMr3vk+AAcGUSe7spyu7bkKk9B2qrZFcH58FYNkBOLw==}
+  '@vue-jsx-vapor/compiler-rs-darwin-arm64@3.2.3':
+    resolution: {integrity: sha512-D5pi9xMXjihw+BIAdKS9XKomenyXIctB0Jvyngvry9Uv80nKyxfTt95eC67m7FPXE/pLHKC7MvYE9uPWmHyn3Q==}
     cpu: [arm64]
     os: [darwin]
 
-  '@vue-jsx-vapor/compiler-rs-darwin-x64@3.2.2':
-    resolution: {integrity: sha512-AqBlaobH4NsgYy6RFF2UWAPci3WgdZwjhj0NOnvNNESz+iBf+XitzJF5eNknAsGjrytmnZ1karkvEH4huZTX9A==}
+  '@vue-jsx-vapor/compiler-rs-darwin-x64@3.2.3':
+    resolution: {integrity: sha512-2hQv5pA+2zPTSrh122xDWlkQ0m2e83vmcqI/4aHOFT+Az0JMraDhr3hcF/SAajyA90Sz0vWaU2/r7xidYy5z2g==}
     cpu: [x64]
     os: [darwin]
 
-  '@vue-jsx-vapor/compiler-rs-freebsd-x64@3.2.2':
-    resolution: {integrity: sha512-RXT9FWS6TAnZcaLPLFIeEj8PkDnuAk2OcTg35Sl3EW2SRwalsIplbLHGXwy7ilGepbIkd0RuTs8N95nbgdeKrw==}
+  '@vue-jsx-vapor/compiler-rs-freebsd-x64@3.2.3':
+    resolution: {integrity: sha512-pueYDBQlhFwcO4iKPPHmv8/yZDdEhG07c4tx+rDA+eUgk5UgCHvYyfi6NOE60ZZ7VTO7DseVd2yQyAjcBky0Lg==}
     cpu: [x64]
     os: [freebsd]
 
-  '@vue-jsx-vapor/compiler-rs-linux-arm-gnueabihf@3.2.2':
-    resolution: {integrity: sha512-kVe6EEcut27eeGQgTSZwpsKQ6AmPIa5cCae92AvDboZRmQA6jm/1nDbGZY6xFEY650hSr2iHZsp8RrqnE++HEQ==}
+  '@vue-jsx-vapor/compiler-rs-linux-arm-gnueabihf@3.2.3':
+    resolution: {integrity: sha512-+UcAfjxkalT3BRA3yRGQYc06NX4Vno4jvnB3fwTK/9wQuUImOL+6L9P8UI70ZH2q0o8j0UVpxrXTpz9RFwkZLA==}
     cpu: [arm]
     os: [linux]
 
-  '@vue-jsx-vapor/compiler-rs-linux-arm64-gnu@3.2.2':
-    resolution: {integrity: sha512-tAgv+VvEh+YNdZFTxNDyixBZj4U/huHHgQ6Cdt3ewc0V2is5uH+siTSpGKZcxsdqlfD4O+vAo1mcYO4Kpg0mIw==}
+  '@vue-jsx-vapor/compiler-rs-linux-arm64-gnu@3.2.3':
+    resolution: {integrity: sha512-EToP8/EZZ3o0ZlHabDhhkLKm1gRMyCz+GINZ+606vmeFG0rDk/6Bf13TgSc6czFqvf3QgA0ext50WZhn4PeODw==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@vue-jsx-vapor/compiler-rs-linux-arm64-musl@3.2.2':
-    resolution: {integrity: sha512-hsL+h9zZnOQPnoYfLZhBgl97/pqwVg791TE7aRnIJIEo1+LNYHIIIBD4VySdzV8SR/R1aqj/O+s3jNAxy0yA0w==}
+  '@vue-jsx-vapor/compiler-rs-linux-arm64-musl@3.2.3':
+    resolution: {integrity: sha512-YNKoEcwgAhYTpUxdiRQYpeO12pb8sJb82JDlweFQPT0T8mSGXDAsc1MIjetfIng1sLdXh3KXrgQIvQN1zMujMQ==}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@vue-jsx-vapor/compiler-rs-linux-x64-gnu@3.2.2':
-    resolution: {integrity: sha512-8C88GTG3nQ5QbOd4vQXMjhi1w0Qqsh9R80s1H3NM8NyScOoNPGYNu40PiMV0b6BRZLfIkOtpMe85koehHTQcbA==}
+  '@vue-jsx-vapor/compiler-rs-linux-x64-gnu@3.2.3':
+    resolution: {integrity: sha512-4PLQ5gGj7PYgZsWVhPgUfX7MlWUcZM/WiPDAuwD8E1lodEFlaD3vsM+nC1SJFlnRHp0+VJHzmD/tXHLK7jy01Q==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@vue-jsx-vapor/compiler-rs-linux-x64-musl@3.2.2':
-    resolution: {integrity: sha512-qk3nT8DcOxp+W4NQbKHRQeXSfVXrUVVPOmAaxZdNDFMdERYpQ7cGqpqrhioKtCkvjKrh14Y6X+UdZM3HAz8LTA==}
+  '@vue-jsx-vapor/compiler-rs-linux-x64-musl@3.2.3':
+    resolution: {integrity: sha512-et9hQ3/i41uZyfWiKzIB85ZVpD7/iQ7ZSJdXYKKsGc8JaXZyZ4o/QjZ6v7BtLmnAiRB8VPEjFuQ0Jc/IDrk5lA==}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@vue-jsx-vapor/compiler-rs-wasm32-wasi@3.2.2':
-    resolution: {integrity: sha512-wpwsMh8e/9N+hhPJcwPfx/jO7CVv2wT9O0V9UhjZQQBG2Q1yLtUa00bJtE0KK5lgrBfSSr8OeSK4OfzuJGH5JA==}
+  '@vue-jsx-vapor/compiler-rs-wasm32-wasi@3.2.3':
+    resolution: {integrity: sha512-Ex30Y1EkPT/xHfYRZlpK3ubRiyiymgVTnuOYc/qNbUhmiKhwLuC9B5iash66/cILLUDrLRnSTk0QohxBvWkD0w==}
     engines: {node: '>=14.0.0'}
     cpu: [wasm32]
 
-  '@vue-jsx-vapor/compiler-rs-win32-arm64-msvc@3.2.2':
-    resolution: {integrity: sha512-UOq2SN0oXGvlCY4rxYd7PZ7MXKKG0AaCUZzQwRKcTo68dgO9Lf+r98ZT8cpzbyxT9L7nwPvsn3WIJRyJIJjgqQ==}
+  '@vue-jsx-vapor/compiler-rs-win32-arm64-msvc@3.2.3':
+    resolution: {integrity: sha512-wiX73K31mwJytiBWLIlS3RAHduKTWypfvLRmFoxoiKw0dO9DhzjWBxa2VBO4pbHiB8c9OvzuUapwRygOE2rivg==}
     cpu: [arm64]
     os: [win32]
 
-  '@vue-jsx-vapor/compiler-rs-win32-ia32-msvc@3.2.2':
-    resolution: {integrity: sha512-IEjVVsNN47857wcdAdLdZUdnGM/nVtMGmjtwb7WyEPuLfQzhLMMw52he34nQi5qjhh+XauMJTa7/6b2FCgQSUw==}
+  '@vue-jsx-vapor/compiler-rs-win32-ia32-msvc@3.2.3':
+    resolution: {integrity: sha512-BCdQRoCv2UZoDzjkhXkinuLygRBvcHayQhgkjpWvMugqcodsQYIUYOlrqDQkGiLpu/wC6Z10S4jfW64cc6DE/Q==}
     cpu: [ia32]
     os: [win32]
 
-  '@vue-jsx-vapor/compiler-rs-win32-x64-msvc@3.2.2':
-    resolution: {integrity: sha512-JRlhSxyv1/ToxNZVGkJjyDPIl7hhHeD8YGMmiVWIVwyRNvDkDq0vzNZ93rAL7f3k7ivg0cwYCU6UlC7d+rXP/g==}
+  '@vue-jsx-vapor/compiler-rs-win32-x64-msvc@3.2.3':
+    resolution: {integrity: sha512-tzfnQA+XGBN3jfsshxJMIiqt+OvOATTYCZ/KpG+XZ99m8fvnH763rgZwFUZJFvlPJk40UVgHk+UfXK388LhAQw==}
     cpu: [x64]
     os: [win32]
 
-  '@vue-jsx-vapor/compiler-rs@3.2.2':
-    resolution: {integrity: sha512-IY0F/12oTNcpClwrAKTgx/r8AO4yAr1Xp0rFvb3VkWjb6pg9x7J2R4xN1BI/r4rxWByVSckR4+Czkp4A7BSSQA==}
+  '@vue-jsx-vapor/compiler-rs@3.2.3':
+    resolution: {integrity: sha512-dKMEUs/L4iU6iGUV8uMC/I80ubxDu0XpCQG82rjzBEyfBqOLiZrs8utsCbEZ9ChKp2m1RvnX8bSDBxYEm7j2Fg==}
 
-  '@vue-jsx-vapor/macros@3.2.2':
-    resolution: {integrity: sha512-fxhOrvvThPsPUNrDsGBLWLfWl1NrJryarQQJ/7Q0uDiCDc4qIuHj5I4iAUX+/IsyzmWsLZK3iUJokczSqRQ8Cg==}
+  '@vue-jsx-vapor/macros@3.2.3':
+    resolution: {integrity: sha512-DkYXudJpIqVoXo5ZSPpE+t/4KF2zNh37DFQ2GdAfhg+BgdFD17K7MAYWgJD64kblD6f8fjRxPfadcXZZesPx5g==}
     peerDependencies:
       '@nuxt/kit': ^3
       '@nuxt/schema': ^3
@@ -1390,8 +1408,8 @@ packages:
       webpack:
         optional: true
 
-  '@vue-jsx-vapor/runtime@3.2.2':
-    resolution: {integrity: sha512-Y+/3R+8pgjXSjLdnEmVz+yEpmy1SGTVsSaLDSfytrILtdSJb2sf0ExEDx/0gbGGQ2QUUJN7Phl4lmGEAQK80rA==}
+  '@vue-jsx-vapor/runtime@3.2.3':
+    resolution: {integrity: sha512-JIR5aPsyWd2zt+XxthUlGC7qY/9/+MF1EQV9R+kDPj1w40RpmZQSCUc3X33Lmdba2AVgjaq6DCb5xmTy7Hcl3Q==}
     peerDependencies:
       csstype: ^3.2.3
       vue: 3.6.0-beta.6
@@ -3102,8 +3120,8 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
 
-  vue-jsx-vapor@3.2.2:
-    resolution: {integrity: sha512-VjBTs90UsqlPY0hOL5ueXv5FlM90Y3w1YiAQhpWUZLj/6Qsq91b7Jz8xhwjG3tcXuUK5lVlEGTNn9Wb9LRSMzQ==}
+  vue-jsx-vapor@3.2.3:
+    resolution: {integrity: sha512-Gzledw3vqSmi3qwfrEAG1Ql2lT5GIJJ2z9sQ6Ux2BgCSb9aYJMuzQubqH4MPADoKrUukszjGJj/NUt70p2AdXg==}
     peerDependencies:
       '@nuxt/kit': ^3
       '@nuxt/schema': ^3
@@ -4046,68 +4064,68 @@ snapshots:
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
 
-  '@vue-jsx-vapor/compiler-rs-android-arm-eabi@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-android-arm-eabi@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-android-arm64@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-android-arm64@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-darwin-arm64@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-darwin-arm64@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-darwin-x64@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-darwin-x64@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-freebsd-x64@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-freebsd-x64@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-linux-arm-gnueabihf@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-linux-arm-gnueabihf@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-linux-arm64-gnu@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-linux-arm64-gnu@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-linux-arm64-musl@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-linux-arm64-musl@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-linux-x64-gnu@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-linux-x64-gnu@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-linux-x64-musl@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-linux-x64-musl@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-wasm32-wasi@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-wasm32-wasi@3.2.3':
     dependencies:
       '@napi-rs/wasm-runtime': 1.1.1
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-win32-arm64-msvc@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-win32-arm64-msvc@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-win32-ia32-msvc@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-win32-ia32-msvc@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs-win32-x64-msvc@3.2.2':
+  '@vue-jsx-vapor/compiler-rs-win32-x64-msvc@3.2.3':
     optional: true
 
-  '@vue-jsx-vapor/compiler-rs@3.2.2':
+  '@vue-jsx-vapor/compiler-rs@3.2.3':
     optionalDependencies:
-      '@vue-jsx-vapor/compiler-rs-android-arm-eabi': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-android-arm64': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-darwin-arm64': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-darwin-x64': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-freebsd-x64': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-linux-arm-gnueabihf': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-linux-arm64-gnu': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-linux-arm64-musl': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-linux-x64-gnu': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-linux-x64-musl': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-wasm32-wasi': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-win32-arm64-msvc': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-win32-ia32-msvc': 3.2.2
-      '@vue-jsx-vapor/compiler-rs-win32-x64-msvc': 3.2.2
+      '@vue-jsx-vapor/compiler-rs-android-arm-eabi': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-android-arm64': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-darwin-arm64': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-darwin-x64': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-freebsd-x64': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-linux-arm-gnueabihf': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-linux-arm64-gnu': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-linux-arm64-musl': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-linux-x64-gnu': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-linux-x64-musl': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-wasm32-wasi': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-win32-arm64-msvc': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-win32-ia32-msvc': 3.2.3
+      '@vue-jsx-vapor/compiler-rs-win32-x64-msvc': 3.2.3
 
-  '@vue-jsx-vapor/macros@3.2.2(vite@8.0.0-beta.15(@types/node@24.10.4)(jiti@2.6.1)(less@4.5.1))(vue@3.6.0-beta.7(typescript@5.9.3))':
+  '@vue-jsx-vapor/macros@3.2.3(vite@8.0.0-beta.15(@types/node@24.10.4)(jiti@2.6.1)(less@4.5.1))(vue@3.6.0-beta.7(typescript@5.9.3))':
     dependencies:
       hash-sum: 2.0.0
       magic-string: 0.30.21
@@ -4118,7 +4136,7 @@ snapshots:
     optionalDependencies:
       vite: 8.0.0-beta.15(@types/node@24.10.4)(jiti@2.6.1)(less@4.5.1)
 
-  '@vue-jsx-vapor/runtime@3.2.2(csstype@3.2.3)(vue@3.6.0-beta.7(typescript@5.9.3))':
+  '@vue-jsx-vapor/runtime@3.2.3(csstype@3.2.3)(vue@3.6.0-beta.7(typescript@5.9.3))':
     dependencies:
       csstype: 3.2.3
       vue: 3.6.0-beta.7(typescript@5.9.3)
@@ -5777,11 +5795,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vue-jsx-vapor@3.2.2(csstype@3.2.3)(vite@8.0.0-beta.15(@types/node@24.10.4)(jiti@2.6.1)(less@4.5.1))(vue@3.6.0-beta.7(typescript@5.9.3)):
+  vue-jsx-vapor@3.2.3(csstype@3.2.3)(vite@8.0.0-beta.15(@types/node@24.10.4)(jiti@2.6.1)(less@4.5.1))(vue@3.6.0-beta.7(typescript@5.9.3)):
     dependencies:
-      '@vue-jsx-vapor/compiler-rs': 3.2.2
-      '@vue-jsx-vapor/macros': 3.2.2(vite@8.0.0-beta.15(@types/node@24.10.4)(jiti@2.6.1)(less@4.5.1))(vue@3.6.0-beta.7(typescript@5.9.3))
-      '@vue-jsx-vapor/runtime': 3.2.2(csstype@3.2.3)(vue@3.6.0-beta.7(typescript@5.9.3))
+      '@vue-jsx-vapor/compiler-rs': 3.2.3
+      '@vue-jsx-vapor/macros': 3.2.3(vite@8.0.0-beta.15(@types/node@24.10.4)(jiti@2.6.1)(less@4.5.1))(vue@3.6.0-beta.7(typescript@5.9.3))
+      '@vue-jsx-vapor/runtime': 3.2.3(csstype@3.2.3)(vue@3.6.0-beta.7(typescript@5.9.3))
       '@vue/shared': 3.6.0-beta.6
       pathe: 2.0.3
       ts-macro: 0.3.7

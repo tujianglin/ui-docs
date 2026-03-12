@@ -187,7 +187,7 @@ export interface BaseSelectProps extends BaseSelectPrivateProps, AriaAttributes,
   popupStyle?: CSSProperties;
   popupClassName?: string;
   popupMatchSelectWidth?: boolean | number;
-  popupRender?: (menu: () => VueNode) => VueNode;
+  popupRender?: (menu: VueNode) => VueNode;
   popupAlign?: AlignType;
 
   placement?: Placement;
@@ -714,7 +714,7 @@ const BaseSelect = defineComponent(
           disabled={disabled}
           prefixCls={prefixCls}
           visible={mergedOpen.value}
-          popupElement={() => <OptionList ref={listRef} />}
+          popupElement={<OptionList ref={listRef} />}
           animation={animation}
           transitionName={transitionName}
           popupStyle={popupStyle}

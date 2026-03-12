@@ -1,7 +1,7 @@
+import useControlledState from '@vc-com/util/src/hooks/useControlledState';
+import type { RenderNode } from '@vc-com/util/src/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent } from 'vue';
-import useControlledState from '../../util/src/hooks/useControlledState';
-import type { RenderNode } from '../../util/src/types';
 import type { CascaderProps, DefaultOptionType, InternalValueType, SingleValueType } from './Cascader';
 import { CascaderContextProvider, type CascaderContextProps } from './context';
 import useMissingValues from './hooks/useMissingValues';
@@ -36,7 +36,7 @@ export type PickType =
 export type PanelProps<
   OptionType extends DefaultOptionType = DefaultOptionType,
   ValueField extends keyof OptionType = keyof OptionType,
-  Multiple extends boolean | RenderNode = false,
+  Multiple extends boolean | RenderNode = boolean,
 > = Pick<CascaderProps<OptionType, ValueField, Multiple>, PickType>;
 
 function noop() {}
@@ -160,7 +160,7 @@ export default defineComponent(
           )}
           style={style}
         >
-          {isEmpty ? (
+          {isEmpty.value ? (
             notFoundContent
           ) : (
             <RawOptionList

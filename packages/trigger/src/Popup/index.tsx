@@ -1,6 +1,7 @@
 import type { CSSMotionProps } from '@vc-com/motion';
 import CSSMotion from '@vc-com/motion';
 import type { PortalProps } from '@vc-com/portal';
+import Render from '@vc-com/render';
 import ResizeObserver, { type ResizeObserverProps } from '@vc-com/resize-observer';
 import { composeRef } from '@vc-com/util/lib/ref';
 import { reactiveComputed } from '@vueuse/core';
@@ -225,82 +226,80 @@ const Popup = defineComponent(
     });
 
     // ========================= Render =========================
-    return () => {
-      const popupContent = typeof popup === 'function' ? (popup as any)?.() : popup;
+    return () => (
+      <Portal
+        v-if={show.value}
+        open={forceRender || isNodeVisible.value}
+        getContainer={getPopupContainer && (() => getPopupContainer(target))}
+        autoDestroy={autoDestroy}
+        onEsc={onEsc}
+      >
+        <Mask
+          prefixCls={prefixCls}
+          open={open}
+          zIndex={zIndex}
+          mask={mergedMask}
+          motion={mergedMaskMotion}
+          mobile={isMobile.value}
+        />
+        <ResizeObserver onResize={onInternalResize} disabled={!open}>
+          <CSSMotion
+            motionAppear
+            motionEnter
+            motionLeave
+            removeOnLeave={false}
+            forceRender={forceRender}
+            leavedClassName={`${prefixCls}-hidden`}
+            {...mergedPopupMotion}
+            onAppearPrepare={onPrepare}
+            onEnterPrepare={onPrepare}
+            visible={open}
+            onVisibleChanged={(nextVisible) => {
+              motion?.onVisibleChanged?.(nextVisible);
+              onVisibleChanged(nextVisible);
+            }}
+          >
+            {({ class: motionClassName, style: motionStyle, ref: motionRef }) => {
+              const cls = clsx(prefixCls, motionClassName, className, {
+                [`${prefixCls}-mobile`]: isMobile.value,
+              });
 
-      return (
-        <Portal
-          v-if={show.value}
-          open={forceRender || isNodeVisible.value}
-          getContainer={getPopupContainer && (() => getPopupContainer(target))}
-          autoDestroy={autoDestroy}
-          onEsc={onEsc}
-        >
-          <Mask
-            prefixCls={prefixCls}
-            open={open}
-            zIndex={zIndex}
-            mask={mergedMask}
-            motion={mergedMaskMotion}
-            mobile={isMobile.value}
-          />
-          <ResizeObserver onResize={onInternalResize} disabled={!open}>
-            <CSSMotion
-              motionAppear
-              motionEnter
-              motionLeave
-              removeOnLeave={false}
-              forceRender={forceRender}
-              leavedClassName={`${prefixCls}-hidden`}
-              {...mergedPopupMotion}
-              onAppearPrepare={onPrepare}
-              onEnterPrepare={onPrepare}
-              visible={open}
-              onVisibleChanged={(nextVisible) => {
-                motion?.onVisibleChanged?.(nextVisible);
-                onVisibleChanged(nextVisible);
-              }}
-            >
-              {({ class: motionClassName, style: motionStyle, ref: motionRef }) => {
-                const cls = clsx(prefixCls, motionClassName, className, {
-                  [`${prefixCls}-mobile`]: isMobile.value,
-                });
-
-                return (
-                  <div
-                    ref={composeRef(domRef, motionRef)}
-                    class={cls}
-                    style={
-                      {
-                        '--arrow-x': `${arrowPos.x || 0}px`,
-                        '--arrow-y': `${arrowPos.y || 0}px`,
-                        ...offsetStyle.value,
-                        ...miscStyle.value,
-                        ...motionStyle,
-                        boxSizing: 'border-box',
-                        zIndex,
-                        ...style,
-                      } as CSSProperties
-                    }
-                    onMouseenter={onMouseEnter}
-                    onMouseleave={onMouseLeave}
-                    onPointerenter={onPointerEnter}
-                    onClick={onClick}
-                    {...{
-                      onPointerdownCapture: onPointerDownCapture,
-                    }}
-                  >
-                    <Arrow v-if={arrow} prefixCls={prefixCls} arrow={arrow} arrowPos={arrowPos} align={align} />
-                    <PopupContent cache={!open && !fresh}>{popupContent}</PopupContent>
-                  </div>
-                );
-              }}
-            </CSSMotion>
-          </ResizeObserver>
-          <slot></slot>
-        </Portal>
-      );
-    };
+              return (
+                <div
+                  ref={composeRef(domRef, motionRef)}
+                  class={cls}
+                  style={
+                    {
+                      '--arrow-x': `${arrowPos.x || 0}px`,
+                      '--arrow-y': `${arrowPos.y || 0}px`,
+                      ...offsetStyle.value,
+                      ...miscStyle.value,
+                      ...motionStyle,
+                      boxSizing: 'border-box',
+                      zIndex,
+                      ...style,
+                    } as CSSProperties
+                  }
+                  onMouseenter={onMouseEnter}
+                  onMouseleave={onMouseLeave}
+                  onPointerenter={onPointerEnter}
+                  onClick={onClick}
+                  {...{
+                    onPointerdownCapture: onPointerDownCapture,
+                  }}
+                >
+                  <Arrow v-if={arrow} prefixCls={prefixCls} arrow={arrow} arrowPos={arrowPos} align={align} />
+                  <PopupContent cache={!open && !fresh}>
+                    <Render content={popup}></Render>
+                  </PopupContent>
+                </div>
+              );
+            }}
+          </CSSMotion>
+        </ResizeObserver>
+        <slot></slot>
+      </Portal>
+    );
   },
   { inheritAttrs: false },
 );

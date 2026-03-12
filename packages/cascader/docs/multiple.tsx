@@ -31,25 +31,25 @@ const Demo = defineComponent(() => {
 
   const loadData = (selectedOptions) => {
     const targetOption = selectedOptions[selectedOptions.length - 1];
-    targetOption.loading = true;
+    // targetOption.loading = true;
 
-    // load options lazily
-    setTimeout(() => {
-      targetOption.loading = false;
-      targetOption.children = [
-        {
-          label: `${targetOption.label} Dynamic 1`,
-          value: 'dynamic1',
-          disableCheckbox: false,
-        },
-        {
-          label: `${targetOption.label} Dynamic 2`,
-          value: 'dynamic2',
-          disableCheckbox: true,
-        },
-      ];
-      options.value = [...options.value];
-    }, 1000);
+    // // load options lazily
+    // setTimeout(() => {
+    //   targetOption.loading = false;
+    targetOption.children = [
+      {
+        label: `${targetOption.label} Dynamic 1`,
+        value: 'dynamic1',
+        disableCheckbox: false,
+      },
+      {
+        label: `${targetOption.label} Dynamic 2`,
+        value: 'dynamic2',
+        disableCheckbox: true,
+      },
+    ];
+    options.value = [...options.value];
+    // }, 1000);
   };
 
   // 直接选中一级选项，但是此时二级选项没有全部选中

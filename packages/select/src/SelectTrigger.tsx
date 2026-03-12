@@ -58,7 +58,7 @@ export interface SelectTriggerProps {
   prefixCls: string;
   disabled: boolean;
   visible: boolean;
-  popupElement: () => VueNode;
+  popupElement: VueNode;
 
   animation?: string;
   transitionName?: string;
@@ -68,7 +68,7 @@ export interface SelectTriggerProps {
   popupClassName: string;
   direction: string;
   popupMatchSelectWidth?: boolean | number;
-  popupRender?: (menu: () => VueNode) => any;
+  popupRender?: (menu: VueNode) => any;
   getPopupContainer?: RenderDOMFunc;
   popupAlign: AlignType;
   empty: boolean;
@@ -153,6 +153,7 @@ const SelectTrigger = defineComponent(
     defineExpose({
       getPopupElement: () => triggerPopupRef.value?.popupElement,
     });
+
     return () => (
       <Trigger
         {...restProps}
@@ -162,11 +163,11 @@ const SelectTrigger = defineComponent(
         builtinPlacements={mergedBuiltinPlacements.value}
         prefixCls={popupPrefixCls.value}
         popupMotion={{ motionName: mergedTransitionName.value }}
-        popup={() => (
+        popup={
           <div onMouseenter={onPopupMouseEnter} onMousedown={onPopupMouseDown} onBlur={onPopupBlur}>
             <Render content={popupNode.value}></Render>
           </div>
-        )}
+        }
         ref={triggerPopupRef}
         stretch={stretch.value}
         popupAlign={popupAlign}
