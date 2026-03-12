@@ -66,8 +66,10 @@ export default defineComponent(
     const inputEditable = computed<boolean>(() => showSearch && !disabled);
 
     // Props from context with safe defaults
+    // @ts-ignore
     const removeIcon = computed(() => removeIconFromContext ?? '×');
     const maxTagPlaceholder = computed(
+      // @ts-ignore
       () => maxTagPlaceholderFromContext ?? ((omittedValues: DisplayValueType[]) => `+ ${omittedValues.length} ...`),
     );
     const tagRender = computed<((props: CustomTagProps) => VueNode) | undefined>(() => tagRenderFromContext);
@@ -107,7 +109,7 @@ export default defineComponent(
           v-if={closable}
           class={clsx(`${selectionItemPrefixCls.value}-remove`, classNames?.itemRemove)}
           style={styles?.itemRemove}
-          onMouseDown={onPreventMouseDown}
+          onMousedown={onPreventMouseDown}
           onClick={onClose}
           customizeIcon={removeIcon.value}
         >
@@ -125,12 +127,12 @@ export default defineComponent(
       isMaxTag?: boolean,
       info?: { index: number },
     ) => {
-      const onMouseDown = (e: MouseEvent) => {
+      const onMousedown = (e: MouseEvent) => {
         onPreventMouseDown(e);
         onToggleOpen(!triggerOpen);
       };
       return (
-        <span onMousedown={onMouseDown}>
+        <span onMousedown={onMousedown}>
           {tagRender.value({
             label: content,
             value,
@@ -200,7 +202,7 @@ export default defineComponent(
         prefixCls={`${prefixCls}-content`}
         class={classNames?.content}
         style={styles?.content}
-        prefix={!displayValues.length && !inputValue && <Placeholder />}
+        prefix={!displayValues.length && !inputValue.value && <Placeholder />}
         data={displayValues}
         renderItem={renderItem}
         renderRest={renderRest}

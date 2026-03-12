@@ -16,9 +16,9 @@ import { useSelectInputContextInject } from './context';
 
 export interface InputProps {
   id?: string;
-  readOnly?: boolean;
+  readonly?: boolean;
   onChange?: ChangeEventHandler<HTMLInputElement>;
-  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
+  onKeydown?: KeyboardEventHandler<HTMLInputElement>;
   onFocus?: FocusEventHandler<HTMLInputElement>;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   placeholder?: string;
@@ -32,7 +32,7 @@ export interface InputProps {
 }
 
 const Input = defineComponent(
-  ({ onChange, onKeyDown, onBlur, style, syncWidth, class: className, autoComplete, ...restProps }: InputProps) => {
+  ({ onChange, onKeydown, onBlur, style, syncWidth, class: className, autoComplete, ...restProps }: InputProps) => {
     const value = defineModel<string>('value');
     const props = useFullProps() as InputProps;
     const {
@@ -107,8 +107,8 @@ const Input = defineComponent(
         onSearchSubmit(nextVal);
       }
 
-      // Call original onKeyDown callback
-      onKeyDown?.(event);
+      // Call original onKeydown callback
+      onKeydown?.(event);
     };
 
     // Handle blur events

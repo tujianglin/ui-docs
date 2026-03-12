@@ -147,7 +147,7 @@ function useDrag(
     }
 
     // Moving
-    const onMouseMove = (event: MouseEvent | TouchEvent) => {
+    const onMousemove = (event: MouseEvent | TouchEvent) => {
       event.preventDefault();
 
       const { pageX: moveX, pageY: moveY } = getPosition(event);
@@ -188,11 +188,11 @@ function useDrag(
     };
 
     // End
-    const onMouseUp = (event: MouseEvent | TouchEvent) => {
+    const onMouseup = (event: MouseEvent | TouchEvent) => {
       event.preventDefault();
 
-      document.removeEventListener('mouseup', onMouseUp);
-      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseup);
+      document.removeEventListener('mousemove', onMousemove);
       if (touchEventTargetRef.value) {
         touchEventTargetRef.value.removeEventListener('touchmove', mouseMoveEventRef.value as any);
         touchEventTargetRef.value.removeEventListener('touchend', mouseUpEventRef.value as any);
@@ -207,12 +207,12 @@ function useDrag(
       draggingDelete.value = false;
     };
 
-    document.addEventListener('mouseup', onMouseUp);
-    document.addEventListener('mousemove', onMouseMove);
-    e.currentTarget.addEventListener('touchend', onMouseUp as any);
-    e.currentTarget.addEventListener('touchmove', onMouseMove as any, { passive: false });
-    mouseMoveEventRef.value = onMouseMove;
-    mouseUpEventRef.value = onMouseUp;
+    document.addEventListener('mouseup', onMouseup);
+    document.addEventListener('mousemove', onMousemove);
+    e.currentTarget.addEventListener('touchend', onMouseup as any);
+    e.currentTarget.addEventListener('touchmove', onMousemove as any, { passive: false });
+    mouseMoveEventRef.value = onMousemove;
+    mouseUpEventRef.value = onMouseup;
     touchEventTargetRef.value = e.currentTarget;
   };
 

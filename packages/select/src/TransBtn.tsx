@@ -8,7 +8,7 @@ export interface TransBtnProps {
   style?: CSSProperties;
   customizeIcon: RenderNode;
   customizeIconProps?: any;
-  onMouseDown?: MouseEventHandler<HTMLSpanElement>;
+  onMousedown?: MouseEventHandler<HTMLSpanElement>;
   onClick?: MouseEventHandler<HTMLSpanElement>;
 }
 
@@ -23,7 +23,7 @@ export interface TransBtnProps {
  * </span>
  */
 const TransBtn = defineComponent(
-  ({ class: className, style, customizeIcon, customizeIconProps, onMouseDown, onClick }: TransBtnProps) => {
+  ({ class: className, style, customizeIcon, customizeIconProps, onMousedown, onClick }: TransBtnProps) => {
     return () => {
       const icon = typeof customizeIcon === 'function' ? customizeIcon(customizeIconProps) : customizeIcon;
       return (
@@ -31,7 +31,7 @@ const TransBtn = defineComponent(
           class={className}
           onMousedown={(event) => {
             event.preventDefault();
-            onMouseDown?.(event);
+            onMousedown?.(event);
           }}
           style={{ userSelect: 'none', WebkitUserSelect: 'none', ...style }}
           unselectable="on"

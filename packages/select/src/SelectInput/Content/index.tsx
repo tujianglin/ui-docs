@@ -33,12 +33,12 @@ const SelectContent = defineComponent(
       },
     });
 
-    return () => {
-      if (multiple) {
-        return <MultipleContent ref={domRef} inputProps={sharedInputProps.value} />;
-      }
-      return <SingleContent ref={domRef} inputProps={sharedInputProps.value} />;
-    };
+    return () => (
+      <>
+        <MultipleContent v-if={multiple} ref={domRef} inputProps={sharedInputProps.value} />
+        <SingleContent v-else ref={domRef} inputProps={sharedInputProps.value} />
+      </>
+    );
   },
   { inheritAttrs: false },
 );

@@ -365,7 +365,7 @@ const Overflow = defineComponent(
           display
           style={suffixStyle.value}
         >
-          <Render content={prefix}></Render>
+          <Render content={suffix}></Render>
         </Item>
       </Component>
     );

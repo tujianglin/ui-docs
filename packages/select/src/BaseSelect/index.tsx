@@ -52,8 +52,8 @@ export type BaseSelectSemanticName =
 
 export type { DisplayInfoType, DisplayValueType, Mode, Placement, RawValueType, RenderDOMFunc };
 export interface RefOptionListProps {
-  onKeyDown: KeyboardEventHandler;
-  onKeyUp: KeyboardEventHandler;
+  onKeydown: KeyboardEventHandler;
+  onKeyup: KeyboardEventHandler;
   scrollTo?: (args: number | ScrollConfig) => void;
 }
 
@@ -187,7 +187,7 @@ export interface BaseSelectProps extends BaseSelectPrivateProps, AriaAttributes,
   popupStyle?: CSSProperties;
   popupClassName?: string;
   popupMatchSelectWidth?: boolean | number;
-  popupRender?: (menu: VueNode) => VueNode;
+  popupRender?: (menu: () => VueNode) => VueNode;
   popupAlign?: AlignType;
 
   placement?: Placement;
@@ -200,13 +200,13 @@ export interface BaseSelectProps extends BaseSelectPrivateProps, AriaAttributes,
   onFocus?: FocusEventHandler<HTMLElement>;
 
   // >>> Rest Events
-  onKeyUp?: KeyboardEventHandler<HTMLDivElement>;
-  onKeyDown?: KeyboardEventHandler<HTMLDivElement>;
-  onMouseDown?: MouseEventHandler<HTMLDivElement>;
+  onKeyup?: KeyboardEventHandler<HTMLDivElement>;
+  onKeydown?: KeyboardEventHandler<HTMLDivElement>;
+  onMousedown?: MouseEventHandler<HTMLDivElement>;
   onPopupScroll?: UIEventHandler;
   onInputKeyDown?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-  onMouseEnter?: MouseEventHandler<HTMLDivElement>;
-  onMouseLeave?: MouseEventHandler<HTMLDivElement>;
+  onMouseenter?: MouseEventHandler<HTMLDivElement>;
+  onMouseleave?: MouseEventHandler<HTMLDivElement>;
   onClick?: MouseEventHandler<HTMLDivElement>;
 
   // >>> Components
@@ -289,9 +289,9 @@ const BaseSelect = defineComponent(
     onBlur,
 
     // Rest Events
-    onKeyUp,
-    onKeyDown,
-    onMouseDown,
+    onKeyup,
+    onKeydown,
+    onMousedown,
 
     // Components
     components,
@@ -507,21 +507,21 @@ const BaseSelect = defineComponent(
         if (isEnterKey) {
           keyLockRef.value = true;
         }
-        listRef.value?.onKeyDown(event);
+        listRef.value?.onKeydown(event);
       }
 
-      onKeyDown?.(event);
+      onKeydown?.(event);
     };
 
     // KeyUp
     const onInternalKeyUp: KeyboardEventHandler<any> = (event, ...rest) => {
       if (mergedOpen.value) {
-        listRef.value?.onKeyUp(event, ...rest);
+        listRef.value?.onKeyup(event, ...rest);
       }
       if (event.key === 'Enter') {
         keyLockRef.value = false;
       }
-      onKeyUp?.(event, ...rest);
+      onKeyup?.(event, ...rest);
     };
 
     // ============================ Selector ============================
@@ -606,7 +606,7 @@ const BaseSelect = defineComponent(
         triggerOpen(true);
       }
 
-      onMouseDown?.(event, ...restArgs);
+      onMousedown?.(event, ...restArgs);
 
       internalMouseDownRef.value = true;
       macroTask(() => {
@@ -640,7 +640,7 @@ const BaseSelect = defineComponent(
       rawOpen: rawOpen.value,
       id,
       showSearch,
-      multiple,
+      multiple: multiple.value,
       toggleOpen: triggerOpen,
       showScrollBar,
       styles,

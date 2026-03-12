@@ -40,7 +40,7 @@ export default function useScrollDrag(
         stopScroll();
       };
 
-      const onMouseDown = (e: MouseEvent) => {
+      const onMousedown = (e: MouseEvent) => {
         // Skip if element set draggable
         if ((e.target as HTMLElement).draggable || e.button !== 0) {
           return;
@@ -74,14 +74,14 @@ export default function useScrollDrag(
         }
       };
 
-      ele.addEventListener('mousedown', onMouseDown);
+      ele.addEventListener('mousedown', onMousedown);
       ele.ownerDocument.addEventListener('mouseup', clearDragState);
       ele.ownerDocument.addEventListener('mousemove', onMouseMove);
 
       ele.ownerDocument.addEventListener('dragend', clearDragState);
 
       return () => {
-        ele.removeEventListener('mousedown', onMouseDown);
+        ele.removeEventListener('mousedown', onMousedown);
         ele.ownerDocument.removeEventListener('mouseup', clearDragState);
         ele.ownerDocument.removeEventListener('mousemove', onMouseMove);
 

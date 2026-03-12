@@ -58,7 +58,7 @@ export interface SelectTriggerProps {
   prefixCls: string;
   disabled: boolean;
   visible: boolean;
-  popupElement: VueNode;
+  popupElement: () => VueNode;
 
   animation?: string;
   transitionName?: string;
@@ -68,7 +68,7 @@ export interface SelectTriggerProps {
   popupClassName: string;
   direction: string;
   popupMatchSelectWidth?: boolean | number;
-  popupRender?: (menu: VueNode) => any;
+  popupRender?: (menu: () => VueNode) => any;
   getPopupContainer?: RenderDOMFunc;
   popupAlign: AlignType;
   empty: boolean;

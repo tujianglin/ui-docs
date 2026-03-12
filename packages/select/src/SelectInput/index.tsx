@@ -226,11 +226,11 @@ export default defineComponent(
       const RootComponent = components?.root;
       if (RootComponent) {
         const originProps = (RootComponent as any).props || {};
-        const mergedProps = { ...originProps, ...domProps };
+        const mergedProps = { ...originProps, ...domProps.value };
 
         Object.keys(originProps).forEach((key) => {
           const originVal = originProps[key];
-          const domVal = domProps[key];
+          const domVal = domProps.value[key];
 
           if (typeof originVal === 'function' && typeof domVal === 'function') {
             mergedProps[key] = (...args: any[]) => {

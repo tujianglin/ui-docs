@@ -20,8 +20,8 @@ import { isValidCount } from './utils/valueUtil';
 export type OptionListProps = Record<string, never>;
 
 export interface RefOptionListProps {
-  onKeyDown: KeyboardEventHandler;
-  onKeyUp: KeyboardEventHandler;
+  onKeydown: KeyboardEventHandler;
+  onKeyup: KeyboardEventHandler;
   scrollTo?: (args: number | ScrollConfig) => void;
 }
 
@@ -191,7 +191,7 @@ const OptionList = defineComponent(
 
     // ========================= Keyboard =========================
     defineExpose({
-      onKeyDown: (event) => {
+      onKeydown: (event) => {
         const { which, ctrlKey } = event;
         switch (which) {
           // >>> Arrow keys & ctrl + n/p on Mac
@@ -252,7 +252,7 @@ const OptionList = defineComponent(
           }
         }
       },
-      onKeyUp: () => {},
+      onKeyup: () => {},
 
       scrollTo: (index) => {
         scrollIntoView(index);

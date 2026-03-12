@@ -1,6 +1,6 @@
+import { assign } from 'es-toolkit/compat';
 import type { ComponentPublicInstance, Ref, VNode, VNodeChild } from 'vue';
-import { isVNode } from 'vue';
-import useMemo from './hooks/useMemo';
+import { getCurrentInstance, isVNode } from 'vue';
 import { isFragment } from './Vue/isFragment';
 
 /**
@@ -74,15 +74,21 @@ export function composeRef(...refs) {
  * @description
  * 使用 useMemo 缓存 composeRef 的结果，避免不必要的重新创建。
  */
-export const useComposeRef = <T>(...refs: (Ref<T> | ((val: T) => void))[]): ((val: T) => void) => {
-  // @ts-ignore
-  return useMemo(
-    () => composeRef(...refs),
-    // @ts-ignore
-    refs,
-    // @ts-ignore
-    (prev, next) => prev.length !== next.length || prev.every((ref, i) => ref !== next[i]),
-  );
+export const useComposeRef = (expose?: Record<string, any>, ref?: any, ref1?: any) => {
+  const vm = getCurrentInstance();
+
+  const changeRef = (instacne) => {
+    if (ref) {
+      ref.value = instacne;
+    }
+    if (ref1) {
+      ref1.value = instacne;
+    }
+    vm.exposed = assign(instacne || {}, expose);
+    vm.exposeProxy = assign(instacne || {}, expose);
+  };
+
+  return changeRef;
 };
 
 /**

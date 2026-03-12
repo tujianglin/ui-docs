@@ -20,7 +20,7 @@ const ComboboxDemo = defineComponent({
       value.value = val;
     };
 
-    const onKeyDown = (e) => {
+    const onKeydown = (e) => {
       if (e.keyCode === 13) {
         console.log('onEnter', value.value);
       }
@@ -125,7 +125,7 @@ const ComboboxDemo = defineComponent({
             showSearch={{
               onSearch: onSearch,
             }}
-            onInputKeyDown={onKeyDown}
+            onInputKeyDown={onKeydown}
             notFoundContent=""
             allowClear
             placeholder="please input, max len: 10"

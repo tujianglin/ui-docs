@@ -13,23 +13,18 @@ export default defineComponent(
     const { prefixCls, placeholder, displayValues } = $(useSelectInputContextInject());
     const { classNames, styles } = $(useBaseSelectContextInject());
 
-    return () => {
-      if (displayValues.length) {
-        return null;
-      }
-
-      return (
-        <div
-          class={clsx(`${prefixCls}-placeholder`, classNames?.placeholder)}
-          style={{
-            visibility: show ? 'visible' : 'hidden',
-            ...styles?.placeholder,
-          }}
-        >
-          <Render content={placeholder}></Render>
-        </div>
-      );
-    };
+    return () => (
+      <div
+        v-if={!displayValues.length}
+        class={clsx(`${prefixCls}-placeholder`, classNames?.placeholder)}
+        style={{
+          visibility: show ? 'visible' : 'hidden',
+          ...styles?.placeholder,
+        }}
+      >
+        <Render content={placeholder}></Render>
+      </div>
+    );
   },
   { inheritAttrs: false },
 );

@@ -140,7 +140,7 @@ const ScrollBar = defineComponent(
         if (dragging.value) {
           let moveRafId: number;
 
-          const onMouseMove = (e: MouseEvent | TouchEvent) => {
+          const onMousemove = (e: MouseEvent | TouchEvent) => {
             const { dragging: stateDragging, pageY: statePageY, startTop: stateStartTop } = stateRef.value;
             raf.cancel(moveRafId);
 
@@ -171,22 +171,22 @@ const ScrollBar = defineComponent(
             }
           };
 
-          const onMouseUp = () => {
+          const onMouseup = () => {
             dragging.value = false;
 
             onStopMove();
           };
 
-          window.addEventListener('mousemove', onMouseMove, { passive: true });
-          window.addEventListener('touchmove', onMouseMove, { passive: true });
-          window.addEventListener('mouseup', onMouseUp, { passive: true });
-          window.addEventListener('touchend', onMouseUp, { passive: true });
+          window.addEventListener('mousemove', onMousemove, { passive: true });
+          window.addEventListener('touchmove', onMousemove, { passive: true });
+          window.addEventListener('mouseup', onMouseup, { passive: true });
+          window.addEventListener('touchend', onMouseup, { passive: true });
 
           onCleanup(() => {
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('touchmove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUp);
-            window.removeEventListener('touchend', onMouseUp);
+            window.removeEventListener('mousemove', onMousemove);
+            window.removeEventListener('touchmove', onMousemove);
+            window.removeEventListener('mouseup', onMouseup);
+            window.removeEventListener('touchend', onMouseup);
 
             raf.cancel(moveRafId);
           });
