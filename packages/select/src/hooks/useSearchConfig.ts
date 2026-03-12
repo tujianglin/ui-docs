@@ -1,3 +1,4 @@
+import { reactiveComputed } from '@vueuse/core';
 import { computed, type Ref } from 'vue';
 import type { DefaultOptionType, SearchConfig, SelectProps } from '../Select';
 
@@ -20,5 +21,5 @@ export default function useSearchConfig(
       searchConfig,
     ] as any;
   });
-  return [computed(() => result?.value?.[0]), computed(() => result?.value?.[1])] as const;
+  return [computed(() => result?.value?.[0]), reactiveComputed(() => result?.value?.[1])] as const;
 }

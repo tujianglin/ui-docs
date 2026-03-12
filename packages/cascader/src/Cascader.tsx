@@ -64,13 +64,7 @@ interface BaseCascaderProps<
   showCheckedStrategy?: ShowCheckedStrategy;
 
   // Search
-  /** @deprecated please use showSearch.autoClearSearchValue */
-  autoClearSearchValue?: boolean;
   showSearch?: boolean | SearchConfig<OptionType>;
-  /** @deprecated please use showSearch.searchValue */
-  searchValue?: string;
-  /** @deprecated please use showSearch.onSearch */
-  onSearch?: (value: string) => void;
 
   // Trigger
   expandTrigger?: 'hover' | 'click';

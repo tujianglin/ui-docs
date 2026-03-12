@@ -17,6 +17,7 @@ import { useSelectInputContextInject } from './context';
 export interface InputProps {
   id?: string;
   readonly?: boolean;
+  value?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onKeydown?: KeyboardEventHandler<HTMLInputElement>;
   onFocus?: FocusEventHandler<HTMLInputElement>;
@@ -24,7 +25,7 @@ export interface InputProps {
   placeholder?: string;
   class?: string;
   style?: CSSProperties;
-  maxLength?: number;
+  maxlength?: number;
   /** width always match content width */
   syncWidth?: boolean;
   /** autoComplete for input */
@@ -32,8 +33,7 @@ export interface InputProps {
 }
 
 const Input = defineComponent(
-  ({ onChange, onKeydown, onBlur, style, syncWidth, class: className, autoComplete, ...restProps }: InputProps) => {
-    const value = defineModel<string>('value');
+  ({ onChange, onKeydown, onBlur, style, syncWidth, value, class: className, autoComplete, ...restProps }: InputProps) => {
     const props = useFullProps() as InputProps;
     const {
       prefixCls,
@@ -41,14 +41,14 @@ const Input = defineComponent(
       onSearch,
       onSearchSubmit,
       onInputBlur,
-      autoFocus,
+      autofocus,
       tokenWithEnter,
-      components: componentsCtx,
+      components,
       // @ts-ignore
       placeholder,
     } = $(useSelectInputContextInject());
 
-    const InputComponent = computed(() => componentsCtx.input || 'input');
+    const InputComponent = computed(() => components.input || 'input');
 
     const { id, classNames, styles, open, activeDescendantId, role, disabled } = $(useBaseSelectContextInject());
 
@@ -148,7 +148,7 @@ const Input = defineComponent(
 
     // When syncWidth is enabled, adjust input width based on content
     watch(
-      [() => syncWidth, value],
+      [() => syncWidth, () => value],
       () => {
         const input = inputRef.value;
 
@@ -176,11 +176,11 @@ const Input = defineComponent(
         ...style,
         '--select-input-width': widthCssVar.value,
       } as CSSProperties,
-      autoFocus,
+      autofocus,
       autocomplete: autoComplete || 'off',
       class: inputCls,
       disabled,
-      value: value.value || '',
+      value: value || '',
       onInput: handleChange,
       onKeydown: handleKeyDown,
       onBlur: handleBlur,

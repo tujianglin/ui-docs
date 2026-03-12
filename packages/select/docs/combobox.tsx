@@ -130,7 +130,7 @@ const ComboboxDemo = defineComponent({
             allowClear
             placeholder="please input, max len: 10"
             value={value.value}
-            maxLength={10}
+            maxlength={10}
             mode="combobox"
             backfill
             onFocus={() => console.log('focus')}

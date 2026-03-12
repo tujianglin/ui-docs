@@ -3,8 +3,9 @@ import Render from '@vc-com/render';
 import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent } from 'vue';
-import { useRef, type MouseEvent, type MouseEventHandler } from 'vue-jsx-vapor';
+import { type MouseEvent, type MouseEventHandler } from 'vue-jsx-vapor';
 import type { SharedContentProps } from '.';
+import { useComposeRef } from '../../../../util/src';
 import type { CustomTagProps } from '../../BaseSelect';
 import TransBtn from '../../TransBtn';
 import { useBaseSelectContextInject } from '../../hooks/useBaseProps';
@@ -164,7 +165,6 @@ export default defineComponent(
       }
 
       const onClose = (event?: MouseEvent) => {
-        console.log(1);
         if (event) {
           event.stopPropagation();
         }
@@ -188,14 +188,6 @@ export default defineComponent(
         : defaultRenderSelector({ title: content }, content, false);
     };
 
-    const domRef = useRef();
-
-    defineExpose({
-      get nativeElement() {
-        return domRef.value;
-      },
-    });
-
     // ======================= Render =======================
     return () => (
       <Overflow
@@ -206,16 +198,16 @@ export default defineComponent(
         data={displayValues}
         renderItem={renderItem}
         renderRest={renderRest}
-        suffix={() => (
+        suffix={
           <Input
-            ref={domRef}
+            ref={useComposeRef()}
             disabled={disabled}
-            readOnly={!inputEditable.value}
+            readonly={!inputEditable.value}
             {...(inputProps as any)}
-            v-model:value={inputValue.value || ''}
+            value={inputValue.value || ''}
             syncWidth
           />
-        )}
+        }
         itemKey={itemKey}
         maxCount={maxTagCount}
       />

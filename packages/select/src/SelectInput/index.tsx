@@ -51,8 +51,8 @@ export interface SelectInputProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   onClearMouseDown?: MouseEventHandler<HTMLElement>;
   onInputKeyDown?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onSelectorRemove?: (value: DisplayValueType) => void;
-  maxLength?: number;
-  autoFocus?: boolean;
+  maxlength?: number;
+  autofocus?: boolean;
   /** Check if `tokenSeparators` contains `\n` or `\r\n` */
   tokenWithEnter?: boolean;
   // Add other props that need to be passed through
@@ -104,8 +104,8 @@ export default defineComponent(
     onInputBlur,
 
     // Input
-    maxLength,
-    autoFocus,
+    maxlength,
+    autofocus,
 
     // Events
     onMousedown,

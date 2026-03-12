@@ -89,7 +89,7 @@ const Test = defineComponent(() => {
 
       <div>
         <Select
-          autoFocus
+          autofocus
           id="my-select"
           value={state.value}
           placeholder="placeholder"

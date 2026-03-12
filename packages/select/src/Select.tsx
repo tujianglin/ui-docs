@@ -198,7 +198,7 @@ const Select = defineComponent(
       computed(() => showSearch),
       computed(() => mode),
     );
-    const { filterOption, searchValue, optionFilterProp, filterSort, onSearch, autoClearSearchValue } = $(searchConfig.value);
+    const { filterOption, searchValue, optionFilterProp, filterSort, onSearch, autoClearSearchValue } = $(searchConfig);
 
     const normalizedOptionFilterProp = computed(() => {
       if (!optionFilterProp) return [];

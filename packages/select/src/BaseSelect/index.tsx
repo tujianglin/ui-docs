@@ -133,7 +133,7 @@ export interface BaseSelectProps extends BaseSelectPrivateProps, AriaAttributes,
   showSearch?: boolean;
   tagRender?: (props: CustomTagProps) => VueNode;
   direction?: 'ltr' | 'rtl';
-  autoFocus?: boolean;
+  autofocus?: boolean;
   placeholder?: RenderNode;
   maxCount?: number;
 
@@ -142,7 +142,7 @@ export interface BaseSelectProps extends BaseSelectPrivateProps, AriaAttributes,
   tabIndex?: number;
   notFoundContent?: RenderNode;
   onClear?: () => void;
-  maxLength?: number;
+  maxlength?: number;
   showScrollBar?: boolean | 'optional';
 
   choiceTransitionName?: string;

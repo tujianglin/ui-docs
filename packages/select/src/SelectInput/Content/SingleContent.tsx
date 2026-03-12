@@ -12,7 +12,7 @@ import Placeholder from './Placeholder';
 
 const SingleContent = defineComponent(
   ({ inputProps }: SharedContentProps) => {
-    const { prefixCls, searchValue, activeValue, displayValues, maxLength, mode, components } = $(useSelectInputContextInject());
+    const { prefixCls, searchValue, activeValue, displayValues, maxlength, mode, components } = $(useSelectInputContextInject());
     const { triggerOpen, title: rootTitle, showSearch, classNames, styles } = $(useBaseSelectContextInject());
     const selectContext = useSelectContextInject();
 
@@ -134,8 +134,8 @@ const SingleContent = defineComponent(
         <Input
           ref={domRef}
           {...(inputProps as any)}
-          v-model:value={mergedSearchValue.value}
-          maxLength={mode === 'combobox' ? maxLength : undefined}
+          value={mergedSearchValue.value}
+          maxlength={mode === 'combobox' ? maxlength : undefined}
           onChange={(e) => {
             inputChanged.value = true;
             inputProps.onChange?.(e);

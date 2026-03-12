@@ -76,7 +76,7 @@ const MultipleDemo = defineComponent({
 
         <div style={{ width: '100%' }}>
           <Select
-            autoFocus
+            autofocus
             value={value.value}
             animation={useAnim.value ? 'slide-up' : undefined}
             style={{ width: '100%' }}
