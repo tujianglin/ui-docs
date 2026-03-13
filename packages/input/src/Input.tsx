@@ -161,7 +161,7 @@ const Input = defineComponent(
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-      if (onPressEnter && e.key === 'Enter' && !keyLockRef.value && !e.nativeEvent.isComposing) {
+      if (onPressEnter && e.key === 'Enter' && !keyLockRef.value && !(e as any).isComposing) {
         keyLockRef.value = true;
         onPressEnter(e);
       }

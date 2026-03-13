@@ -154,7 +154,7 @@ const TextArea = defineComponent(
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Enter' && onPressEnter && !e.nativeEvent.isComposing) {
+      if (e.key === 'Enter' && onPressEnter && !(e as any).isComposing) {
         onPressEnter(e);
       }
       onKeydown?.(e);

@@ -6,7 +6,7 @@ export interface CheckboxChangeEvent {
   target: CheckboxChangeEventTarget;
   stopPropagation: () => void;
   preventDefault: () => void;
-  nativeEvent: ChangeEvent<HTMLInputElement>['nativeEvent'];
+  nativeEvent: any;
 }
 
 export interface CheckboxChangeEventTarget extends CheckboxProps {
@@ -82,7 +82,7 @@ export const Checkbox = defineComponent(
         preventDefault() {
           e.preventDefault();
         },
-        nativeEvent: e.nativeEvent,
+        nativeEvent: e,
       });
     };
 
