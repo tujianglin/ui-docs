@@ -1,4 +1,6 @@
 import { watch, type Ref } from 'vue';
+import { useId } from '../hooks/useId';
+import { getDOM } from './findDOMNode';
 import isVisible from './isVisible';
 
 type DisabledElement =
@@ -93,6 +95,10 @@ export function triggerFocus(element?: HTMLElement, option?: InputFocusOptions) 
 // ======================================================
 let lastFocusElement: HTMLElement | null = null;
 let focusElements: HTMLElement[] = [];
+// Map stable ID to lock element
+const idToElementMap = new Map<string, HTMLElement>();
+// Map stable ID to ignored element
+const ignoredElementMap = new Map<string, HTMLElement | null>();
 
 function getLastElement() {
   return focusElements[focusElements.length - 1];
@@ -138,9 +144,12 @@ function onWindowKeyDown(e: KeyboardEvent) {
 /**
  * Lock focus in the element.
  * It will force back to the first focusable element when focus leaves the element.
+ * @param id - A stable ID for this lock instance
  */
-export function lockFocus(element: HTMLElement): VoidFunction {
+export function lockFocus(element: HTMLElement, id: string): VoidFunction {
   if (element) {
+    idToElementMap.set(id, element);
+
     // Refresh focus elements
     focusElements = focusElements.filter((ele) => ele !== element);
     focusElements.push(element);
@@ -155,29 +164,43 @@ export function lockFocus(element: HTMLElement): VoidFunction {
   return () => {
     lastFocusElement = null;
     focusElements = focusElements.filter((ele) => ele !== element);
+    idToElementMap.delete(id);
+    ignoredElementMap.delete(id);
     if (focusElements.length === 0) {
       window.removeEventListener('focusin', syncFocus);
       window.removeEventListener('keydown', onWindowKeyDown, true);
     }
   };
 }
-
 /**
  * Lock focus within an element.
  * When locked, focus will be restricted to focusable elements within the specified element.
  * If multiple elements are locked, only the last locked element will be effective.
  */
-export function useLockFocus(lock: Ref<boolean>, getElement: () => HTMLElement | null) {
+export function useLockFocus(
+  lock: Ref<boolean>,
+  getElement: () => HTMLElement | null,
+): [ignoreElement: (ele: HTMLElement) => void] {
+  const id = useId();
+
   watch(
-    lock,
-    () => {
-      if (lock) {
-        const element = getElement();
-        if (element) {
-          return lockFocus(element);
-        }
+    [lock, () => getElement()],
+    ([nextLock, element], _o, onCleanup) => {
+      element = getDOM(element) as HTMLElement;
+      if (nextLock && element) {
+        const fn = lockFocus(element, id.value);
+        onCleanup(fn);
       }
     },
-    { immediate: true },
+    {
+      flush: 'post',
+      immediate: true,
+    },
   );
+
+  const ignoreElement = (ele: HTMLElement) => {
+    if (ele) ignoredElementMap.set(id.value, ele);
+  };
+
+  return [ignoreElement];
 }

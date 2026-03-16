@@ -50,7 +50,8 @@
       "@vc-com/textarea/*": ["packages/textarea/src/*"],
       "@vc-com/dropdown/*": ["packages/dropdown/src/*"],
       "@vc-com/menu/*": ["packages/menu/src/*"],
-      "@vc-com/mentions/*": ["packages/mentions/src/*"]
+      "@vc-com/mentions/*": ["packages/mentions/src/*"],
+      "@vc-com/dialog/*": ["packages/dialog/src/*"]
     }
   },
   "include": [
