@@ -1,10 +1,10 @@
 import { defineComponent } from 'vue';
-// import Cascader from '../packages/cascader/docs/cascader.story.vue';
-import Select from '../packages/dialog/docs/dialog.story.vue';
+import Cascader from '../packages/cascader/docs/cascader.story.vue';
+import Select from '../packages/mentions/docs/mentions.story.vue';
 const App = defineComponent(() => {
   return () => (
     <>
-      {/* <Cascader></Cascader> */}
+      <Cascader></Cascader>
       <Select></Select>
     </>
   );

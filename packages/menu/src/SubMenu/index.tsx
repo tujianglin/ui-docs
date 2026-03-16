@@ -433,7 +433,7 @@ const SubMenu = defineComponent(
       } else {
         renderNode = <InternalSubMenu {...props}>{childList}</InternalSubMenu>;
       }
-      return <PathTrackerContextProvider value={connectedKeyPath.value}>{renderNode}</PathTrackerContextProvider>;
+      return <PathTrackerContextProvider value={connectedKeyPath.value}>{() => renderNode}</PathTrackerContextProvider>;
     };
   },
   { inheritAttrs: false, name: process.env.NODE_ENV !== 'production' ? 'SubMenu' : undefined },

@@ -708,68 +708,72 @@ const BaseSelect = defineComponent(
     );
     return () => (
       <BaseSelectContextProvider value={baseSelectContext.value}>
-        <Polite visible={focused.value && !mergedOpen.value} values={displayValues} />
-        <SelectTrigger
-          ref={triggerRef}
-          disabled={disabled}
-          prefixCls={prefixCls}
-          visible={mergedOpen.value}
-          popupElement={<OptionList ref={listRef} />}
-          animation={animation}
-          transitionName={transitionName}
-          popupStyle={popupStyle}
-          popupClassName={popupClassName}
-          direction={direction}
-          popupMatchSelectWidth={popupMatchSelectWidth}
-          popupRender={popupRender}
-          popupAlign={popupAlign}
-          placement={placement}
-          builtinPlacements={builtinPlacements}
-          getPopupContainer={getPopupContainer}
-          empty={emptyOptions}
-          onPopupVisibleChange={onTriggerVisibleChange}
-          onPopupMouseEnter={onPopupMouseEnter}
-          onPopupMouseDown={onRootMouseDown}
-          onPopupBlur={onRootBlur}
-        >
-          <SelectInput
-            {...restProps}
-            // Ref
-            ref={containerRef}
-            // Style
-            prefixCls={prefixCls}
-            class={mergedClassName.value}
-            // Focus state
-            focused={focused.value}
-            // UI
-            prefix={prefix}
-            suffix={mergedSuffixIcon.value}
-            clearIcon={clearNode}
-            // Type or mode
-            multiple={multiple.value}
-            mode={mode}
-            // Values
-            displayValues={displayValues}
-            placeholder={placeholder}
-            searchValue={mergedSearchValue.value}
-            activeValue={activeValue}
-            onSearch={onInternalSearch}
-            onSearchSubmit={onInternalSearchSubmit}
-            onInputBlur={onInputBlur}
-            onFocus={onInternalFocus}
-            onBlur={onInternalBlur}
-            onClearMouseDown={onClearMouseDown}
-            onKeydown={onInternalKeyDown}
-            onKeyup={onInternalKeyUp}
-            onSelectorRemove={onSelectorRemove}
-            // Token handling
-            tokenWithEnter={tokenWithEnter.value}
-            // Open
-            onMousedown={onRootMouseDown}
-            // Components
-            components={mergedComponents.value}
-          />
-        </SelectTrigger>
+        {() => (
+          <>
+            <Polite visible={focused.value && !mergedOpen.value} values={displayValues} />
+            <SelectTrigger
+              ref={triggerRef}
+              disabled={disabled}
+              prefixCls={prefixCls}
+              visible={mergedOpen.value}
+              popupElement={<OptionList ref={listRef} />}
+              animation={animation}
+              transitionName={transitionName}
+              popupStyle={popupStyle}
+              popupClassName={popupClassName}
+              direction={direction}
+              popupMatchSelectWidth={popupMatchSelectWidth}
+              popupRender={popupRender}
+              popupAlign={popupAlign}
+              placement={placement}
+              builtinPlacements={builtinPlacements}
+              getPopupContainer={getPopupContainer}
+              empty={emptyOptions}
+              onPopupVisibleChange={onTriggerVisibleChange}
+              onPopupMouseEnter={onPopupMouseEnter}
+              onPopupMouseDown={onRootMouseDown}
+              onPopupBlur={onRootBlur}
+            >
+              <SelectInput
+                {...restProps}
+                // Ref
+                ref={containerRef}
+                // Style
+                prefixCls={prefixCls}
+                class={mergedClassName.value}
+                // Focus state
+                focused={focused.value}
+                // UI
+                prefix={prefix}
+                suffix={mergedSuffixIcon.value}
+                clearIcon={clearNode}
+                // Type or mode
+                multiple={multiple.value}
+                mode={mode}
+                // Values
+                displayValues={displayValues}
+                placeholder={placeholder}
+                searchValue={mergedSearchValue.value}
+                activeValue={activeValue}
+                onSearch={onInternalSearch}
+                onSearchSubmit={onInternalSearchSubmit}
+                onInputBlur={onInputBlur}
+                onFocus={onInternalFocus}
+                onBlur={onInternalBlur}
+                onClearMouseDown={onClearMouseDown}
+                onKeydown={onInternalKeyDown}
+                onKeyup={onInternalKeyUp}
+                onSelectorRemove={onSelectorRemove}
+                // Token handling
+                tokenWithEnter={tokenWithEnter.value}
+                // Open
+                onMousedown={onRootMouseDown}
+                // Components
+                components={mergedComponents.value}
+              />
+            </SelectTrigger>
+          </>
+        )}
       </BaseSelectContextProvider>
     );
   },
