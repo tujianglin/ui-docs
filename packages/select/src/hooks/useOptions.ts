@@ -26,7 +26,7 @@ const useOptions = <OptionType>(
 
     const dig = (optionList: OptionType[], isChildren = false) => {
       // for loop to speed up collection speed
-      for (let i = 0; i < optionList.length; i += 1) {
+      for (let i = 0; i < optionList?.length; i += 1) {
         const option = optionList[i];
         if (!option[fieldNames.value.options] || isChildren) {
           valueOptions.set(option[fieldNames.value.value], option);

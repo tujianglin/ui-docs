@@ -1,7 +1,7 @@
 import CSSMotion from '@vc-com/motion';
 import type { CSSMotionRef } from '@vc-com/motion/CSSMotion';
 import { clsx } from 'clsx';
-import { computed, defineComponent, effect, ref, type CSSProperties } from 'vue';
+import { computed, defineComponent, ref, type CSSProperties } from 'vue';
 import { useFullProps, useRef } from 'vue-jsx-vapor';
 import { offset } from '../../util';
 import type { PanelProps, PanelRef } from './Panel';
@@ -30,26 +30,29 @@ const Content = defineComponent(
     ariaId,
     onVisibleChanged,
     mousePosition,
+    onClose: _ = () => ({}),
+    onMousedown: _1 = () => ({}),
+    onMouseup: _2 = () => ({}),
   }: ContentProps) => {
     const props = useFullProps() as unknown as ContentProps;
     const dialogRef = useRef<{ nativeElement: HTMLElement } & CSSMotionStateRef>(null);
 
     const panelRef = useRef<PanelRef>(null);
 
-    effect(() => {
-      console.log(dialogRef.value);
-    });
-
     // ============================== Refs ==============================
     defineExpose({
-      get el() {
+      get nativeElement() {
         return panelRef.value;
       },
       focus: () => {
         panelRef.value?.focus();
       },
-      inMotion: dialogRef.value?.inMotion,
-      enableMotion: dialogRef.value?.enableMotion,
+      inMotion: () => {
+        dialogRef.value?.inMotion?.();
+      },
+      enableMotion: () => {
+        dialogRef.value?.enableMotion?.();
+      },
     });
 
     // ============================= Style ==============================
@@ -74,7 +77,6 @@ const Content = defineComponent(
           ? `${mousePosition.x - elementOffset.left}px ${mousePosition.y - elementOffset.top}px`
           : '';
     }
-
     // ============================= Render =============================
     return () => (
       <CSSMotion

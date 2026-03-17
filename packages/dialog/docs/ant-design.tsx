@@ -78,7 +78,7 @@ const MyControl = defineComponent(() => {
     const style = { width: width.value + 'px' };
 
     let wrapClassName = '';
-    if (center) {
+    if (center.value) {
       wrapClassName = 'center';
     }
     const dialog = (
@@ -92,7 +92,7 @@ const MyControl = defineComponent(() => {
         classNames={{ wrapper: wrapClassName }}
         mousePosition={mousePosition.value}
         destroyOnHidden={destroyOnHidden.value}
-        closeIcon={useIcon ? getSvg(clearPath, {}, true) : undefined}
+        closeIcon={useIcon.value ? getSvg(clearPath, {}, true) : undefined}
         forceRender={forceRender.value}
         focusTriggerAfterClose={false}
       >
@@ -119,12 +119,10 @@ const MyControl = defineComponent(() => {
           change width
         </button>
         <button type="button" onClick={toggleCloseIcon}>
-          use custom icon, is using icon: {(useIcon && 'true') || 'false'}.
+          use custom icon, is using icon: {(useIcon.value && 'true') || 'false'}.
         </button>
         <div style={{ height: '200px' }}>
-          <Select popupStyle={{ zIndex: 9999999 }}>
-            <Select.Option value="light">Light</Select.Option>
-          </Select>
+          <Select popupStyle={{ zIndex: 9999999 }} options={[{ label: 'Light', value: 'light' }]}></Select>
         </div>
       </Dialog>
     );
@@ -156,7 +154,7 @@ const MyControl = defineComponent(() => {
           change width
         </button>
         <button type="button" onClick={toggleCloseIcon}>
-          use custom icon, is using icon: {(useIcon && 'true') || 'false'}.
+          use custom icon, is using icon: {(useIcon.value && 'true') || 'false'}.
         </button>
         <div style={{ height: '200px' }} />
       </Dialog>
@@ -180,7 +178,7 @@ const MyControl = defineComponent(() => {
           change width
         </button>
         <button type="button" onClick={toggleCloseIcon}>
-          use custom icon, is using icon: {(useIcon && 'true') || 'false'}.
+          use custom icon, is using icon: {(useIcon.value && 'true') || 'false'}.
         </button>
         <div style={{ height: '200px' }} />
       </Dialog>

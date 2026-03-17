@@ -6,6 +6,6 @@ catalog:
   '@ts-macro/tsc': ^0.3.7
   '@typescript/native-preview': 7.0.0-dev.20260109.1
   '@vueuse/core': ^14.1.0
-  'vue-jsx-vapor': ^3.2.3
+  'vue-jsx-vapor': ^3.2.4
   'vue-tsc': ^3.2.2
   'clsx': ^2.1.1

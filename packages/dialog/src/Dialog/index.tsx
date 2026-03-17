@@ -2,6 +2,7 @@ import contains from '@vc-com/util/lib/Dom/contains';
 import { useId } from '@vc-com/util/lib/hooks/useId';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
 import { clsx } from 'clsx';
+import { omit } from 'es-toolkit';
 import { computed, defineComponent, ref, watch, type CSSProperties } from 'vue';
 import { useFullProps, useRef, type SyntheticEvent } from 'vue-jsx-vapor';
 import type { IDialogPropTypes } from '../IDialogPropTypes';
@@ -66,7 +67,6 @@ const Dialog = defineComponent(
     //   2. Controlled `open` to `false` immediately after set to `true` which will not trigger motion
     function doClose() {
       // Clean up scroll bar & focus back
-      animatedVisible.value = false;
 
       if (mask && lastOutSideActiveElementRef.value && focusTriggerAfterClose) {
         try {
@@ -81,6 +81,7 @@ const Dialog = defineComponent(
       if (animatedVisible.value) {
         afterClose?.();
       }
+      animatedVisible.value = false;
     }
 
     function onDialogVisibleChanged(newVisible: boolean) {
@@ -157,12 +158,12 @@ const Dialog = defineComponent(
           className={clsx(`${prefixCls}-wrap`, modalClassNames?.wrapper)}
           ref={wrapperRef}
           onClick={onWrapperClick}
-          onMouseDown={onWrapperMouseDown}
+          onMousedown={onWrapperMouseDown}
           style={mergedStyle.value}
           {...wrapProps}
         >
           <Content
-            {...props}
+            {...omit(props, ['onClose'])}
             isFixedPos={isFixedPos.value}
             ref={contentRef}
             closable={closable}

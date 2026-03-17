@@ -1,13 +1,12 @@
+import Render from '@vc-com/render';
 import { useLockFocus } from '@vc-com/util/lib/Dom/focus';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
-import { useComposeRef } from '@vc-com/util/lib/ref';
 import { clsx } from 'clsx';
-import { computed, defineComponent, type CSSProperties } from 'vue';
+import { computed, defineComponent, toRefs, type CSSProperties } from 'vue';
 import { useRef, type MouseEventHandler } from 'vue-jsx-vapor';
-import Render from '../../../../render/src';
 import { useRefContextInject } from '../../context';
 import type { IDialogPropTypes } from '../../IDialogPropTypes';
-import MemoChildren from './MemoChildren';
+import MemoChildren from './MemoChildren.vue';
 
 export interface PanelProps extends Omit<IDialogPropTypes, 'getOpenCount'> {
   prefixCls: string;
@@ -49,9 +48,13 @@ const Panel = defineComponent(
     focusTrap,
   }: PanelProps) => {
     // ================================= Refs =================================
-    const { panel: panelRef } = $(useRefContextInject());
+    const { panel: panelRef } = toRefs(useRefContextInject());
     const internalRef = useRef<HTMLDivElement>(null);
-    const mergedRef = useComposeRef(holderRef, panelRef, internalRef);
+    const mergedRef = (el) => {
+      panelRef.value = el;
+      internalRef.value = el;
+      holderRef.value = el;
+    };
 
     const [ignoreElement] = useLockFocus(
       computed(() => visible && isFixedPos && focusTrap !== false),
@@ -76,19 +79,6 @@ const Panel = defineComponent(
       return result;
     });
     // ================================ Render ================================
-    const FooterNode = () => (
-      <div v-if={footer} class={clsx(`${prefixCls}-footer`, modalClassNames?.footer)} style={{ ...modalStyles?.footer }}>
-        {footer}
-      </div>
-    );
-
-    const HeaderNode = () => (
-      <div v-if={title} class={clsx(`${prefixCls}-header`, modalClassNames?.header)} style={{ ...modalStyles?.header }}>
-        <div class={clsx(`${prefixCls}-title`, modalClassNames?.title)} id={ariaId} style={{ ...modalStyles?.title }}>
-          {title}
-        </div>
-      </div>
-    );
 
     const closableObj = computed(() => {
       if (typeof closable === 'object' && closable !== null) {
@@ -103,30 +93,42 @@ const Panel = defineComponent(
     const ariaProps = computed(() => pickAttrs(closableObj.value, true));
     const closeBtnIsDisabled = computed(() => typeof closable === 'object' && closable.disabled);
 
-    const CloserNode = () => (
-      <button
-        v-if={closable}
-        type="button"
-        onClick={onClose}
-        aria-label="Close"
-        {...ariaProps.value}
-        class={clsx(`${prefixCls}-close`, modalClassNames?.close)}
-        disabled={closeBtnIsDisabled.value}
-        style={modalStyles?.close}
-      >
-        <Render content={closableObj.value.closeIcon}></Render>
-      </button>
-    );
-
     return () => {
+      const footerNode = (
+        <div v-if={footer} class={clsx(`${prefixCls}-footer`, modalClassNames?.footer)} style={{ ...modalStyles?.footer }}>
+          <Render content={footer}></Render>
+        </div>
+      );
+
+      const headerNode = (
+        <div v-if={title} class={clsx(`${prefixCls}-header`, modalClassNames?.header)} style={{ ...modalStyles?.header }}>
+          <div class={clsx(`${prefixCls}-title`, modalClassNames?.title)} id={ariaId} style={{ ...modalStyles?.title }}>
+            <Render content={title}></Render>
+          </div>
+        </div>
+      );
+      const closerNode = (
+        <button
+          v-if={closable}
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          {...ariaProps.value}
+          class={clsx(`${prefixCls}-close`, modalClassNames?.close)}
+          disabled={closeBtnIsDisabled.value}
+          style={modalStyles?.close}
+        >
+          <Render content={closableObj.value.closeIcon}></Render>
+        </button>
+      );
       const content = (
         <div class={clsx(`${prefixCls}-container`, modalClassNames?.container)} style={modalStyles?.container}>
-          <CloserNode></CloserNode>
-          <HeaderNode></HeaderNode>
+          {closerNode}
+          {headerNode}
           <div class={clsx(`${prefixCls}-body`, modalClassNames?.body)} style={modalStyles?.body} {...bodyProps}>
             <slot></slot>
           </div>
-          <FooterNode></FooterNode>
+          {footerNode}
         </div>
       );
 
@@ -137,7 +139,7 @@ const Panel = defineComponent(
           aria-labelledby={title ? ariaId : null}
           aria-modal="true"
           ref={mergedRef}
-          style={{ ...style, ...contentStyle }}
+          style={{ ...style, ...contentStyle.value }}
           class={clsx(prefixCls, className)}
           onMousedown={onMousedown}
           onMouseup={onMouseup}
@@ -147,18 +149,7 @@ const Panel = defineComponent(
           }}
         >
           <MemoChildren shouldUpdate={visible || forceRender}>
-            {modalRender ? (
-              modalRender(content)
-            ) : (
-              <div class={clsx(`${prefixCls}-container`, modalClassNames?.container)} style={modalStyles?.container}>
-                {/* <CloserNode></CloserNode>
-                <HeaderNode></HeaderNode> */}
-                <div class={clsx(`${prefixCls}-body`, modalClassNames?.body)} style={modalStyles?.body} {...bodyProps}>
-                  <slot></slot>
-                </div>
-                {/* <FooterNode></FooterNode> */}
-              </div>
-            )}
+            {() => (modalRender ? modalRender(content) : content)}
           </MemoChildren>
         </div>
       );
