@@ -51,7 +51,8 @@
       "@vc-com/dropdown/*": ["packages/dropdown/src/*"],
       "@vc-com/menu/*": ["packages/menu/src/*"],
       "@vc-com/mentions/*": ["packages/mentions/src/*"],
-      "@vc-com/dialog/*": ["packages/dialog/src/*"]
+      "@vc-com/dialog/*": ["packages/dialog/src/*"],
+      "@vc-com/drawer/*": ["packages/drawer/src/*"]
     }
   },
   "include": [
