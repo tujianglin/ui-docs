@@ -6,7 +6,7 @@ import ResizeObserver, { type ResizeObserverProps } from '@vc-com/resize-observe
 import { composeRef } from '@vc-com/util/lib/ref';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, defineComponent, nextTick, ref, shallowRef, watch, type CSSProperties } from 'vue';
+import { computed, defineComponent, effect, nextTick, ref, shallowRef, watch, type CSSProperties } from 'vue';
 import type { MouseEventHandler } from 'vue-jsx-vapor';
 import type { TriggerProps } from '../';
 import useOffsetStyle from '../hooks/useOffsetStyle';
@@ -30,10 +30,10 @@ export interface PopupProps {
   style?: CSSProperties;
   popup?: TriggerProps['popup'];
   target: HTMLElement;
-  onMouseEnter?: MouseEventHandler<HTMLDivElement>;
-  onMouseLeave?: MouseEventHandler<HTMLDivElement>;
-  onPointerEnter?: (e: PointerEvent) => void;
-  onPointerDownCapture?: MouseEventHandler<HTMLDivElement>;
+  onMouseenter?: MouseEventHandler<HTMLDivElement>;
+  onMouseleave?: MouseEventHandler<HTMLDivElement>;
+  onPointerenter?: (e: PointerEvent) => void;
+  onPointerdownCapture?: MouseEventHandler<HTMLDivElement>;
   zIndex?: number;
 
   mask?: boolean;
@@ -126,10 +126,10 @@ const Popup = defineComponent(
 
     zIndex,
 
-    onMouseEnter,
-    onMouseLeave,
-    onPointerEnter,
-    onPointerDownCapture,
+    onMouseenter,
+    onMouseleave,
+    onPointerenter,
+    onPointerdownCapture,
 
     ready,
     offsetX,
@@ -224,6 +224,9 @@ const Popup = defineComponent(
       }
       return result;
     });
+    effect(() => {
+      console.log(__props);
+    });
 
     // ========================= Render =========================
     return () => (
@@ -280,12 +283,12 @@ const Popup = defineComponent(
                       ...style,
                     } as CSSProperties
                   }
-                  onMouseenter={onMouseEnter}
-                  onMouseleave={onMouseLeave}
-                  onPointerenter={onPointerEnter}
-                  onClick={onClick}
                   {...{
-                    onPointerdownCapture: onPointerDownCapture,
+                    onMouseenter,
+                    onMouseleave,
+                    onPointerenter,
+                    onClick,
+                    onPointerdownCapture,
                   }}
                 >
                   <Arrow v-if={arrow} prefixCls={prefixCls} arrow={arrow} arrowPos={arrowPos} align={align} />

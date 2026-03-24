@@ -743,10 +743,10 @@ export function generateTrigger(PortalComponent: Component = Portal) {
                   class={clsx(popupClassName, !isMobile.value && alignedClassName.value)}
                   style={popupStyle}
                   target={targetEle.value!}
-                  onMouseEnter={onPopupMouseEnter}
-                  onMouseLeave={onPopupMouseLeave}
+                  onMouseenter={onPopupMouseEnter}
+                  onMouseleave={onPopupMouseLeave}
                   // https://github.com/ant-design/ant-design/issues/43924
-                  onPointerEnter={onPopupMouseEnter}
+                  onPointerenter={onPopupMouseEnter}
                   zIndex={zIndex}
                   // Open
                   open={mergedOpen.value}
@@ -754,7 +754,7 @@ export function generateTrigger(PortalComponent: Component = Portal) {
                   fresh={fresh}
                   // Click
                   onClick={onPopupClick}
-                  onPointerDownCapture={onPopupPointerDown}
+                  onPointerdownCapture={onPopupPointerDown}
                   // Mask
                   mask={mask}
                   // Motion
