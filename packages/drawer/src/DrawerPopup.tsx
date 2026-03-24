@@ -3,7 +3,7 @@ import CSSMotion from '@vc-com/motion';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
 import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, ref, watch, type CSSProperties } from 'vue';
 import { useFullProps, useRef, type FocusEvent } from 'vue-jsx-vapor';
 import type { VueNode } from '../../util/src/types';
 import { useDrawerContextInject, useDrawerContextProvide, type DrawerContextProps } from './context';
@@ -203,10 +203,6 @@ const DrawerPopup = defineComponent(
     // ============================ Size ============================
     const currentSize = ref<number>();
     const isHorizontal = computed(() => placement === 'left' || placement === 'right');
-
-    onMounted(() => {
-      console.log(size);
-    });
 
     // Aggregate size logic with backward compatibility using useMemo
     const mergedSize = computed(() => {

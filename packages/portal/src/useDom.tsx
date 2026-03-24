@@ -21,6 +21,7 @@ export default function useDom(render: Ref<boolean>, debug?: string): [HTMLDivEl
 
   // ========================== Order ==========================
   const appendedRef = shallowRef(false);
+  const cleanupIdRef = shallowRef(0);
   const queueCreate = useOrderContextInject();
   const queue = shallowRef<VoidFunction[]>([]);
 
@@ -56,11 +57,16 @@ export default function useDom(render: Ref<boolean>, debug?: string): [HTMLDivEl
     render,
     () => {
       if (render.value) {
+        cleanupIdRef.value += 1;
         if (queueCreate?.value) queueCreate.value(append);
         else append();
       } else {
+        const cleanupId = cleanupIdRef.value + 1;
+        cleanupIdRef.value = cleanupId;
         nextTick(() => {
-          cleanup();
+          if (cleanupIdRef.value === cleanupId && !render.value) {
+            cleanup();
+          }
         });
       }
     },

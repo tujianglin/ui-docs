@@ -19,7 +19,6 @@ export default defineComponent(() => {
 
   const openDrawer = (direction: Placement) => {
     placement.value = direction;
-    console.log(direction);
     open.value = true;
   };
 
@@ -35,7 +34,7 @@ export default defineComponent(() => {
         ))}
       </div>
       <Drawer
-        size={isHorizontal.value ? width.value : undefined}
+        size={width.value}
         placement={placement.value as Placement}
         open={open.value}
         key={placement.value}
