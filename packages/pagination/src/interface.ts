@@ -1,0 +1,74 @@
+import type { CSSProperties } from 'vue';
+import type { AriaAttributes } from 'vue-jsx-vapor';
+import type { VueNode } from '../../util/src/types';
+import type { SizeChangerRender } from './Options';
+
+export interface PaginationLocale {
+  // Options
+  items_per_page?: string;
+  jump_to?: string;
+  jump_to_confirm?: string;
+  page?: string;
+
+  // Pagination
+  prev_page?: string;
+  next_page?: string;
+  prev_5?: string;
+  next_5?: string;
+  prev_3?: string;
+  next_3?: string;
+  page_size?: string;
+}
+
+type SemanticName = 'item';
+
+export interface PaginationData {
+  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: Partial<Record<SemanticName, string>>;
+  class: string;
+  selectPrefixCls: string;
+  prefixCls: string;
+  pageSizeOptions: number[];
+
+  current: number;
+  defaultCurrent: number;
+  total: number;
+  totalBoundaryShowSizeChanger?: number;
+  pageSize: number;
+  defaultPageSize: number;
+
+  hideOnSinglePage: boolean;
+  align: 'start' | 'center' | 'end';
+  showSizeChanger: boolean;
+  sizeChangerRender?: SizeChangerRender;
+  showLessItems: boolean;
+  showPrevNextJumpers: boolean;
+  showQuickJumper: boolean | object;
+  showTitle: boolean;
+  simple: boolean | { readOnly?: boolean };
+  disabled: boolean;
+
+  locale: PaginationLocale;
+
+  style: CSSProperties;
+
+  prevIcon: any;
+  nextIcon: any;
+  jumpPrevIcon: any;
+  jumpNextIcon: any;
+}
+
+export interface PaginationProps extends Partial<PaginationData>, AriaAttributes {
+  onChange?: (page: number, pageSize: number) => void;
+  onShowSizeChange?: (current: number, size: number) => void;
+  itemRender?: (page: number, type: 'page' | 'prev' | 'next' | 'jump-prev' | 'jump-next', element: VueNode) => any;
+  showTotal?: (total: number, range: [number, number]) => VueNode;
+  // WAI-ARIA
+  role?: string | undefined;
+}
+
+export interface PaginationState {
+  current: number;
+  currentInputValue: number;
+  pageSize: number;
+}
