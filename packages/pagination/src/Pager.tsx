@@ -44,7 +44,7 @@ const Pager = defineComponent(
       <li
         v-if={pager.value}
         title={showTitle ? String(page) : null}
-        class={cls}
+        class={cls.value}
         style={style}
         onClick={handleClick}
         onKeydown={handleKeyPress}

@@ -1,6 +1,5 @@
 import KeyCode from '@vc-com/util/lib/KeyCode';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
-import { warning } from '@vc-com/util/lib/warning';
 import { clsx } from 'clsx';
 import { computed, createVNode, defineComponent, ref, watchEffect } from 'vue';
 import { useFullProps, useRef, type FocusEvent, type KeyboardEvent } from 'vue-jsx-vapor';
@@ -86,16 +85,6 @@ const Pagination = defineComponent(
     watchEffect(() => {
       internalInputVal.value = current.value;
     });
-
-    const hasOnChange = computed(() => onChange !== noop);
-    const hasCurrent = computed(() => 'current' in props);
-
-    if (process.env.NODE_ENV !== 'production') {
-      warning(
-        hasCurrent.value ? hasOnChange.value : true,
-        'You provided a `current` prop to a Pagination component without an `onChange` handler. This will render a read-only component.',
-      );
-    }
 
     const jumpPrevPage = computed(() => Math.max(1, current.value - (showLessItems ? 3 : 5)));
     const jumpNextPage = computed(() =>
