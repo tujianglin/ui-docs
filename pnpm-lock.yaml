@@ -366,6 +366,21 @@ importers:
         specifier: 'catalog:'
         version: 3.6.0-beta.8(typescript@5.9.3)
 
+  packages/notification:
+    dependencies:
+      '@vc-com/motion':
+        specifier: workspace:*
+        version: link:../motion
+      '@vc-com/util':
+        specifier: workspace:*
+        version: link:../util
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.8(typescript@5.9.3)
+
   packages/overflow:
     dependencies:
       '@vc-com/resize-observer':
@@ -380,6 +395,49 @@ importers:
       vue:
         specifier: 'catalog:'
         version: 3.6.0-beta.8(typescript@5.9.3)
+
+  packages/pagination:
+    dependencies:
+      '@vc-com/util':
+        specifier: workspace:*
+        version: link:../util
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.8(typescript@5.9.3)
+
+  packages/picker:
+    dependencies:
+      '@vc-com/overflow':
+        specifier: workspace:*
+        version: link:../overflow
+      '@vc-com/resize-observer':
+        specifier: workspace:*
+        version: link:../resize-observer
+      '@vc-com/trigger':
+        specifier: workspace:*
+        version: link:../trigger
+      '@vc-com/util':
+        specifier: workspace:*
+        version: link:../util
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+    devDependencies:
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      dayjs:
+        specifier: ^1.11.20
+        version: 1.11.20
+      luxon:
+        specifier: ^3.7.2
+        version: 3.7.2
+      moment:
+        specifier: ^2.30.1
+        version: 2.30.1
 
   packages/portal:
     dependencies:
@@ -1790,6 +1848,12 @@ packages:
     resolution: {integrity: sha512-euIQENZg6x8mj3fO6o9+fOW8MimUI4PpD/fZBhJfeioZVy9TUpM4UY7KjQNVZFlqwJ0UdzRDzkycB997HEq1BQ==}
     engines: {node: '>=20'}
 
+  date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
+
+  dayjs@1.11.20:
+    resolution: {integrity: sha512-YbwwqR/uYpeoP4pu043q+LTDLFBLApUP6VxRihdfNTqu4ubqMlGDLd6ErXhEgsyvY0K6nCs7nggYumAN+9uEuQ==}
+
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
     peerDependencies:
@@ -2431,6 +2495,10 @@ packages:
     resolution: {integrity: sha512-B5Y16Jr9LB9dHVkh6ZevG+vAbOsNOYCX+sXvFWFu7B3Iz5mijW3zdbMyhsh8ANd2mSWBYdJgnqi+mL7/LrOPYg==}
     engines: {node: 20 || >=22}
 
+  luxon@3.7.2:
+    resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
+    engines: {node: '>=12'}
+
   magic-string-ast@1.0.3:
     resolution: {integrity: sha512-CvkkH1i81zl7mmb94DsRiFeG9V2fR2JeuK8yDgS8oiZSFa++wWLEgZ5ufEOyLHbvSbD1gTRKv9NdX69Rnvr9JA==}
     engines: {node: '>=20.19.0'}
@@ -2514,6 +2582,9 @@ packages:
 
   mlly@1.8.0:
     resolution: {integrity: sha512-l8D9ODSRWLe2KHJSifWGwBqpTZXIXTeo8mlKjY+E2HAakaTeNpqAyBZ8GSqLzHgw4XmHmC8whvpjJNMbFZN7/g==}
+
+  moment@2.30.1:
+    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
 
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
@@ -4511,6 +4582,10 @@ snapshots:
       whatwg-mimetype: 5.0.0
       whatwg-url: 15.1.0
 
+  date-fns@4.1.0: {}
+
+  dayjs@1.11.20: {}
+
   debug@2.6.9:
     dependencies:
       ms: 2.0.0
@@ -5157,6 +5232,8 @@ snapshots:
 
   lru-cache@11.2.4: {}
 
+  luxon@3.7.2: {}
+
   magic-string-ast@1.0.3:
     dependencies:
       magic-string: 0.30.21
@@ -5252,6 +5329,8 @@ snapshots:
       pathe: 2.0.3
       pkg-types: 1.3.1
       ufo: 1.6.3
+
+  moment@2.30.1: {}
 
   mri@1.2.0: {}
 

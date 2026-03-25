@@ -1,0 +1,37 @@
+{
+  "name": "@vc-com/picker",
+  "version": "1.0.0",
+  "description": "Vue 3 Picker 组件",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build && pnpm build:types",
+    "build:types": "tsmc -p tsconfig.build.json",
+    "prepublish": "pnpm build",
+    "bump": "bumpp --release patch"
+  },
+  "dependencies": {
+    "@vc-com/overflow": "workspace:*",
+    "@vc-com/resize-observer": "workspace:*",
+    "@vc-com/trigger": "workspace:*",
+    "@vc-com/util": "workspace:*",
+    "clsx": "catalog:"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.20",
+    "luxon": "^3.7.2",
+    "moment": "^2.30.1"
+  }
+}

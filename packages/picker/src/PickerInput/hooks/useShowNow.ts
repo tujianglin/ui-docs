@@ -1,0 +1,21 @@
+import { computed, type Ref } from 'vue';
+import type { InternalMode, PanelMode } from '../../interface';
+
+export default function useShowNow(
+  picker: Ref<InternalMode>,
+  mode: Ref<PanelMode>,
+  showNow?: Ref<boolean>,
+  rangePicker?: Ref<boolean>,
+) {
+  return computed(() => {
+    if (mode.value !== 'date' && mode.value !== 'time') {
+      return false;
+    }
+
+    if (showNow.value !== undefined) {
+      return showNow.value;
+    }
+
+    return !rangePicker.value && (picker.value === 'date' || picker.value === 'time');
+  });
+}
