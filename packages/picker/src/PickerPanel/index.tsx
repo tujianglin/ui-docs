@@ -376,7 +376,7 @@ const PickerPanel = defineComponent(
     );
 
     // ======================== Context =========================
-    const sharedPanelContext = computed(() => ({
+    const sharedPanelContext = reactiveComputed(() => ({
       classNames: pickerClassNames?.popup ?? panelClassNames ?? {},
       styles: pickerStyles?.popup ?? panelStyles ?? {},
     }));
@@ -418,12 +418,12 @@ const PickerPanel = defineComponent(
         'onHover',
       ]),
     );
-    useSharedPanelContextProvider(reactiveComputed(() => sharedPanelContext.value));
+    useSharedPanelContextProvider(sharedPanelContext);
     return () => (
       <PickerHackContextProvider value={pickerPanelContext.value}>
-        <div ref={rootRef} tabindex={tabindex} class={clsx(panelCls, { [`${panelCls}-rtl`]: direction === 'rtl' })}>
+        <div ref={rootRef} tabindex={tabindex} class={clsx(panelCls.value, { [`${panelCls.value}-rtl`]: direction === 'rtl' })}>
           <PanelComponent.value
-            {...panelProps}
+            {...panelProps.value}
             // Time
             showTime={mergedShowTime.value}
             // MISC

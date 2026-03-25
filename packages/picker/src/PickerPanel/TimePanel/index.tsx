@@ -27,8 +27,9 @@ const TimePanel = defineComponent(
     const panelPrefixCls = computed(() => `${prefixCls}-time-panel`);
 
     // ========================== Base ==========================
+    // @ts-ignore
     const [info] = useInfo(
-      reactiveComputed(() => props),
+      props,
       computed(() => 'time'),
     );
 

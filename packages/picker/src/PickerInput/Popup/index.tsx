@@ -1,9 +1,10 @@
 import ResizeObserver, { type ResizeObserverProps } from '@vc-com/resize-observer';
 import { clsx } from 'clsx';
-import { defineComponent } from 'vue';
-import type { InputHTMLAttributes, MouseEventHandler } from 'vue-jsx-vapor';
+import { computed, defineComponent, ref, watch } from 'vue';
+import { useFullProps, useRef, type InputHTMLAttributes, type MouseEventHandler } from 'vue-jsx-vapor';
 import type { DateType, RangeTimeProps, SharedPickerProps, SharedTimeProps, ValueDate } from '../../interface';
 import { toArray } from '../../utils/miscUtil';
+import { usePickerContextInject } from '../context';
 import Footer, { type FooterProps } from './Footer';
 import PopupPanel, { type PopupPanelProps } from './PopupPanel';
 import PresetPanel from './PresetPanel';
@@ -75,166 +76,182 @@ const Popup = defineComponent(
     classNames,
     styles,
   }: PopupProps) => {
-    const { prefixCls } = useContext(PickerContext);
-    const panelPrefixCls = `${prefixCls}-panel`;
+    const props = useFullProps() as PopupProps;
+    const { prefixCls } = $(usePickerContextInject());
+    const panelPrefixCls = computed(() => `${prefixCls}-panel`);
 
-    const rtl = direction === 'rtl';
+    const rtl = computed(() => direction === 'rtl');
 
     // ========================= Refs =========================
     const arrowRef = useRef<HTMLDivElement>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     // ======================== Offset ========================
-    const [containerWidth, setContainerWidth] = useState<number>(0);
-    const [containerOffset, setContainerOffset] = useState<number>(0);
-    const [arrowOffset, setArrowOffset] = useState<number>(0);
+    const containerWidth = ref<number>(0);
+    const containerOffset = ref<number>(0);
+    const arrowOffset = ref<number>(0);
 
     const onResize: ResizeObserverProps['onResize'] = (info) => {
       if (info.width) {
-        setContainerWidth(info.width);
+        containerWidth.value = info.width;
       }
     };
 
-    const [activeInputLeft, activeInputRight, selectorWidth] = activeInfo;
-    const [retryTimes, setRetryTimes] = useState(0);
+    const activeInputLeft = computed(() => activeInfo[0]);
+    const activeInputRight = computed(() => activeInfo[1]);
+    const selectorWidth = computed(() => activeInfo[2]);
+    const retryTimes = ref(0);
 
-    useEffect(() => {
-      setRetryTimes(10);
-    }, [activeInputLeft]);
+    watch(
+      activeInputLeft,
+      () => {
+        retryTimes.value = 10;
+      },
+      { immediate: true },
+    );
 
-    useEffect(() => {
+    watch([retryTimes, rtl, containerWidth, activeInputLeft, activeInputRight, selectorWidth, () => range], () => {
       // `activeOffset` is always align with the active input element
       // So we need only check container contains the `activeOffset`
-      if (range && wrapperRef.current) {
+      if (range && wrapperRef.value) {
         // Offset in case container has border radius
-        const arrowWidth = arrowRef.current?.offsetWidth || 0;
+        const arrowWidth = arrowRef.value?.offsetWidth || 0;
 
         // Arrow Offset
-        const wrapperRect = wrapperRef.current.getBoundingClientRect();
+        const wrapperRect = wrapperRef.value.getBoundingClientRect();
         if (!wrapperRect.height || wrapperRect.right < 0) {
-          setRetryTimes((times) => Math.max(0, times - 1));
+          retryTimes.value = Math.max(0, retryTimes.value - 1);
           return;
         }
 
-        const nextArrowOffset = (rtl ? activeInputRight - arrowWidth : activeInputLeft) - wrapperRect.left;
-        setArrowOffset(nextArrowOffset);
+        const nextArrowOffset = (rtl.value ? activeInputRight.value - arrowWidth : activeInputLeft.value) - wrapperRect.left;
+        arrowOffset.value = nextArrowOffset;
 
         // Container Offset
-        if (containerWidth && containerWidth < selectorWidth) {
+        if (containerWidth.value && containerWidth.value < selectorWidth.value) {
           const offset = rtl
-            ? wrapperRect.right - (activeInputRight - arrowWidth + containerWidth)
-            : activeInputLeft + arrowWidth - wrapperRect.left - containerWidth;
+            ? wrapperRect.right - (activeInputRight.value - arrowWidth + containerWidth.value)
+            : activeInputLeft.value + arrowWidth - wrapperRect.left - containerWidth.value;
 
           const safeOffset = Math.max(0, offset);
-          setContainerOffset(safeOffset);
+          containerOffset.value = safeOffset;
         } else {
-          setContainerOffset(0);
+          containerOffset.value = 0;
         }
       }
-    }, [retryTimes, rtl, containerWidth, activeInputLeft, activeInputRight, selectorWidth, range]);
+    });
 
     // ======================== Custom ========================
     function filterEmpty<T>(list: T[]) {
       return list.filter((item) => item);
     }
 
-    const valueList = useMemo(() => filterEmpty(toArray(value)), [value]);
+    const valueList = computed(() => filterEmpty(toArray(value)));
 
-    const isTimePickerEmptyValue = picker === 'time' && !valueList.length;
+    const isTimePickerEmptyValue = computed(() => picker === 'time' && !valueList.value?.length);
 
-    const footerSubmitValue = useMemo(() => {
-      if (isTimePickerEmptyValue) {
+    const footerSubmitValue = computed(() => {
+      if (isTimePickerEmptyValue.value) {
         return filterEmpty([defaultOpenValue]);
       }
-      return valueList;
-    }, [isTimePickerEmptyValue, valueList, defaultOpenValue]);
+      return valueList.value;
+    });
 
-    const popupPanelValue = isTimePickerEmptyValue ? defaultOpenValue : valueList;
+    const popupPanelValue = computed(() => (isTimePickerEmptyValue.value ? defaultOpenValue : valueList.value));
 
-    const disableSubmit = useMemo(() => {
+    const disableSubmit = computed(() => {
       // Empty is invalid
-      if (!footerSubmitValue.length) {
+      if (!footerSubmitValue.value.length) {
         return true;
       }
 
-      return footerSubmitValue.some((val) => isInvalid(val));
-    }, [footerSubmitValue, isInvalid]);
+      return footerSubmitValue.value.some((val) => isInvalid(val));
+    });
 
     const onFooterSubmit = () => {
       // For TimePicker, we will additional trigger the value update
-      if (isTimePickerEmptyValue) {
+      if (isTimePickerEmptyValue.value) {
         onSelect(defaultOpenValue);
       }
 
       onOk();
       onSubmit();
     };
-
-    let mergedNodes: ReactNode = (
-      <div className={`${prefixCls}-panel-layout`}>
-        {/* `any` here since PresetPanel is reused for both Single & Range Picker which means return type is not stable */}
-        <PresetPanel<any> prefixCls={prefixCls} presets={presets} onClick={onPresetSubmit} onHover={onPresetHover} />
-        <div>
-          <PopupPanel {...props} value={popupPanelValue} />
-          <Footer {...props} showNow={multiple ? false : showNow} invalid={disableSubmit} onSubmit={onFooterSubmit} />
-        </div>
-      </div>
-    );
-
-    if (panelRender) {
-      mergedNodes = panelRender(mergedNodes);
-    }
-
-    // ======================== Render ========================
-    const containerPrefixCls = `${panelPrefixCls}-container`;
-
-    const marginLeft = 'marginLeft';
-    const marginRight = 'marginRight';
-
-    // Container
-    let renderNode = (
-      <div
-        onMouseDown={onPanelMouseDown}
-        tabIndex={-1}
-        className={clsx(
-          containerPrefixCls,
-          // Used for Today Button style, safe to remove if no need
-          `${prefixCls}-${internalMode}-panel-container`,
-          classNames?.popup?.container,
-        )}
-        style={{
-          [rtl ? marginRight : marginLeft]: containerOffset,
-          [rtl ? marginLeft : marginRight]: 'auto',
-          ...styles?.popup?.container,
-        }}
-        // Still wish not to lose focus on mouse down
-        // onMouseDown={(e) => {
-        //   // e.preventDefault();
-        // }}
-        onFocus={onFocus}
-        onBlur={onBlur}
-      >
-        {mergedNodes}
-      </div>
-    );
-
-    if (range) {
-      renderNode = (
-        <div
-          onMouseDown={onPanelMouseDown}
-          ref={wrapperRef}
-          className={clsx(`${prefixCls}-range-wrapper`, `${prefixCls}-${picker}-range-wrapper`)}
-        >
-          <div ref={arrowRef} className={`${prefixCls}-range-arrow`} style={{ left: arrowOffset }} />
-
-          {/* Watch for container size */}
-          <ResizeObserver onResize={onResize}>{renderNode}</ResizeObserver>
+    return () => {
+      let mergedNodes = (
+        <div class={`${prefixCls}-panel-layout`}>
+          {/* `any` here since PresetPanel is reused for both Single & Range Picker which means return type is not stable */}
+          <PresetPanel prefixCls={prefixCls} presets={presets} onClick={onPresetSubmit} onHover={onPresetHover} />
+          <div>
+            <PopupPanel {...props} value={popupPanelValue.value} />
+            <Footer {...props} showNow={multiple ? false : showNow} invalid={disableSubmit.value} onSubmit={onFooterSubmit} />
+          </div>
         </div>
       );
-    }
 
-    return renderNode;
+      if (panelRender) {
+        mergedNodes = panelRender(mergedNodes) as JSX.Element;
+      }
+
+      // ======================== Render ========================
+      const containerPrefixCls = `${panelPrefixCls.value}-container`;
+
+      const marginLeft = 'marginLeft';
+      const marginRight = 'marginRight';
+
+      // Container
+      let renderNode = (
+        <div
+          tabindex={-1}
+          class={clsx(
+            containerPrefixCls,
+            // Used for Today Button style, safe to remove if no need
+            `${prefixCls}-${internalMode}-panel-container`,
+            classNames?.popup?.container,
+          )}
+          style={{
+            [rtl.value ? marginRight : marginLeft]: `${containerOffset.value}px`,
+            [rtl.value ? marginLeft : marginRight]: 'auto',
+            ...styles?.popup?.container,
+          }}
+          {...{
+            // Keep focus on the selector while interacting with the popup
+            // so cell click handlers can run before any blur-close sequence.
+            onMousedown: (e) => {
+              e.preventDefault();
+              onPanelMouseDown?.(e);
+            },
+            onFocus,
+            onBlur,
+          }}
+        >
+          {mergedNodes}
+        </div>
+      );
+
+      if (range) {
+        renderNode = (
+          <div
+            ref={wrapperRef}
+            class={clsx(`${prefixCls}-range-wrapper`, `${prefixCls}-${picker}-range-wrapper`)}
+            {...{
+              onMousedown: (e) => {
+                e.preventDefault();
+                onPanelMouseDown?.(e);
+              },
+            }}
+          >
+            <div ref={arrowRef} class={`${prefixCls}-range-arrow`} style={{ left: `${arrowOffset.value}px` }} />
+
+            {/* Watch for container size */}
+            <ResizeObserver onResize={onResize}>{renderNode}</ResizeObserver>
+          </div>
+        );
+      }
+      return renderNode;
+    };
   },
+  { inheritAttrs: false },
 );
 
 export default Popup;

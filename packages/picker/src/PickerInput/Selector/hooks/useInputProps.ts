@@ -1,5 +1,5 @@
-import { warning } from '@vc-com/util';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
+import { warning } from '@vc-com/util/lib/warning';
 import type { ReactiveComputedReturn } from '@vueuse/core';
 import { computed } from 'vue';
 import type { KeyboardEvent } from 'vue-jsx-vapor';

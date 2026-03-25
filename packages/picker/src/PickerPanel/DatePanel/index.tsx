@@ -1,4 +1,3 @@
-import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
 import { computed, defineComponent } from 'vue';
 import { useFullProps } from 'vue-jsx-vapor';
@@ -42,7 +41,7 @@ const DatePanel = defineComponent(
     // ========================== Base ==========================
     // @ts-ignore
     const [info, now] = useInfo(
-      reactiveComputed(() => props),
+      props,
       computed(() => mode),
     );
     const weekFirstDay = computed(() => generateConfig.locale.getWeekFirstDay(locale.locale));
@@ -52,7 +51,6 @@ const DatePanel = defineComponent(
 
     // =========================== PrefixColumn ===========================
     const showPrefixColumn = computed(() => (showWeek === undefined ? isWeek.value : showWeek));
-
     usePanelContextProvider(info);
     return () => {
       const prefixColumn = showPrefixColumn.value

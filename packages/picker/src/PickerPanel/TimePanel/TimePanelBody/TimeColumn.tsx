@@ -99,7 +99,7 @@ const TimeColumn = defineComponent(
     };
 
     // ========================= Render =========================
-    const columnPrefixCls = computed(() => `${panelPrefixCls}-column`);
+    const columnPrefixCls = computed(() => `${panelPrefixCls.value}-column`);
 
     return () => (
       <ul class={columnPrefixCls.value} ref={ulRef} data-type={type} onScroll={onInternalScroll}>

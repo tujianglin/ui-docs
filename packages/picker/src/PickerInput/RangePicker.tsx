@@ -1,4 +1,4 @@
-import { useControlledState } from '@vc-com/util';
+import useControlledState from '@vc-com/util/lib/hooks/useControlledState';
 import omit from '@vc-com/util/lib/omit';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
 import { warning } from '@vc-com/util/lib/warning';
@@ -779,7 +779,7 @@ const RefRangePicker = defineComponent(
         >
           <RangeSelector
             // Shared
-            {...filledProps}
+            {...omit(filledProps, ['onFocus', 'onBlur', 'onKeydown', 'onSubmit', 'onChange', 'onOpenChange', 'onClick'])}
             // Ref
             ref={selectorRef}
             // Style

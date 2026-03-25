@@ -1,8 +1,13 @@
+// oxlint-disable no-unused-vars
 import type { RenderNode } from '@vc-com/util/lib/types';
+import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
-import type { DateType, InternalMode, PickerRef, SelectorProps } from '../../../interface';
+import { computed, defineComponent } from 'vue';
+import { useFullProps, useRef } from 'vue-jsx-vapor';
+import type { DateType, InternalMode, SelectorProps } from '../../../interface';
 import { isSame } from '../../../utils/dateUtil';
 import type { PickerProps } from '../../SinglePicker';
+import { usePickerContextInject } from '../../context';
 import Icon, { ClearIcon } from '../Icon';
 import Input, { type InputRef } from '../Input';
 import useInputProps from '../hooks/useInputProps';
@@ -31,8 +36,8 @@ export interface SingleSelectorProps extends SelectorProps, Pick<PickerProps, 'm
   removeIcon?: RenderNode;
 }
 
-function SingleSelector<DateType extends object = any>(props: SingleSelectorProps<DateType>, ref: React.Ref<PickerRef>) {
-  const {
+const SingleSelector = defineComponent(
+  ({
     id,
 
     open,
@@ -46,7 +51,7 @@ function SingleSelector<DateType extends object = any>(props: SingleSelectorProp
     focused,
     onFocus,
     onBlur,
-    onKeyDown,
+    onKeydown,
     locale,
     generateConfig,
 
@@ -54,7 +59,7 @@ function SingleSelector<DateType extends object = any>(props: SingleSelectorProp
     placeholder,
 
     // Style
-    className,
+    class: className,
     style,
 
     // Click
@@ -88,149 +93,150 @@ function SingleSelector<DateType extends object = any>(props: SingleSelectorProp
     onOpenChange,
 
     // Native
-    onMouseDown,
+    onMousedown,
 
     // Input
     required,
     'aria-required': ariaRequired,
-    autoFocus,
-    tabIndex,
+    autofocus,
+    tabindex,
 
     removeIcon,
 
     ...restProps
-  } = props;
+  }: SingleSelectorProps) => {
+    const props = useFullProps() as SingleSelectorProps;
 
-  const rtl = direction === 'rtl';
+    const rtl = computed(() => direction === 'rtl');
 
-  // ======================== Prefix ========================
-  const { prefixCls, classNames, styles } = React.useContext(PickerContext);
+    // ======================== Prefix ========================
+    const { prefixCls, classNames, styles } = $(usePickerContextInject());
 
-  // ========================= Refs =========================
-  const rootRef = React.useRef<HTMLDivElement>();
-  const inputRef = React.useRef<InputRef>();
+    // ========================= Refs =========================
+    const rootRef = useRef<HTMLDivElement>();
+    const inputRef = useRef<InputRef>();
 
-  React.useImperativeHandle(ref, () => ({
-    nativeElement: rootRef.current,
-    focus: (options) => {
-      inputRef.current?.focus(options);
-    },
-    blur: () => {
-      inputRef.current?.blur();
-    },
-  }));
+    defineExpose({
+      get nativeElement() {
+        return rootRef.value;
+      },
+      focus: (options) => {
+        inputRef.value?.focus(options);
+      },
+      blur: () => {
+        inputRef.value?.blur();
+      },
+    });
 
-  // ======================== Props =========================
-  const rootProps = useRootProps(restProps);
+    // ======================== Props =========================
+    const rootProps = useRootProps(restProps);
 
-  // ======================== Change ========================
-  const onSingleChange = (date: DateType) => {
-    onChange([date]);
-  };
+    // ======================== Change ========================
+    const onSingleChange = (date: DateType) => {
+      onChange([date]);
+    };
 
-  const onMultipleRemove = (date: DateType) => {
-    const nextValues = value.filter((oriDate) => oriDate && !isSame(generateConfig, locale, oriDate, date, internalPicker));
-    onChange(nextValues);
+    const onMultipleRemove = (date: DateType) => {
+      const nextValues = value.filter((oriDate) => oriDate && !isSame(generateConfig, locale, oriDate, date, internalPicker));
+      onChange(nextValues);
 
-    // When `open`, it means user is operating the
-    if (!open) {
-      onSubmit();
-    }
-  };
+      // When `open`, it means user is operating the
+      if (!open) {
+        onSubmit();
+      }
+    };
 
-  // ======================== Inputs ========================
-  const [getInputProps, getText] = useInputProps<DateType>(
-    {
-      ...props,
-      onChange: onSingleChange,
-    },
-    ({ valueTexts }) => ({
-      value: valueTexts[0] || '',
-      active: focused,
-    }),
-  );
+    // ======================== Inputs ========================
+    const [getInputProps, getText] = useInputProps(
+      reactiveComputed(() => ({
+        ...props,
+        onChange: onSingleChange,
+      })),
+      ({ valueTexts }) => ({
+        value: valueTexts[0] || '',
+        active: focused,
+      }),
+    );
 
-  // ======================== Clear =========================
-  const showClear = !!(clearIcon && value.length && !disabled);
+    // ======================== Clear =========================
+    const showClear = computed(() => !!(clearIcon && value.length && !disabled));
 
-  // ======================= Multiple =======================
-  const selectorNode = multiple ? (
-    <>
-      <MultipleDates
-        prefixCls={prefixCls}
-        value={value}
-        onRemove={onMultipleRemove}
-        formatDate={getText}
-        maxTagCount={maxTagCount}
-        disabled={disabled}
-        removeIcon={removeIcon}
-        placeholder={placeholder}
-      />
-      <input
-        className={`${prefixCls}-multiple-input`}
-        value={value.map(getText).join(',')}
-        ref={inputRef as any}
-        readOnly
-        autoFocus={autoFocus}
-        tabIndex={tabIndex}
-      />
-      <Icon type="suffix" icon={suffixIcon} />
-      {showClear && <ClearIcon icon={clearIcon} onClear={onClear} />}
-    </>
-  ) : (
-    <Input
-      ref={inputRef}
-      {...getInputProps()}
-      autoFocus={autoFocus}
-      tabIndex={tabIndex}
-      suffixIcon={suffixIcon}
-      clearIcon={showClear && <ClearIcon icon={clearIcon} onClear={onClear} />}
-      showActiveCls={false}
-    />
-  );
+    return () => {
+      // ======================= Multiple =======================
+      const selectorNode = multiple ? (
+        <>
+          <MultipleDates
+            prefixCls={prefixCls}
+            value={value}
+            onRemove={onMultipleRemove}
+            formatDate={getText}
+            maxTagCount={maxTagCount}
+            disabled={disabled}
+            removeIcon={removeIcon}
+            placeholder={placeholder}
+          />
+          <input
+            class={`${prefixCls}-multiple-input`}
+            value={value.map(getText).join(',')}
+            ref={inputRef}
+            readonly
+            autofocus={autofocus}
+            tabindex={tabindex}
+          />
+          <Icon type="suffix" icon={suffixIcon} />
+          {showClear.value && <ClearIcon icon={clearIcon} onClear={onClear} />}
+        </>
+      ) : (
+        <Input
+          ref={inputRef}
+          {...getInputProps()}
+          autofocus={autofocus}
+          tabindex={tabindex}
+          suffixIcon={suffixIcon}
+          clearIcon={showClear.value && <ClearIcon icon={clearIcon} onClear={onClear} />}
+          showActiveCls={false}
+        />
+      );
 
-  // ======================== Render ========================
-  return (
-    <div
-      {...rootProps}
-      className={clsx(
-        prefixCls,
-        {
-          [`${prefixCls}-multiple`]: multiple,
-          [`${prefixCls}-focused`]: focused,
-          [`${prefixCls}-disabled`]: disabled,
-          [`${prefixCls}-invalid`]: invalid,
-          [`${prefixCls}-rtl`]: rtl,
-        },
-        className,
-      )}
-      style={style}
-      ref={rootRef}
-      onClick={onClick}
-      // Not lose current input focus
-      onMouseDown={(e) => {
-        const { target } = e;
-        if (target !== inputRef.current?.inputElement) {
-          e.preventDefault();
-        }
+      // ======================== Render ========================
+      return (
+        <div
+          {...rootProps}
+          class={clsx(
+            prefixCls,
+            {
+              [`${prefixCls}-multiple`]: multiple,
+              [`${prefixCls}-focused`]: focused,
+              [`${prefixCls}-disabled`]: disabled,
+              [`${prefixCls}-invalid`]: invalid,
+              [`${prefixCls}-rtl`]: rtl.value,
+            },
+            className,
+          )}
+          style={style}
+          ref={rootRef}
+          // Not lose value input focus
+          onMousedown={(e) => {
+            const { target } = e;
+            if (target !== inputRef.value?.inputElement) {
+              e.preventDefault();
+            }
 
-        onMouseDown?.(e);
-      }}
-    >
-      {prefix && (
-        <div className={clsx(`${prefixCls}-prefix`, classNames.prefix)} style={styles.prefix}>
-          {prefix}
+            onMousedown?.(e);
+          }}
+          {...{
+            onClick,
+          }}
+        >
+          <div v-if={prefix} class={clsx(`${prefixCls}-prefix`, classNames.prefix)} style={styles.prefix}>
+            {prefix}
+          </div>
+          {selectorNode}
         </div>
-      )}
-      {selectorNode}
-    </div>
-  );
-}
+      );
+    };
+  },
+  { inheritAttrs: false, name: process.env.NODE_ENV !== 'production' ? 'SingleSelector' : undefined },
+);
 
-const RefSingleSelector = React.forwardRef(SingleSelector);
-
-if (process.env.NODE_ENV !== 'production') {
-  RefSingleSelector.displayName = 'SingleSelector';
-}
-
-export default RefSingleSelector;
+export default SingleSelector;

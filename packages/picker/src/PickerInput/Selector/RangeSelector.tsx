@@ -229,7 +229,6 @@ const RefRangeSelector = defineComponent(
           )}
           style={style}
           ref={rootRef}
-          onClick={onClick}
           // Not lose value input focus
           onMousedown={(e) => {
             const { target } = e;
@@ -238,6 +237,9 @@ const RefRangeSelector = defineComponent(
             }
 
             onMousedown?.(e);
+          }}
+          {...{
+            onClick,
           }}
         >
           <div v-if={prefix} class={clsx(`${prefixCls}-prefix`, classNames.prefix)} style={styles.prefix}>

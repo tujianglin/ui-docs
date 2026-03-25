@@ -82,60 +82,38 @@ export function useInfo(
 ): [sharedProps: ReactiveComputedReturn<PanelContextProps>, now: ComputedRef<DateType>] {
   // TODO: this is not good to get from each props.
   // Should move to `SharedPanelContext` instead.
-  const {
-    prefixCls,
-    generateConfig,
-    locale,
-    disabledDate,
-    minDate,
-    maxDate,
-    cellRender,
-    hoverValue,
-    hoverRangeValue,
-    onHover,
-    values,
-    pickerValue,
-    onSelect,
-
-    // Icons
-    // @ts-ignore
-    prevIcon,
-    nextIcon,
-    superPrevIcon,
-    superNextIcon,
-  } = $(props);
 
   // ======================= Context ========================
   const { classNames, styles } = $(useSharedPanelContextInject());
 
   // ========================= MISC =========================
-  const now = computed(() => generateConfig.getNow());
-
+  const now = computed(() => props.generateConfig?.getNow?.());
   // ========================= Info =========================
   const info = reactiveComputed(() => ({
     now: now.value,
-    values,
-    pickerValue,
-    prefixCls,
-    classNames,
-    styles,
-    disabledDate,
-    minDate,
-    maxDate,
-    cellRender,
-    hoverValue,
-    hoverRangeValue,
-    onHover,
-    locale,
-    generateConfig,
-    onSelect,
+    values: props.values,
+    pickerValue: props.pickerValue,
+    prefixCls: props.prefixCls,
+    classNames: classNames,
+    styles: styles,
+    disabledDate: props.disabledDate,
+    minDate: props.minDate,
+    maxDate: props.maxDate,
+    cellRender: props.cellRender,
+    hoverValue: props.hoverValue,
+    hoverRangeValue: props.hoverRangeValue,
+    onHover: props.onHover,
+    locale: props.locale,
+    generateConfig: props.generateConfig,
+    onSelect: props.onSelect,
     panelType: panelType.value,
 
     // Icons
-    prevIcon,
-    nextIcon,
-    superPrevIcon,
-    superNextIcon,
+    // @ts-ignore
+    prevIcon: props.prevIcon,
+    nextIcon: props.nextIcon,
+    superPrevIcon: props.superPrevIcon,
+    superNextIcon: props.superNextIcon,
   }));
 
   return [info, now];

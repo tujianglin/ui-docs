@@ -6,7 +6,7 @@ import ResizeObserver, { type ResizeObserverProps } from '@vc-com/resize-observe
 import { composeRef } from '@vc-com/util/lib/ref';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, defineComponent, effect, nextTick, ref, shallowRef, watch, type CSSProperties } from 'vue';
+import { computed, defineComponent, nextTick, ref, shallowRef, watch, type CSSProperties } from 'vue';
 import type { MouseEventHandler } from 'vue-jsx-vapor';
 import type { TriggerProps } from '../';
 import useOffsetStyle from '../hooks/useOffsetStyle';
@@ -223,9 +223,6 @@ const Popup = defineComponent(
         result.pointerEvents = 'none';
       }
       return result;
-    });
-    effect(() => {
-      console.log(__props);
     });
 
     // ========================= Render =========================

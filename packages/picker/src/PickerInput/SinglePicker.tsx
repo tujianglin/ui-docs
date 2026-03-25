@@ -1,4 +1,4 @@
-import { useControlledState } from '@vc-com/util';
+import useControlledState from '@vc-com/util/lib/hooks/useControlledState';
 import omit from '@vc-com/util/lib/omit';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
 import { reactiveComputed } from '@vueuse/core';
@@ -106,9 +106,7 @@ const Picker = defineComponent(
   (props: PickerProps) => {
     // ========================= Prop =========================
     // @ts-ignore
-    const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(
-      reactiveComputed(() => props),
-    );
+    const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(props);
 
     const {
       // Style
@@ -655,11 +653,11 @@ const Picker = defineComponent(
         >
           <SingleSelector
             // Shared
-            {...filledProps}
+            {...omit(filledProps, ['onFocus', 'onBlur', 'onKeydown', 'onSubmit', 'onChange', 'onOpenChange', 'onClick'])}
             // Ref
             ref={selectorRef}
             // Style
-            className={clsx(filledProps.class, rootClassName, mergedClassNames.value.root)}
+            class={clsx(filledProps.class, rootClassName, mergedClassNames.value.root)}
             style={{ ...mergedStyles.value.root, ...filledProps.style }}
             // Icon
             suffixIcon={suffixIcon}

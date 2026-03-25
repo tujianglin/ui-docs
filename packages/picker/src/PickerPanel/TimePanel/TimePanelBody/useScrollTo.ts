@@ -28,7 +28,7 @@ export default function useScrollTo(
     scrollRafTimesRef.value = 0;
 
     if (ul) {
-      const targetLi = ul.querySelector<HTMLLIElement>(`[data-value="${value}"]`);
+      const targetLi = ul.querySelector<HTMLLIElement>(`[data-value="${value.value}"]`);
       const firstLi = ul.querySelector<HTMLLIElement>(`li`);
 
       const doScroll = () => {

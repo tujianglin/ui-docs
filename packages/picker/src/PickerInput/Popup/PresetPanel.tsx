@@ -15,7 +15,7 @@ function executeValue(value: ValueDate['value']): DateType {
 const PresetPanel = defineComponent(
   ({ prefixCls, presets, onClick, onHover }: PresetPanelProps) => {
     return () => {
-      if (!presets.length) {
+      if (!presets?.length) {
         return null;
       }
 

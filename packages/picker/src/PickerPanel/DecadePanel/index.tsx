@@ -1,4 +1,3 @@
-import { reactiveComputed } from '@vueuse/core';
 import { computed, defineComponent } from 'vue';
 import { useFullProps } from 'vue-jsx-vapor';
 import type { DateType, DisabledDate, SharedPanelProps } from '../../interface';
@@ -14,7 +13,7 @@ const DecadePanel = defineComponent(
 
     // ========================== Base ==========================
     const [info] = useInfo(
-      reactiveComputed(() => props),
+      props,
       computed(() => 'decade'),
     );
 

@@ -12,10 +12,10 @@ export default function useShowNow(
       return false;
     }
 
-    if (showNow.value !== undefined) {
+    if (showNow?.value !== undefined) {
       return showNow.value;
     }
 
-    return !rangePicker.value && (picker.value === 'date' || picker.value === 'time');
+    return !rangePicker?.value && (picker.value === 'date' || picker.value === 'time');
   });
 }

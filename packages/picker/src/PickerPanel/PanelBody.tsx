@@ -119,7 +119,6 @@ const PanelBody = defineComponent(
 
           // Render
           const inner = <div class={`${cellPrefixCls.value}-inner`}>{getCellText(currentDate)}</div>;
-
           rowNode.push(
             <td
               key={col}
@@ -185,11 +184,9 @@ const PanelBody = defineComponent(
       return (
         <div class={clsx(`${prefixCls}-body`, classNames.body)} style={styles.body}>
           <table class={clsx(`${prefixCls}-content`, classNames.content)} style={styles.content}>
-            {headerCells && (
-              <thead>
-                <tr>{headerCells}</tr>
-              </thead>
-            )}
+            <thead v-if={headerCells}>
+              <tr>{headerCells}</tr>
+            </thead>
             <tbody>{rows}</tbody>
           </table>
         </div>

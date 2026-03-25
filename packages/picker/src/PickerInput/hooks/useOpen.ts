@@ -19,7 +19,7 @@ export default function useOpen(
   const [rafOpen, setRafOpen] = useDelayState(mergedOpen, defaultOpen || false, onOpenChange);
 
   function setOpen(next: boolean, config: OpenConfig = {}) {
-    if (!config.inherit || rafOpen) {
+    if (!config.inherit || rafOpen.value) {
       setRafOpen(next, config.force);
     }
   }

@@ -1,4 +1,5 @@
 import { reactiveComputed } from '@vueuse/core';
+import { omit } from 'es-toolkit';
 import { computed, defineComponent } from 'vue';
 import { useFullProps } from 'vue-jsx-vapor';
 import useTimeInfo from '../../hooks/useTimeInfo';
@@ -43,8 +44,8 @@ const DateTimePanel = defineComponent(
     // ============================== Render ==============================
     return () => (
       <div class={panelPrefixCls.value}>
-        <DatePanel {...props} onSelect={onDateSelect} onHover={onDateHover} />
-        <TimePanel {...props} />
+        <DatePanel {...omit(props, ['onHover', 'onSelect'])} onSelect={onDateSelect} onHover={onDateHover} />
+        <TimePanel {...omit(props, ['values'])} values={props.values} />
       </div>
     );
   },
