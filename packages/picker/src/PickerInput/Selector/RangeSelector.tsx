@@ -26,7 +26,7 @@ export interface RangeSelectorProps extends SelectorProps {
 
   separator?: RenderNode;
 
-  value?: [DateType?, DateType?];
+  value?: DateType[];
   onChange: (date: DateType, index?: number) => void;
 
   disabled: [boolean, boolean];

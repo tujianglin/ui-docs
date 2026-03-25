@@ -1,32 +1,31 @@
-import { useEvent } from '@rc-component/util';
-import raf from '@rc-component/util/lib/raf';
-import isVisible from '@rc-component/util/lib/Dom/isVisible';
-import * as React from 'react';
+import raf from '@vc-com/util/lib/raf';
+import { shallowRef, type Ref } from 'vue';
+import isVisible from '../../../../../util/src/Dom/isVisible';
 
 const SPEED_PTG = 1 / 3;
 
 export default function useScrollTo(
-  ulRef: React.RefObject<HTMLUListElement>,
-  value: number | string,
+  ulRef: Ref<HTMLUListElement>,
+  value: Ref<number | string>,
 ): [syncScroll: VoidFunction, clearScroll: VoidFunction, isScrolling: () => boolean] {
   // ========================= Scroll =========================
-  const scrollingRef = React.useRef<boolean>(false);
-  const scrollRafRef = React.useRef<number>(null);
-  const scrollDistRef = React.useRef<number>(null);
+  const scrollingRef = shallowRef<boolean>(false);
+  const scrollRafRef = shallowRef<number>(null);
+  const scrollDistRef = shallowRef<number>(null);
 
-  const isScrolling = () => scrollingRef.current;
+  const isScrolling = () => scrollingRef.value;
 
   const stopScroll = () => {
-    raf.cancel(scrollRafRef.current);
-    scrollingRef.current = false;
+    raf.cancel(scrollRafRef.value);
+    scrollingRef.value = false;
   };
 
-  const scrollRafTimesRef = React.useRef<number>();
+  const scrollRafTimesRef = shallowRef<number>();
 
   const startScroll = () => {
-    const ul = ulRef.current;
-    scrollDistRef.current = null;
-    scrollRafTimesRef.current = 0;
+    const ul = ulRef.value;
+    scrollDistRef.value = null;
+    scrollRafTimesRef.value = 0;
 
     if (ul) {
       const targetLi = ul.querySelector<HTMLLIElement>(`[data-value="${value}"]`);
@@ -34,8 +33,8 @@ export default function useScrollTo(
 
       const doScroll = () => {
         stopScroll();
-        scrollingRef.current = true;
-        scrollRafTimesRef.current += 1;
+        scrollingRef.value = true;
+        scrollRafTimesRef.value += 1;
 
         const { scrollTop: currentTop } = ul;
 
@@ -45,8 +44,8 @@ export default function useScrollTo(
 
         // Wait for element exist. 5 frames is enough
         if ((targetLiTop === 0 && targetLi !== firstLi) || !isVisible(ul)) {
-          if (scrollRafTimesRef.current <= 5) {
-            scrollRafRef.current = raf(doScroll);
+          if (scrollRafTimesRef.value <= 5) {
+            scrollRafRef.value = raf(doScroll);
           }
           return;
         }
@@ -55,11 +54,11 @@ export default function useScrollTo(
         const dist = Math.abs(targetTop - nextTop);
 
         // Break if dist get larger, which means user is scrolling
-        if (scrollDistRef.current !== null && scrollDistRef.current < dist) {
+        if (scrollDistRef.value !== null && scrollDistRef.value < dist) {
           stopScroll();
           return;
         }
-        scrollDistRef.current = dist;
+        scrollDistRef.value = dist;
 
         // Stop when dist is less than 1
         if (dist <= 1) {
@@ -71,7 +70,7 @@ export default function useScrollTo(
         // IE not support `scrollTo`
         ul.scrollTop = nextTop;
 
-        scrollRafRef.current = raf(doScroll);
+        scrollRafRef.value = raf(doScroll);
       };
 
       if (targetLi && firstLi) {
@@ -81,7 +80,7 @@ export default function useScrollTo(
   };
 
   // ======================== Trigger =========================
-  const syncScroll = useEvent(startScroll);
+  const syncScroll = startScroll;
 
   return [syncScroll, stopScroll, isScrolling];
 }

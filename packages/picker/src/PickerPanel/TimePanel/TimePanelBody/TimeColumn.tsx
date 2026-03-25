@@ -1,13 +1,13 @@
 import { clsx } from 'clsx';
-import useLayoutEffect from '@rc-component/util/lib/hooks/useLayoutEffect';
-import * as React from 'react';
-import { usePanelContext } from '../../context';
+import { computed, defineComponent, nextTick, watch } from 'vue';
+import { useRef, type UIEventHandler } from 'vue-jsx-vapor';
+import { usePanelContextInject } from '../../context';
 import useScrollTo from './useScrollTo';
 
 const SCROLL_DELAY = 300;
 
 export type Unit<ValueType = number | string> = {
-  label: React.ReactText;
+  label: any;
   value: ValueType;
   disabled?: boolean;
 };
@@ -28,116 +28,127 @@ function flattenUnits(units: Unit<string | number>[]) {
   return units.map(({ value, label, disabled }) => [value, label, disabled].join(',')).join(';');
 }
 
-export default function TimeColumn<DateType extends object>(props: TimeUnitColumnProps) {
-  const { units, value, optionalValue, type, onChange, onHover, onDblClick, changeOnScroll } = props;
+const TimeColumn = defineComponent(
+  ({ units, value, optionalValue, type, onChange, onHover, onDblClick, changeOnScroll }: TimeUnitColumnProps) => {
+    const { prefixCls, cellRender, now, locale, classNames, styles } = $(usePanelContextInject());
 
-  const { prefixCls, cellRender, now, locale, classNames, styles } = usePanelContext<DateType>();
+    const panelPrefixCls = computed(() => `${prefixCls}-time-panel`);
+    const cellPrefixCls = computed(() => `${prefixCls}-time-panel-cell`);
 
-  const panelPrefixCls = `${prefixCls}-time-panel`;
-  const cellPrefixCls = `${prefixCls}-time-panel-cell`;
+    // ========================== Refs ==========================
+    const ulRef = useRef<HTMLUListElement>(null);
 
-  // ========================== Refs ==========================
-  const ulRef = React.useRef<HTMLUListElement>(null);
+    // ========================= Scroll =========================
+    const checkDelayRef = useRef<any>();
 
-  // ========================= Scroll =========================
-  const checkDelayRef = React.useRef<any>();
-
-  const clearDelayCheck = () => {
-    clearTimeout(checkDelayRef.current);
-  };
-
-  // ========================== Sync ==========================
-  const [syncScroll, stopScroll, isScrolling] = useScrollTo(ulRef, value ?? optionalValue);
-
-  // Effect sync value scroll
-  useLayoutEffect(() => {
-    syncScroll();
-    clearDelayCheck();
-
-    return () => {
-      stopScroll();
-      clearDelayCheck();
+    const clearDelayCheck = () => {
+      clearTimeout(checkDelayRef.value);
     };
-  }, [value, optionalValue, flattenUnits(units)]);
 
-  // ========================= Change =========================
-  // Scroll event if sync onScroll
-  const onInternalScroll: React.UIEventHandler<HTMLUListElement> = (event) => {
-    clearDelayCheck();
+    // ========================== Sync ==========================
+    const [syncScroll, stopScroll, isScrolling] = useScrollTo(
+      ulRef,
+      computed(() => value ?? optionalValue),
+    );
 
-    const target = event.target as HTMLUListElement;
+    // Effect sync value scroll
+    watch(
+      [() => value, () => optionalValue, () => flattenUnits(units)],
+      async (_n, _o, onCleanup) => {
+        await nextTick();
+        syncScroll();
+        clearDelayCheck();
 
-    if (!isScrolling() && changeOnScroll) {
-      checkDelayRef.current = setTimeout(() => {
-        const ul = ulRef.current!;
-        const firstLiTop = ul.querySelector<HTMLLIElement>(`li`).offsetTop;
-        const liList = Array.from(ul.querySelectorAll<HTMLLIElement>(`li`));
-        const liTopList = liList.map((li) => li.offsetTop - firstLiTop);
-        const liDistList = liTopList.map((top, index) => {
-          if (units[index].disabled) {
-            return Number.MAX_SAFE_INTEGER;
-          }
-          return Math.abs(top - target.scrollTop);
+        onCleanup(() => {
+          stopScroll();
+          clearDelayCheck();
         });
+      },
+      { immediate: true, deep: true, flush: 'post' },
+    );
 
-        // Find min distance index
-        const minDist = Math.min(...liDistList);
-        const minDistIndex = liDistList.findIndex((dist) => dist === minDist);
-        const targetUnit = units[minDistIndex];
-        if (targetUnit && !targetUnit.disabled) {
-          onChange(targetUnit.value);
-        }
-      }, SCROLL_DELAY);
-    }
-  };
+    // ========================= Change =========================
+    // Scroll event if sync onScroll
+    const onInternalScroll: UIEventHandler<HTMLUListElement> = (event) => {
+      clearDelayCheck();
 
-  // ========================= Render =========================
-  const columnPrefixCls = `${panelPrefixCls}-column`;
+      const target = event.target as HTMLUListElement;
 
-  return (
-    <ul className={columnPrefixCls} ref={ulRef} data-type={type} onScroll={onInternalScroll}>
-      {units.map(({ label, value: unitValue, disabled }) => {
-        const inner = <div className={`${cellPrefixCls}-inner`}>{label}</div>;
+      if (!isScrolling() && changeOnScroll) {
+        checkDelayRef.value = setTimeout(() => {
+          const ul = ulRef.value!;
+          const firstLiTop = ul.querySelector<HTMLLIElement>(`li`).offsetTop;
+          const liList = Array.from(ul.querySelectorAll<HTMLLIElement>(`li`));
+          const liTopList = liList.map((li) => li.offsetTop - firstLiTop);
+          const liDistList = liTopList.map((top, index) => {
+            if (units[index].disabled) {
+              return Number.MAX_SAFE_INTEGER;
+            }
+            return Math.abs(top - target.scrollTop);
+          });
 
-        return (
-          <li
-            key={unitValue}
-            style={styles.item}
-            className={clsx(cellPrefixCls, classNames.item, {
-              [`${cellPrefixCls}-selected`]: value === unitValue,
-              [`${cellPrefixCls}-disabled`]: disabled,
-            })}
-            onClick={() => {
-              if (!disabled) {
-                onChange(unitValue);
-              }
-            }}
-            onDoubleClick={() => {
-              if (!disabled && onDblClick) {
-                onDblClick();
-              }
-            }}
-            onMouseEnter={() => {
-              onHover(unitValue);
-            }}
-            onMouseLeave={() => {
-              onHover(null);
-            }}
-            data-value={unitValue}
-          >
-            {cellRender
-              ? cellRender(unitValue, {
-                  prefixCls,
-                  originNode: inner,
-                  today: now,
-                  type: 'time',
-                  subType: type,
-                  locale,
-                })
-              : inner}
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
+          // Find min distance index
+          const minDist = Math.min(...liDistList);
+          const minDistIndex = liDistList.findIndex((dist) => dist === minDist);
+          const targetUnit = units[minDistIndex];
+          if (targetUnit && !targetUnit.disabled) {
+            onChange(targetUnit.value);
+          }
+        }, SCROLL_DELAY);
+      }
+    };
+
+    // ========================= Render =========================
+    const columnPrefixCls = computed(() => `${panelPrefixCls}-column`);
+
+    return () => (
+      <ul class={columnPrefixCls.value} ref={ulRef} data-type={type} onScroll={onInternalScroll}>
+        {units.map(({ label, value: unitValue, disabled }) => {
+          const inner = <div class={`${cellPrefixCls.value}-inner`}>{label}</div>;
+
+          return (
+            <li
+              key={unitValue}
+              style={styles.item}
+              class={clsx(cellPrefixCls.value, classNames.item, {
+                [`${cellPrefixCls.value}-selected`]: value === unitValue,
+                [`${cellPrefixCls.value}-disabled`]: disabled,
+              })}
+              onClick={() => {
+                if (!disabled) {
+                  onChange(unitValue);
+                }
+              }}
+              onDblclick={() => {
+                if (!disabled && onDblClick) {
+                  onDblClick();
+                }
+              }}
+              onMouseenter={() => {
+                onHover(unitValue);
+              }}
+              onMouseleave={() => {
+                onHover(null);
+              }}
+              data-value={unitValue}
+            >
+              {cellRender
+                ? cellRender(unitValue as any, {
+                    prefixCls,
+                    originNode: inner,
+                    today: now,
+                    type: 'time',
+                    subType: type,
+                    locale,
+                  })
+                : inner}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  },
+  { inheritAttrs: false },
+);
+
+export default TimeColumn;

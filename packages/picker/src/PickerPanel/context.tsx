@@ -28,8 +28,8 @@ export const useSharedPanelContextProvider = (props: Reactive<SharedPanelContext
   provide(SharedPanelContext, props);
 };
 
-export interface PanelContextProps<DateType extends object = any> extends Pick<
-  SharedPanelProps<DateType>,
+export interface PanelContextProps extends Pick<
+  SharedPanelProps,
   | 'prefixCls'
   | 'cellRender'
   | 'generateConfig'

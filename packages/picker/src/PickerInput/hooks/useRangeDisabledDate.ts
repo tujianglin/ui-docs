@@ -1,16 +1,15 @@
 import { computed, type Ref } from 'vue';
 import type { GenerateConfig } from '../../generate';
-import type { DisabledDate, Locale } from '../../interface';
+import type { DateType, DisabledDate, Locale } from '../../interface';
 import { isSame } from '../../utils/dateUtil';
 import { getFromDate } from '../../utils/miscUtil';
-import type { RangeValueType } from '../RangePicker';
 
 /**
  * RangePicker need additional logic to handle the `disabled` case. e.g.
  * [disabled, enabled] should end date not before start date
  */
 export default function useRangeDisabledDate(
-  values: Ref<RangeValueType>,
+  values: Ref<DateType[]>,
   disabled: Ref<[boolean, boolean]>,
   activeIndexList: Ref<number[]>,
   generateConfig: Ref<GenerateConfig>,

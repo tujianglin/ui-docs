@@ -25,13 +25,13 @@
     "@vc-com/util": "workspace:*",
     "clsx": "catalog:"
   },
-  "peerDependencies": {
-    "vue": "catalog:"
-  },
   "devDependencies": {
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.20",
     "luxon": "^3.7.2",
     "moment": "^2.30.1"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
   }
 }

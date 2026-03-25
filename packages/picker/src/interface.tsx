@@ -115,7 +115,7 @@ export interface CellRenderInfo extends BaseInfo {
   subType?: 'hour' | 'minute' | 'second' | 'millisecond' | 'meridiem';
 }
 
-export type CellRender<CurrentType = DateType> = (current: CurrentType, info: CellRenderInfo) => VueNode;
+export type CellRender = (current: DateType, info: CellRenderInfo) => VueNode;
 
 export interface ValueDate<DateType = any> {
   label: VueNode;
@@ -254,7 +254,7 @@ export interface SharedPanelProps {
 }
 
 export type Components = Partial<
-  Record<InternalMode, VueNode> & {
+  Record<InternalMode, any> & {
     button?: VueNode;
     input?: VueNode;
   }
@@ -282,7 +282,10 @@ export type SharedHTMLAttrs = Omit<
   | 'onKeydown'
   | 'size'
   | 'prefix'
->;
+  | 'multiple'
+> & {
+  multiple?: boolean;
+};
 
 export type PickerFocusEventHandler = (e: FocusEvent<HTMLElement>, info: BaseInfo) => void;
 
@@ -294,7 +297,7 @@ export type PreviewValueType = 'hover';
 
 export type PanelSemanticName = 'root' | 'header' | 'body' | 'content' | 'item' | 'footer' | 'container';
 
-export interface SharedPickerProps<DateType extends object = any>
+export interface SharedPickerProps
   extends
     SharedHTMLAttrs,
     Pick<

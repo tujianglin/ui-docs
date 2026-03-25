@@ -107,8 +107,8 @@ export function useInnerValue(
   order: Ref<boolean>,
   defaultValue?: DateType[],
   value?: Ref<DateType[]>,
-  onCalendarChange?: (dates: DateType[], dateStrings: ReplaceListType<Required<DateType[]>, string>, info: BaseInfo) => void,
-  onOk?: (dates: DateType[]) => void,
+  onCalendarChange?: (dates: any, dateStrings: any, info: BaseInfo) => void,
+  onOk?: (dates: any) => void,
 ) {
   // This is the root value which will sync with controlled or uncontrolled value
   const [innerValue, setInnerValue] = useControlledState(defaultValue, value);

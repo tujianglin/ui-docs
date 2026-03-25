@@ -1,15 +1,17 @@
+import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
-import * as React from 'react';
+import { computed, defineComponent } from 'vue';
+import { useFullProps } from 'vue-jsx-vapor';
 import type { SharedPanelProps } from '../../interface';
 import { formatValue } from '../../utils/dateUtil';
-import { PanelContext, useInfo } from '../context';
+import { useInfo, usePanelContextProvider } from '../context';
 import PanelHeader from '../PanelHeader';
 import TimePanelBody from './TimePanelBody';
 
-export type TimePanelProps<DateType extends object> = SharedPanelProps<DateType>;
+export type TimePanelProps = SharedPanelProps;
 
-export default function TimePanel<DateType extends object = any>(props: TimePanelProps<DateType>) {
-  const {
+const TimePanel = defineComponent(
+  ({
     prefixCls,
     value,
     locale,
@@ -17,22 +19,29 @@ export default function TimePanel<DateType extends object = any>(props: TimePane
 
     // Format
     showTime,
-  } = props;
+  }: TimePanelProps) => {
+    const props = useFullProps() as TimePanelProps;
 
-  const { format } = showTime || {};
+    const { format } = $(reactiveComputed(() => showTime || {}));
 
-  const panelPrefixCls = `${prefixCls}-time-panel`;
+    const panelPrefixCls = computed(() => `${prefixCls}-time-panel`);
 
-  // ========================== Base ==========================
-  const [info] = useInfo(props, 'time');
+    // ========================== Base ==========================
+    const [info] = useInfo(
+      reactiveComputed(() => props),
+      computed(() => 'time'),
+    );
 
-  // ========================= Render =========================
-  return (
-    <PanelContext.Provider value={info}>
-      <div className={clsx(panelPrefixCls)}>
+    usePanelContextProvider(info);
+    // ========================= Render =========================
+    return () => (
+      <div class={clsx(panelPrefixCls.value)}>
         <PanelHeader>{value ? formatValue(value, { locale, format, generateConfig }) : '\u00A0'}</PanelHeader>
         <TimePanelBody {...showTime} />
       </div>
-    </PanelContext.Provider>
-  );
-}
+    );
+  },
+  { inheritAttrs: false },
+);
+
+export default TimePanel;

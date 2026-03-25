@@ -1,46 +1,54 @@
 import { clsx } from 'clsx';
-import * as React from 'react';
-import type { SharedPanelProps } from '../../interface';
+import { computed, defineComponent } from 'vue';
+import { useFullProps } from 'vue-jsx-vapor';
+import type { DateType, SharedPanelProps } from '../../interface';
 import { isInRange, isSameWeek } from '../../utils/dateUtil';
 import DatePanel from '../DatePanel';
 
-export default function WeekPanel<DateType extends object = any>(props: SharedPanelProps<DateType>) {
-  const { prefixCls, generateConfig, locale, value, hoverValue, hoverRangeValue } = props;
+const WeekPanel = defineComponent(
+  ({ prefixCls, generateConfig, locale, value, hoverValue, hoverRangeValue }: SharedPanelProps) => {
+    const props = useFullProps() as SharedPanelProps;
+    // =============================== Row ================================
+    const localeName = computed(() => locale.locale);
 
-  // =============================== Row ================================
-  const localeName = locale.locale;
+    const rowPrefixCls = computed(() => `${prefixCls}-week-panel-row`);
 
-  const rowPrefixCls = `${prefixCls}-week-panel-row`;
+    const rowClassName = (currentDate: DateType) => {
+      const rangeCls = {};
 
-  const rowClassName = (currentDate: DateType) => {
-    const rangeCls = {};
+      if (hoverRangeValue) {
+        const [rangeStart, rangeEnd] = hoverRangeValue;
 
-    if (hoverRangeValue) {
-      const [rangeStart, rangeEnd] = hoverRangeValue;
+        const isRangeStart = isSameWeek(generateConfig, localeName.value, rangeStart, currentDate);
+        const isRangeEnd = isSameWeek(generateConfig, localeName.value, rangeEnd, currentDate);
 
-      const isRangeStart = isSameWeek(generateConfig, localeName, rangeStart, currentDate);
-      const isRangeEnd = isSameWeek(generateConfig, localeName, rangeEnd, currentDate);
+        rangeCls[`${rowPrefixCls.value}-range-start`] = isRangeStart;
+        rangeCls[`${rowPrefixCls.value}-range-end`] = isRangeEnd;
+        rangeCls[`${rowPrefixCls.value}-range-hover`] =
+          !isRangeStart && !isRangeEnd && isInRange(generateConfig, rangeStart, rangeEnd, currentDate);
+      }
 
-      rangeCls[`${rowPrefixCls}-range-start`] = isRangeStart;
-      rangeCls[`${rowPrefixCls}-range-end`] = isRangeEnd;
-      rangeCls[`${rowPrefixCls}-range-hover`] =
-        !isRangeStart && !isRangeEnd && isInRange(generateConfig, rangeStart, rangeEnd, currentDate);
-    }
+      if (hoverValue) {
+        rangeCls[`${rowPrefixCls.value}-hover`] = hoverValue.some((date) =>
+          isSameWeek(generateConfig, localeName.value, currentDate, date),
+        );
+      }
 
-    if (hoverValue) {
-      rangeCls[`${rowPrefixCls}-hover`] = hoverValue.some((date) => isSameWeek(generateConfig, localeName, currentDate, date));
-    }
+      return clsx(
+        rowPrefixCls.value,
+        {
+          [`${rowPrefixCls.value}-selected`]:
+            !hoverRangeValue && isSameWeek(generateConfig, localeName.value, value, currentDate),
+        },
+        // Patch for hover range
+        rangeCls,
+      );
+    };
 
-    return clsx(
-      rowPrefixCls,
-      {
-        [`${rowPrefixCls}-selected`]: !hoverRangeValue && isSameWeek(generateConfig, localeName, value, currentDate),
-      },
-      // Patch for hover range
-      rangeCls,
-    );
-  };
+    // ============================== Render ==============================
+    return () => <DatePanel {...props} mode="week" panelName="week" rowClassName={rowClassName} />;
+  },
+  { inheritAttrs: false },
+);
 
-  // ============================== Render ==============================
-  return <DatePanel {...props} mode="week" panelName="week" rowClassName={rowClassName} />;
-}
+export default WeekPanel;

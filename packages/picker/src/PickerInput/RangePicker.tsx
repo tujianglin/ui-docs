@@ -22,14 +22,15 @@ import PickerTrigger from '../PickerTrigger';
 import { pickTriggerProps } from '../PickerTrigger/util';
 import { fillIndex, getFromDate, toArray } from '../utils/miscUtil';
 // import {usePickerContextProvider} from './context';
-import { defineComponent } from 'vue';
+import { reactiveComputed } from '@vueuse/core';
+import { computed, defineComponent, nextTick, ref, watch } from 'vue';
+import { useRef, type FocusEvent, type FocusEventHandler, type MouseEventHandler } from 'vue-jsx-vapor';
 import type { RenderNode } from '../../../util/src/types';
+import { usePickerContextProvider } from './context';
 import useCellRender from './hooks/useCellRender';
 import useFieldsInvalidate from './hooks/useFieldsInvalidate';
 import useFilledProps from './hooks/useFilledProps';
 import useOpen from './hooks/useOpen';
-import usePickerRef from './hooks/usePickerRef';
-import usePresets from './hooks/usePresets';
 import useRangeActive from './hooks/useRangeActive';
 import useRangeDisabledDate from './hooks/useRangeDisabledDate';
 import useRangePickerValue from './hooks/useRangePickerValue';
@@ -48,7 +49,7 @@ function separateConfig<T>(config: T | [T, T] | null | undefined, defaultConfig:
   return [singleConfig, singleConfig];
 }
 
-export type RangeValueType = [start: DateType | null | undefined, end: DateType | null | undefined];
+export type RangeValueType = DateType[];
 
 /** Used for change event, it should always be not undefined */
 export type NoUndefinedRangeValueType = [start: DateType | null, end: DateType | null];
@@ -109,7 +110,7 @@ export interface BaseRangePickerProps extends Omit<SharedPickerProps, 'showTime'
   // Mode
   mode?: [startMode: PanelMode, endMode: PanelMode];
   /** Trigger on each `mode` or `pickerValue` changed. */
-  onPanelChange?: (values: NoUndefinedRangeValueType, modes: [startMode: PanelMode, endMode: PanelMode]) => void;
+  onPanelChange?: (values: DateType[], modes: [startMode: PanelMode, endMode: PanelMode]) => void;
 }
 
 export interface RangePickerProps
@@ -122,17 +123,21 @@ function getActiveRange(activeIndex: number) {
 const RefRangePicker = defineComponent(
   (props: RangePickerProps) => {
     // ========================= Prop =========================
-    const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(props, () => {
-      const { disabled, allowEmpty } = props;
+    // @ts-ignore
+    const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(
+      reactiveComputed(() => props),
+      () => {
+        const { disabled, allowEmpty } = props;
 
-      const mergedDisabled = separateConfig(disabled, false);
-      const mergedAllowEmpty = separateConfig(allowEmpty, false);
+        const mergedDisabled = separateConfig(disabled, false);
+        const mergedAllowEmpty = separateConfig(allowEmpty, false);
 
-      return {
-        disabled: mergedDisabled,
-        allowEmpty: mergedAllowEmpty,
-      };
-    });
+        return {
+          disabled: mergedDisabled,
+          allowEmpty: mergedAllowEmpty,
+        };
+      },
+    );
 
     const {
       // Style
@@ -146,7 +151,7 @@ const RefRangePicker = defineComponent(
       defaultValue,
       value,
       needConfirm,
-      onKeyDown,
+      onKeydown,
 
       // Disabled
       disabled,
@@ -165,7 +170,6 @@ const RefRangePicker = defineComponent(
       generateConfig,
       picker,
       showNow,
-      showToday,
       showTime,
 
       // Mode
@@ -190,26 +194,43 @@ const RefRangePicker = defineComponent(
 
       // Presets
       presets,
-      ranges,
 
       // Render
       components,
       cellRender,
-      dateRender,
-      monthCellRender,
 
       // Native
       onClick,
-    } = filledProps;
+    } = $(filledProps);
 
     // ========================= Refs =========================
-    const selectorRef = usePickerRef(ref);
+    const selectorRef = useRef(null);
+
+    defineExpose({
+      get nativeElement() {
+        return selectorRef.value?.nativeElement;
+      },
+      focus: (options) => {
+        selectorRef.value?.focus(options);
+      },
+      blur: () => {
+        selectorRef.value?.blur();
+      },
+    });
 
     // ======================= Semantic =======================
-    const [mergedClassNames, mergedStyles] = useSemantic(propClassNames, propStyles);
+    const [mergedClassNames, mergedStyles] = useSemantic(
+      computed(() => propClassNames),
+      computed(() => propStyles),
+    );
 
     // ========================= Open =========================
-    const [mergedOpen, setMergeOpen] = useOpen(open, defaultOpen, disabled, onOpenChange);
+    const [mergedOpen, setMergeOpen] = useOpen(
+      computed(() => open),
+      defaultOpen,
+      computed(() => disabled),
+      onOpenChange,
+    );
 
     const triggerOpen: OnOpenChange = (nextOpen, config?: OpenConfig) => {
       // No need to open if all disabled
@@ -220,18 +241,18 @@ const RefRangePicker = defineComponent(
 
     // ======================== Values ========================
     const [mergedValue, setInnerValue, getCalendarValue, triggerCalendarChange, triggerOk] = useInnerValue(
-      generateConfig,
-      locale,
+      computed(() => generateConfig),
+      computed(() => locale),
       formatList,
-      true,
-      false,
+      computed(() => true),
+      computed(() => false),
       defaultValue,
-      value,
+      computed(() => value),
       onCalendarChange,
       onOk,
     );
 
-    const calendarValue = getCalendarValue();
+    const calendarValue = computed(() => getCalendarValue());
 
     // ======================== Active ========================
     const [
@@ -239,34 +260,35 @@ const RefRangePicker = defineComponent(
       triggerFocus,
       lastOperation,
       activeIndex,
-      setActiveIndex,
       nextActiveIndex,
       activeIndexList,
       updateSubmitIndex,
       hasActiveSubmitValue,
-    ] = useRangeActive(disabled, allowEmpty, mergedOpen);
+    ] = useRangeActive(
+      computed(() => disabled),
+      computed(() => allowEmpty),
+      mergedOpen,
+    );
 
-    const onSharedFocus = (event: React.FocusEvent<HTMLElement>, index?: number) => {
+    const onSharedFocus = (event: FocusEvent<HTMLElement>, index?: number) => {
       triggerFocus(true);
 
       onFocus?.(event, {
-        range: getActiveRange(index ?? activeIndex),
+        range: getActiveRange(index ?? activeIndex.value),
       });
     };
 
-    const onSharedBlur = (event: React.FocusEvent<HTMLElement>, index?: number) => {
+    const onSharedBlur = (event: FocusEvent<HTMLElement>, index?: number) => {
       triggerFocus(false);
 
       onBlur?.(event, {
-        range: getActiveRange(index ?? activeIndex),
+        range: getActiveRange(index ?? activeIndex.value),
       });
     };
 
     // ======================= ShowTime =======================
     /** Used for Popup panel */
-    const mergedShowTime = React.useMemo<
-      PopupShowTimeConfig<DateType> & Pick<RangeTimeProps<DateType>, 'defaultOpenValue'>
-    >(() => {
+    const mergedShowTime = computed<PopupShowTimeConfig & Pick<RangeTimeProps, 'defaultOpenValue'>>(() => {
       if (!showTime) {
         return null;
       }
@@ -275,8 +297,8 @@ const RefRangePicker = defineComponent(
 
       const proxyDisabledTime = disabledTime
         ? (date: DateType) => {
-            const range = getActiveRange(activeIndex);
-            const fromDate = getFromDate(calendarValue, activeIndexList, activeIndex);
+            const range = getActiveRange(activeIndex.value);
+            const fromDate = getFromDate(calendarValue.value, activeIndexList.value, activeIndex.value);
             return disabledTime(date, range, {
               from: fromDate,
             });
@@ -284,21 +306,31 @@ const RefRangePicker = defineComponent(
         : undefined;
 
       return { ...showTime, disabledTime: proxyDisabledTime };
-    }, [showTime, activeIndex, calendarValue, activeIndexList]);
+    });
 
     // ========================= Mode =========================
-    const [modes, setModes] = useControlledState<[PanelMode, PanelMode]>([picker, picker], mode);
+    const [modes, setModes] = useControlledState<[PanelMode, PanelMode]>(
+      [picker, picker],
+      computed(() => mode),
+    );
 
-    const mergedMode = modes[activeIndex] || picker;
+    const mergedMode = computed(() => modes.value[activeIndex.value] || picker);
 
     /** Extends from `mergedMode` to patch `datetime` mode */
-    const internalMode: InternalMode = mergedMode === 'date' && mergedShowTime ? 'datetime' : mergedMode;
+    const internalMode = computed<InternalMode>(() =>
+      mergedMode.value === 'date' && mergedShowTime.value ? 'datetime' : mergedMode.value,
+    );
 
     // ====================== PanelCount ======================
-    const multiplePanel = internalMode === picker && internalMode !== 'time';
+    const multiplePanel = computed(() => internalMode.value === picker && internalMode.value !== 'time');
 
     // ======================= Show Now =======================
-    const mergedShowNow = useShowNow(picker, mergedMode, showNow, showToday, true);
+    const mergedShowNow = useShowNow(
+      computed(() => picker),
+      mergedMode,
+      computed(() => showNow),
+      computed(() => true),
+    );
 
     // ======================== Value =========================
     const [
@@ -306,13 +338,13 @@ const RefRangePicker = defineComponent(
       flushSubmit,
       /** Trigger `onChange` directly without check `disabledDate` */
       triggerSubmitChange,
-    ] = useRangeValue<RangeValueType<DateType>, DateType>(
-      filledProps,
+    ] = useRangeValue(
+      reactiveComputed(() => filledProps as any),
       mergedValue,
       setInnerValue,
       getCalendarValue,
       triggerCalendarChange,
-      disabled,
+      computed(() => disabled),
       formatList,
       focused,
       mergedOpen,
@@ -322,20 +354,24 @@ const RefRangePicker = defineComponent(
     // ===================== DisabledDate =====================
     const mergedDisabledDate = useRangeDisabledDate(
       calendarValue,
-      disabled,
+      computed(() => disabled),
       activeIndexList,
-      generateConfig,
-      locale,
+      computed(() => generateConfig),
+      computed(() => locale),
       disabledDate,
     );
 
     // ======================= Validate =======================
-    const [submitInvalidates, onSelectorInvalid] = useFieldsInvalidate(calendarValue, isInvalidateDate, allowEmpty);
+    const [submitInvalidates, onSelectorInvalid] = useFieldsInvalidate(
+      calendarValue,
+      isInvalidateDate,
+      computed(() => allowEmpty),
+    );
 
     // ===================== Picker Value =====================
     const [currentPickerValue, setCurrentPickerValue] = useRangePickerValue(
-      generateConfig,
-      locale,
+      computed(() => generateConfig),
+      computed(() => locale),
       calendarValue,
       modes,
       mergedOpen,
@@ -343,35 +379,35 @@ const RefRangePicker = defineComponent(
       internalPicker,
       multiplePanel,
       defaultPickerValue,
-      pickerValue,
-      mergedShowTime?.defaultOpenValue,
+      computed(() => pickerValue),
+      computed(() => mergedShowTime.value?.defaultOpenValue),
       onPickerValueChange,
-      minDate,
-      maxDate,
+      computed(() => minDate),
+      computed(() => maxDate),
     );
 
     // >>> Mode need wait for `pickerValue`
-    const triggerModeChange = useEvent((nextPickerValue: DateType, nextMode: PanelMode, triggerEvent?: boolean) => {
-      const clone = fillIndex(modes, activeIndex, nextMode);
+    const triggerModeChange = (nextPickerValue: DateType, nextMode: PanelMode, triggerEvent?: boolean) => {
+      const clone = fillIndex(modes.value, activeIndex.value, nextMode);
 
-      if (clone[0] !== modes[0] || clone[1] !== modes[1]) {
+      if (clone[0] !== modes.value[0] || clone[1] !== modes.value[1]) {
         setModes(clone);
       }
 
       // Compatible with `onPanelChange`
       if (onPanelChange && triggerEvent !== false) {
-        const clonePickerValue: RangeValueType<DateType> = [...calendarValue];
+        const clonePickerValue = [...calendarValue.value];
         if (nextPickerValue) {
-          clonePickerValue[activeIndex] = nextPickerValue;
+          clonePickerValue[activeIndex.value] = nextPickerValue;
         }
         onPanelChange(clonePickerValue, clone);
       }
-    });
+    };
 
     // ======================== Change ========================
     const fillCalendarValue = (date: DateType, index: number) =>
       // Trigger change only when date changed
-      fillIndex(calendarValue, index, date);
+      fillIndex(calendarValue.value, index, date);
 
     // ======================== Submit ========================
     /**
@@ -381,36 +417,36 @@ const RefRangePicker = defineComponent(
      * - Panel: OK button
      */
     const triggerPartConfirm = (date?: DateType, skipFocus?: boolean) => {
-      let nextValue = calendarValue;
+      let nextValue = calendarValue.value;
 
       if (date) {
-        nextValue = fillCalendarValue(date, activeIndex);
+        nextValue = fillCalendarValue(date, activeIndex.value);
       }
-      updateSubmitIndex(activeIndex);
+      updateSubmitIndex(activeIndex.value);
       // Get next focus index
       const nextIndex = nextActiveIndex(nextValue);
 
       // Change calendar value and tell flush it
       triggerCalendarChange(nextValue);
-      flushSubmit(activeIndex, nextIndex === null);
+      flushSubmit(activeIndex.value, nextIndex === null);
 
       if (nextIndex === null) {
         triggerOpen(false, { force: true });
       } else if (!skipFocus) {
-        selectorRef.current.focus({ index: nextIndex });
+        selectorRef.value.focus({ index: nextIndex });
       }
     };
 
     // ======================== Click =========================
-    const onSelectorClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
+    const onSelectorClick: MouseEventHandler<HTMLDivElement> = (event) => {
       const rootNode = (event.target as HTMLElement).getRootNode();
       if (
-        !selectorRef.current.nativeElement.contains((rootNode as Document | ShadowRoot).activeElement ?? document.activeElement)
+        !selectorRef.value.nativeElement.contains((rootNode as Document | ShadowRoot).activeElement ?? document.activeElement)
       ) {
         // Click to focus the enabled input
         const enabledIndex = disabled.findIndex((d) => !d);
         if (enabledIndex >= 0) {
-          selectorRef.current.focus({ index: enabledIndex });
+          selectorRef.value.focus({ index: enabledIndex });
         }
       }
 
@@ -425,45 +461,44 @@ const RefRangePicker = defineComponent(
     };
 
     // ======================== Hover =========================
-    const [hoverSource, setHoverSource] = React.useState<'cell' | 'preset'>(null);
-    const [internalHoverValues, setInternalHoverValues] = React.useState<RangeValueType<DateType>>(null);
+    const hoverSource = ref<'cell' | 'preset'>(null);
+    const internalHoverValues = ref<RangeValueType>(null);
 
-    const hoverValues = React.useMemo(() => {
-      return internalHoverValues || calendarValue;
-    }, [calendarValue, internalHoverValues]);
+    const hoverValues = computed(() => {
+      return internalHoverValues.value || calendarValue.value;
+    });
 
     // Clean up `internalHoverValues` when closed
-    React.useEffect(() => {
-      if (!mergedOpen) {
-        setInternalHoverValues(null);
-      }
-    }, [mergedOpen]);
+    watch(
+      mergedOpen,
+      () => {
+        if (!mergedOpen.value) {
+          internalHoverValues.value = null;
+        }
+      },
+      { immediate: true },
+    );
 
     // ========================================================
     // ==                       Panels                       ==
     // ========================================================
     // Save the offset with active bar position
-    // const [activeOffset, setActiveOffset] = React.useState(0);
-    const [activeInfo, setActiveInfo] = React.useState<
-      [activeInputLeft: number, activeInputRight: number, selectorWidth: number]
-    >([0, 0, 0]);
+    // const [activeOffset, setActiveOffset] = useState(0);
+    const activeInfo = ref<[activeInputLeft: number, activeInputRight: number, selectorWidth: number]>([0, 0, 0]);
 
-    const onSetHover = (date: RangeValueType<DateType> | null, source: 'cell' | 'preset') => {
+    const onSetHover = (date: RangeValueType | null, source: 'cell' | 'preset') => {
       if (previewValue !== 'hover') {
         return;
       }
-      setInternalHoverValues(date);
-      setHoverSource(source);
+      internalHoverValues.value = date;
+      hoverSource.value = source;
     };
 
-    // ======================= Presets ========================
-    const presetList = usePresets(presets, ranges);
-
-    const onPresetHover = (nextValues: RangeValueType<DateType> | null) => {
+    const onPresetHover = (nextValues) => {
       onSetHover(nextValues, 'preset');
     };
 
-    const onPresetSubmit = (nextValues: RangeValueType<DateType>) => {
+    const onPresetSubmit = (nextValues) => {
       const passed = triggerSubmitChange(nextValues);
 
       if (passed) {
@@ -478,30 +513,30 @@ const RefRangePicker = defineComponent(
 
     // ======================== Panel =========================
     const onPanelHover = (date: DateType) => {
-      onSetHover(date ? fillCalendarValue(date, activeIndex) : null, 'cell');
+      onSetHover(date ? fillCalendarValue(date, activeIndex.value) : null, 'cell');
     };
 
     // >>> Focus
-    const onPanelFocus: React.FocusEventHandler<HTMLElement> = (event) => {
+    const onPanelFocus: FocusEventHandler<HTMLElement> = (event) => {
       triggerOpen(true);
       onSharedFocus(event);
     };
 
     // >>> MouseDown
-    const onPanelMouseDown: React.MouseEventHandler<HTMLDivElement> = () => {
+    const onPanelMouseDown: MouseEventHandler<HTMLDivElement> = () => {
       lastOperation('panel');
     };
 
     // >>> Calendar
-    const onPanelSelect: PickerPanelProps<DateType>['onChange'] = (date: DateType) => {
-      const clone: RangeValueType<DateType> = fillIndex(calendarValue, activeIndex, date);
+    const onPanelSelect: PickerPanelProps['onChange'] = (date: DateType) => {
+      const clone: RangeValueType = fillIndex(calendarValue.value, activeIndex.value, date);
 
       // Only trigger calendar event but not update internal `calendarValue` state
       triggerCalendarChange(clone);
 
       // >>> Trigger next active if !needConfirm
       // Fully logic check `useRangeValue` hook
-      if (!needConfirm && !complexPicker && internalPicker === internalMode) {
+      if (!needConfirm && !complexPicker.value && internalPicker.value === internalMode.value) {
         triggerPartConfirm(date);
       }
     };
@@ -513,86 +548,36 @@ const RefRangePicker = defineComponent(
     };
 
     // >>> cellRender
-    const onInternalCellRender = useCellRender(cellRender, dateRender, monthCellRender, getActiveRange(activeIndex));
+    const onInternalCellRender = useCellRender(
+      computed(() => cellRender),
+      computed(() => getActiveRange(activeIndex.value)),
+    );
 
     // >>> Value
-    const panelValue = calendarValue[activeIndex] || null;
+    const panelValue = computed(() => calendarValue.value[activeIndex.value] || null);
 
     // >>> invalid
-    const isPopupInvalidateDate = useEvent((date: DateType) => {
+    const isPopupInvalidateDate = (date) => {
       return isInvalidateDate(date, {
-        activeIndex,
+        activeIndex: activeIndex.value,
       });
-    });
+    };
 
-    const panelProps = React.useMemo(() => {
+    const panelProps = computed(() => {
       const domProps = pickAttrs(filledProps, false);
       const restProps = omit(filledProps, [
         ...(Object.keys(domProps) as (keyof SharedHTMLAttrs)[]),
         'onChange',
         'onCalendarChange',
         'style',
-        'className',
+        'class',
         'onPanelChange',
         'disabledTime',
         'classNames',
         'styles',
       ]);
       return restProps;
-    }, [filledProps]);
-
-    // >>> Render
-    const panel = (
-      <Popup<any>
-        // MISC
-        {...panelProps}
-        showNow={mergedShowNow}
-        showTime={mergedShowTime}
-        // Range
-        range
-        multiplePanel={multiplePanel}
-        activeInfo={activeInfo}
-        // Disabled
-        disabledDate={mergedDisabledDate}
-        // Focus
-        onFocus={onPanelFocus}
-        onBlur={onSharedBlur}
-        onPanelMouseDown={onPanelMouseDown}
-        // Mode
-        picker={picker}
-        mode={mergedMode}
-        internalMode={internalMode}
-        onPanelChange={triggerModeChange}
-        // Value
-        format={maskFormat}
-        value={panelValue}
-        isInvalid={isPopupInvalidateDate}
-        onChange={null}
-        onSelect={onPanelSelect}
-        // PickerValue
-        pickerValue={currentPickerValue}
-        defaultOpenValue={toArray(showTime?.defaultOpenValue)[activeIndex]}
-        onPickerValueChange={setCurrentPickerValue}
-        // Hover
-        hoverValue={hoverValues}
-        onHover={onPanelHover}
-        // Submit
-        needConfirm={needConfirm}
-        onSubmit={triggerPartConfirm}
-        onOk={triggerOk}
-        // Preset
-        presets={presetList}
-        onPresetHover={onPresetHover}
-        onPresetSubmit={onPresetSubmit}
-        // Now
-        onNow={onNow}
-        // Render
-        cellRender={onInternalCellRender}
-        // Styles
-        classNames={mergedClassNames}
-        styles={mergedStyles}
-      />
-    );
+    });
 
     // ========================================================
     // ==                      Selector                      ==
@@ -612,8 +597,8 @@ const RefRangePicker = defineComponent(
     // ======================= Selector =======================
     const onSelectorFocus: SelectorProps['onFocus'] = (event, index) => {
       // Check if `needConfirm` but user not submit yet
-      const activeListLen = activeIndexList.length;
-      const lastActiveIndex = activeIndexList[activeListLen - 1];
+      const activeListLen = activeIndexList.value.length;
+      const lastActiveIndex = activeIndexList.value[activeListLen - 1];
       if (
         activeListLen &&
         lastActiveIndex !== index &&
@@ -621,9 +606,9 @@ const RefRangePicker = defineComponent(
         // Not change index if is not filled
         !allowEmpty[lastActiveIndex] &&
         !hasActiveSubmitValue(lastActiveIndex) &&
-        calendarValue[lastActiveIndex]
+        calendarValue.value[lastActiveIndex]
       ) {
-        selectorRef.current.focus({ index: lastActiveIndex });
+        selectorRef.value.focus({ index: lastActiveIndex });
         return;
       }
 
@@ -636,11 +621,11 @@ const RefRangePicker = defineComponent(
       // When click input to switch the field, it will not trigger close.
       // Which means it will lose the part confirm and we need fill back.
       // ref: https://github.com/ant-design/ant-design/issues/49512
-      if (activeIndex !== index && mergedOpen && !needConfirm && complexPicker) {
+      if (activeIndex.value !== index && mergedOpen.value && !needConfirm && complexPicker.value) {
         triggerPartConfirm(null, true);
       }
 
-      setActiveIndex(index);
+      activeIndex.value = index;
 
       onSharedFocus(event, index);
     };
@@ -648,61 +633,67 @@ const RefRangePicker = defineComponent(
     const onSelectorBlur: SelectorProps['onBlur'] = (event, index) => {
       triggerOpen(false);
       if (!needConfirm && lastOperation() === 'input') {
-        const nextIndex = nextActiveIndex(calendarValue);
-        flushSubmit(activeIndex, nextIndex === null);
+        const nextIndex = nextActiveIndex(calendarValue.value);
+        flushSubmit(activeIndex.value, nextIndex === null);
       }
 
       onSharedBlur(event, index);
     };
 
-    const onSelectorKeyDown: SelectorProps['onKeyDown'] = (event, preventDefault) => {
+    const onSelectorKeyDown: SelectorProps['onKeydown'] = (event, preventDefault) => {
       if (event.key === 'Tab') {
         triggerPartConfirm(null, true);
       }
 
-      onKeyDown?.(event, preventDefault);
+      onKeydown?.(event, preventDefault);
     };
 
     // ======================= Context ========================
-    const context = React.useMemo(
-      () => ({
-        prefixCls,
-        locale,
-        generateConfig,
-        button: components.button,
-        input: components.input,
-        classNames: mergedClassNames,
-        styles: mergedStyles,
-      }),
-      [prefixCls, locale, generateConfig, components.button, components.input, mergedClassNames, mergedStyles],
-    );
+    const context = reactiveComputed(() => ({
+      prefixCls,
+      locale,
+      generateConfig,
+      button: components.button,
+      input: components.input,
+      classNames: mergedClassNames.value,
+      styles: mergedStyles.value,
+    }));
 
     // ======================== Effect ========================
     // >>> Mode
     // Reset for every active
-    useLayoutEffect(() => {
-      if (mergedOpen && activeIndex !== undefined) {
-        // Legacy compatible. This effect update should not trigger `onPanelChange`
-        triggerModeChange(null, picker, false);
-      }
-    }, [mergedOpen, activeIndex, picker]);
+    watch(
+      [mergedOpen, activeIndex, () => picker],
+      async () => {
+        await nextTick();
+        if (mergedOpen.value && activeIndex.value !== undefined) {
+          // Legacy compatible. This effect update should not trigger `onPanelChange`
+          triggerModeChange(null, picker, false);
+        }
+      },
+      { immediate: true, flush: 'post' },
+    );
 
     // >>> For complex picker, we need check if need to focus next one
-    useLayoutEffect(() => {
-      const lastOp = lastOperation();
+    watch(
+      mergedOpen,
+      async () => {
+        await nextTick();
+        const lastOp = lastOperation();
+        // Trade as confirm on field leave
+        if (!mergedOpen.value && lastOp === 'input') {
+          triggerOpen(false);
+          triggerPartConfirm(null, true);
+        }
 
-      // Trade as confirm on field leave
-      if (!mergedOpen && lastOp === 'input') {
-        triggerOpen(false);
-        triggerPartConfirm(null, true);
-      }
-
-      // Submit with complex picker
-      if (!mergedOpen && complexPicker && !needConfirm && lastOp === 'panel') {
-        triggerOpen(true);
-        triggerPartConfirm();
-      }
-    }, [mergedOpen]);
+        // Submit with complex picker
+        if (!mergedOpen.value && complexPicker.value && !needConfirm && lastOp === 'panel') {
+          triggerOpen(true);
+          triggerPartConfirm();
+        }
+      },
+      { immediate: true, flush: 'post' },
+    );
 
     // ====================== DevWarning ======================
     if (process.env.NODE_ENV !== 'production') {
@@ -719,17 +710,69 @@ const RefRangePicker = defineComponent(
         warning(false, '`disabled` should not set with empty `value`. You should set `allowEmpty` or `value` instead.');
       }
     }
-
-    // ======================== Render ========================
-    return () => (
-      <PickerContext.Provider value={context}>
+    usePickerContextProvider(context);
+    return () => {
+      // >>> Render
+      const panel = (
+        <Popup
+          // MISC
+          {...(panelProps.value as any)}
+          showNow={mergedShowNow.value}
+          showTime={mergedShowTime.value}
+          // Range
+          range
+          multiplePanel={multiplePanel.value}
+          activeInfo={activeInfo.value}
+          // Disabled
+          disabledDate={mergedDisabledDate}
+          // Focus
+          onFocus={onPanelFocus}
+          onBlur={onSharedBlur}
+          onPanelMouseDown={onPanelMouseDown}
+          // Mode
+          picker={picker}
+          mode={mergedMode.value}
+          internalMode={internalMode.value}
+          onPanelChange={triggerModeChange}
+          // Value
+          format={maskFormat.value}
+          value={panelValue.value}
+          isInvalid={isPopupInvalidateDate}
+          onChange={null}
+          onSelect={onPanelSelect}
+          // PickerValue
+          pickerValue={currentPickerValue.value}
+          defaultOpenValue={toArray(showTime?.defaultOpenValue)[activeIndex.value]}
+          onPickerValueChange={setCurrentPickerValue}
+          // Hover
+          hoverValue={hoverValues.value}
+          onHover={onPanelHover}
+          // Submit
+          needConfirm={needConfirm}
+          onSubmit={triggerPartConfirm}
+          onOk={triggerOk}
+          // Preset
+          presets={presets}
+          onPresetHover={onPresetHover}
+          onPresetSubmit={onPresetSubmit}
+          // Now
+          onNow={onNow}
+          // Render
+          cellRender={onInternalCellRender.value}
+          // Styles
+          classNames={mergedClassNames.value}
+          styles={mergedStyles.value}
+        />
+      );
+      // ======================== Render ========================
+      return (
         <PickerTrigger
           {...pickTriggerProps(filledProps)}
           popupElement={panel}
-          popupStyle={mergedStyles.popup.root}
-          popupClassName={clsx(rootClassName, mergedClassNames.popup.root)}
+          popupStyle={mergedStyles.value.popup.root}
+          popupClassName={clsx(rootClassName, mergedClassNames.value.popup.root)}
           // Visible
-          visible={mergedOpen}
+          visible={mergedOpen.value}
           onClose={onPopupClose}
           // Range
           range
@@ -740,44 +783,44 @@ const RefRangePicker = defineComponent(
             // Ref
             ref={selectorRef}
             // Style
-            className={clsx(filledProps.className, rootClassName, mergedClassNames.root)}
-            style={{ ...mergedStyles.root, ...filledProps.style }}
+            class={clsx(filledProps.class, rootClassName, mergedClassNames.value.root)}
+            style={{ ...mergedStyles.value.root, ...filledProps.style }}
             // Icon
             suffixIcon={suffixIcon}
             // Active
-            activeIndex={focused || mergedOpen ? activeIndex : null}
-            activeHelp={!!internalHoverValues}
-            allHelp={!!internalHoverValues && hoverSource === 'preset'}
-            focused={focused}
+            activeIndex={focused.value || mergedOpen.value ? activeIndex.value : null}
+            activeHelp={!!internalHoverValues.value}
+            allHelp={!!internalHoverValues.value && hoverSource.value === 'preset'}
+            focused={focused.value}
             onFocus={onSelectorFocus}
             onBlur={onSelectorBlur}
-            onKeyDown={onSelectorKeyDown}
+            onKeydown={onSelectorKeyDown}
             onSubmit={triggerPartConfirm}
             // Change
-            value={hoverValues}
-            maskFormat={maskFormat}
+            value={hoverValues.value}
+            maskFormat={maskFormat.value}
             onChange={onSelectorChange}
             onInputChange={onSelectorInputChange}
             // Format
-            format={formatList}
+            format={formatList.value}
             inputReadOnly={inputReadOnly}
             // Disabled
             disabled={disabled}
             // Open
-            open={mergedOpen}
+            open={mergedOpen.value}
             onOpenChange={triggerOpen}
             // Click
             onClick={onSelectorClick}
             onClear={onSelectorClear}
             // Invalid
-            invalid={submitInvalidates}
+            invalid={submitInvalidates.value}
             onInvalid={onSelectorInvalid}
             // Offset
-            onActiveInfo={setActiveInfo}
+            onActiveInfo={(e) => (activeInfo.value = e)}
           />
         </PickerTrigger>
-      </PickerContext.Provider>
-    );
+      );
+    };
   },
   { inheritAttrs: false, name: process.env.NODE_ENV !== 'production' ? 'RefRangePicker' : undefined },
 );

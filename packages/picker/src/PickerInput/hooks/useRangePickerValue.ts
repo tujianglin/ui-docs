@@ -37,7 +37,7 @@ export default function useRangePickerValue(
   activeIndex: Ref<number>,
   pickerMode: Ref<InternalMode>,
   multiplePanel: Ref<boolean>,
-  defaultPickerValue: Ref<DateType[]> = ref(EMPTY_LIST),
+  defaultPickerValue: DateType[] = EMPTY_LIST,
   pickerValue: Ref<DateType[]> = ref(EMPTY_LIST),
   // This is legacy from origin logic.
   // We will take `showTime.defaultValue` as the part of `pickerValue`
@@ -59,7 +59,7 @@ export default function useRangePickerValue(
       now = fillTime(generateConfig.value, now);
     }
 
-    return defaultPickerValue.value[index] || calendarValue.value[index] || now;
+    return defaultPickerValue[index] || calendarValue.value[index] || now;
   };
 
   // Align `pickerValue` with `showTime.defaultValue`
@@ -141,7 +141,7 @@ export default function useRangePickerValue(
     async () => {
       await nextTick();
       if (open.value) {
-        if (!defaultPickerValue.value[mergedActiveIndex.value]) {
+        if (!defaultPickerValue[mergedActiveIndex.value]) {
           let nextPickerValue: DateType = isTimePicker.value ? null : generateConfig.value.getNow();
 
           /**

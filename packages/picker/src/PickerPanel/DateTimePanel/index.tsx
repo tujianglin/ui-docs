@@ -1,45 +1,54 @@
-import * as React from 'react';
+import { reactiveComputed } from '@vueuse/core';
+import { computed, defineComponent } from 'vue';
+import { useFullProps } from 'vue-jsx-vapor';
 import useTimeInfo from '../../hooks/useTimeInfo';
-import type { SharedPanelProps } from '../../interface';
+import type { DateType, SharedPanelProps } from '../../interface';
 import { fillTime } from '../../utils/dateUtil';
 import DatePanel from '../DatePanel';
 import TimePanel from '../TimePanel';
 
-export default function DateTimePanel<DateType extends object = any>(props: SharedPanelProps<DateType>) {
-  const { prefixCls, generateConfig, showTime, onSelect, value, pickerValue, onHover } = props;
+const DateTimePanel = defineComponent(
+  ({ prefixCls, generateConfig, showTime, onSelect, value, pickerValue, onHover }: SharedPanelProps) => {
+    const props = useFullProps() as SharedPanelProps;
+    const panelPrefixCls = computed(() => `${prefixCls}-datetime-panel`);
 
-  const panelPrefixCls = `${prefixCls}-datetime-panel`;
+    // =============================== Time ===============================
+    const [getValidTime] = useTimeInfo(
+      computed(() => generateConfig),
+      reactiveComputed(() => showTime),
+    );
 
-  // =============================== Time ===============================
-  const [getValidTime] = useTimeInfo(generateConfig, showTime);
+    // Merge the time info from `value` or `pickerValue`
+    const mergeTime = (date: DateType) => {
+      if (value) {
+        return fillTime(generateConfig, date, value);
+      }
 
-  // Merge the time info from `value` or `pickerValue`
-  const mergeTime = (date: DateType) => {
-    if (value) {
-      return fillTime(generateConfig, date, value);
-    }
+      return fillTime(generateConfig, date, pickerValue);
+    };
 
-    return fillTime(generateConfig, date, pickerValue);
-  };
+    // ============================== Hover ===============================
+    const onDateHover = (date: DateType) => {
+      onHover?.(date ? mergeTime(date) : date);
+    };
 
-  // ============================== Hover ===============================
-  const onDateHover = (date: DateType) => {
-    onHover?.(date ? mergeTime(date) : date);
-  };
+    // ============================== Select ==============================
+    const onDateSelect = (date: DateType) => {
+      // Merge with current time
+      const cloneDate = mergeTime(date);
 
-  // ============================== Select ==============================
-  const onDateSelect = (date: DateType) => {
-    // Merge with current time
-    const cloneDate = mergeTime(date);
+      onSelect(getValidTime(cloneDate, cloneDate));
+    };
 
-    onSelect(getValidTime(cloneDate, cloneDate));
-  };
+    // ============================== Render ==============================
+    return () => (
+      <div class={panelPrefixCls.value}>
+        <DatePanel {...props} onSelect={onDateSelect} onHover={onDateHover} />
+        <TimePanel {...props} />
+      </div>
+    );
+  },
+  { inheritAttrs: false },
+);
 
-  // ============================== Render ==============================
-  return (
-    <div className={panelPrefixCls}>
-      <DatePanel {...props} onSelect={onDateSelect} onHover={onDateHover} />
-      <TimePanel {...props} />
-    </div>
-  );
-}
+export default DateTimePanel;

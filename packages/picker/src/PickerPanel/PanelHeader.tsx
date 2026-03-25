@@ -1,13 +1,14 @@
 import { clsx } from 'clsx';
-import * as React from 'react';
+import { computed, defineComponent, type CSSProperties } from 'vue';
+import type { DateType } from '../interface';
 import { isSameOrAfter } from '../utils/dateUtil';
-import { PickerHackContext, usePanelContext } from './context';
+import { usePanelContextInject, usePickerHackContextInject } from './context';
 
-const HIDDEN_STYLE: React.CSSProperties = {
+const HIDDEN_STYLE: CSSProperties = {
   visibility: 'hidden',
 };
 
-export interface HeaderProps<DateType extends object> {
+export interface HeaderProps {
   offset?: (distance: number, date: DateType) => DateType;
   superOffset?: (distance: number, date: DateType) => DateType;
   onChange?: (date: DateType) => void;
@@ -15,167 +16,165 @@ export interface HeaderProps<DateType extends object> {
   // Limitation
   getStart?: (date: DateType) => DateType;
   getEnd?: (date: DateType) => DateType;
-
-  children?: React.ReactNode;
 }
 
-function PanelHeader<DateType extends object>(props: HeaderProps<DateType>) {
-  const {
+const PanelHeader = defineComponent(
+  ({
     offset,
     superOffset,
     onChange,
 
     getStart,
     getEnd,
+  }: HeaderProps) => {
+    const {
+      prefixCls,
+      classNames,
+      styles,
 
-    children,
-  } = props;
+      // Icons
+      // @ts-ignore
+      prevIcon = '\u2039',
+      nextIcon = '\u203A',
+      superPrevIcon = '\u00AB',
+      superNextIcon = '\u00BB',
 
-  const {
-    prefixCls,
-    classNames,
-    styles,
+      // Limitation
+      minDate,
+      maxDate,
+      generateConfig,
+      locale,
+      pickerValue,
+      panelType: type,
+    } = $(usePanelContextInject());
 
-    // Icons
-    prevIcon = '\u2039',
-    nextIcon = '\u203A',
-    superPrevIcon = '\u00AB',
-    superNextIcon = '\u00BB',
+    const headerPrefixCls = computed(() => `${prefixCls}-header`);
 
-    // Limitation
-    minDate,
-    maxDate,
-    generateConfig,
-    locale,
-    pickerValue,
-    panelType: type,
-  } = usePanelContext<DateType>();
+    const { hidePrev, hideNext, hideHeader } = $(usePickerHackContextInject());
 
-  const headerPrefixCls = `${prefixCls}-header`;
+    // ======================= Limitation =======================
+    const disabledOffsetPrev = computed(() => {
+      if (!minDate || !offset || !getEnd) {
+        return false;
+      }
 
-  const { hidePrev, hideNext, hideHeader } = React.useContext(PickerHackContext);
+      const prevPanelLimitDate = getEnd(offset(-1, pickerValue));
 
-  // ======================= Limitation =======================
-  const disabledOffsetPrev = React.useMemo(() => {
-    if (!minDate || !offset || !getEnd) {
-      return false;
-    }
+      return !isSameOrAfter(generateConfig, locale, prevPanelLimitDate, minDate, type);
+    });
 
-    const prevPanelLimitDate = getEnd(offset(-1, pickerValue));
+    const disabledSuperOffsetPrev = computed(() => {
+      if (!minDate || !superOffset || !getEnd) {
+        return false;
+      }
 
-    return !isSameOrAfter(generateConfig, locale, prevPanelLimitDate, minDate, type);
-  }, [minDate, offset, pickerValue, getEnd, generateConfig, locale, type]);
+      const prevPanelLimitDate = getEnd(superOffset(-1, pickerValue));
 
-  const disabledSuperOffsetPrev = React.useMemo(() => {
-    if (!minDate || !superOffset || !getEnd) {
-      return false;
-    }
+      return !isSameOrAfter(generateConfig, locale, prevPanelLimitDate, minDate, type);
+    });
 
-    const prevPanelLimitDate = getEnd(superOffset(-1, pickerValue));
+    const disabledOffsetNext = computed(() => {
+      if (!maxDate || !offset || !getStart) {
+        return false;
+      }
 
-    return !isSameOrAfter(generateConfig, locale, prevPanelLimitDate, minDate, type);
-  }, [minDate, superOffset, pickerValue, getEnd, generateConfig, locale, type]);
+      const nextPanelLimitDate = getStart(offset(1, pickerValue));
 
-  const disabledOffsetNext = React.useMemo(() => {
-    if (!maxDate || !offset || !getStart) {
-      return false;
-    }
+      return !isSameOrAfter(generateConfig, locale, maxDate, nextPanelLimitDate, type);
+    });
 
-    const nextPanelLimitDate = getStart(offset(1, pickerValue));
+    const disabledSuperOffsetNext = computed(() => {
+      if (!maxDate || !superOffset || !getStart) {
+        return false;
+      }
 
-    return !isSameOrAfter(generateConfig, locale, maxDate, nextPanelLimitDate, type);
-  }, [maxDate, offset, pickerValue, getStart, generateConfig, locale, type]);
+      const nextPanelLimitDate = getStart(superOffset(1, pickerValue));
 
-  const disabledSuperOffsetNext = React.useMemo(() => {
-    if (!maxDate || !superOffset || !getStart) {
-      return false;
-    }
+      return !isSameOrAfter(generateConfig, locale, maxDate, nextPanelLimitDate, type);
+    });
 
-    const nextPanelLimitDate = getStart(superOffset(1, pickerValue));
+    // ========================= Offset =========================
+    const onOffset = (distance: number) => {
+      if (offset) {
+        onChange(offset(distance, pickerValue));
+      }
+    };
 
-    return !isSameOrAfter(generateConfig, locale, maxDate, nextPanelLimitDate, type);
-  }, [maxDate, superOffset, pickerValue, getStart, generateConfig, locale, type]);
+    const onSuperOffset = (distance: number) => {
+      if (superOffset) {
+        onChange(superOffset(distance, pickerValue));
+      }
+    };
 
-  // ========================= Offset =========================
-  const onOffset = (distance: number) => {
-    if (offset) {
-      onChange(offset(distance, pickerValue));
-    }
-  };
+    // ========================= Render =========================
+    return () => {
+      if (hideHeader) {
+        return null;
+      }
 
-  const onSuperOffset = (distance: number) => {
-    if (superOffset) {
-      onChange(superOffset(distance, pickerValue));
-    }
-  };
+      const prevBtnCls = `${headerPrefixCls.value}-prev-btn`;
+      const nextBtnCls = `${headerPrefixCls.value}-next-btn`;
+      const superPrevBtnCls = `${headerPrefixCls.value}-super-prev-btn`;
+      const superNextBtnCls = `${headerPrefixCls.value}-super-next-btn`;
 
-  // ========================= Render =========================
-  if (hideHeader) {
-    return null;
-  }
-
-  const prevBtnCls = `${headerPrefixCls}-prev-btn`;
-  const nextBtnCls = `${headerPrefixCls}-next-btn`;
-  const superPrevBtnCls = `${headerPrefixCls}-super-prev-btn`;
-  const superNextBtnCls = `${headerPrefixCls}-super-next-btn`;
-
-  return (
-    <div className={clsx(headerPrefixCls, classNames.header)} style={styles.header}>
-      {superOffset && (
-        <button
-          type="button"
-          aria-label={locale.previousYear}
-          onClick={() => onSuperOffset(-1)}
-          tabIndex={-1}
-          className={clsx(superPrevBtnCls, disabledSuperOffsetPrev && `${superPrevBtnCls}-disabled`)}
-          disabled={disabledSuperOffsetPrev}
-          style={hidePrev ? HIDDEN_STYLE : {}}
-        >
-          {superPrevIcon}
-        </button>
-      )}
-      {offset && (
-        <button
-          type="button"
-          aria-label={locale.previousMonth}
-          onClick={() => onOffset(-1)}
-          tabIndex={-1}
-          className={clsx(prevBtnCls, disabledOffsetPrev && `${prevBtnCls}-disabled`)}
-          disabled={disabledOffsetPrev}
-          style={hidePrev ? HIDDEN_STYLE : {}}
-        >
-          {prevIcon}
-        </button>
-      )}
-      <div className={`${headerPrefixCls}-view`}>{children}</div>
-      {offset && (
-        <button
-          type="button"
-          aria-label={locale.nextMonth}
-          onClick={() => onOffset(1)}
-          tabIndex={-1}
-          className={clsx(nextBtnCls, disabledOffsetNext && `${nextBtnCls}-disabled`)}
-          disabled={disabledOffsetNext}
-          style={hideNext ? HIDDEN_STYLE : {}}
-        >
-          {nextIcon}
-        </button>
-      )}
-      {superOffset && (
-        <button
-          type="button"
-          aria-label={locale.nextYear}
-          onClick={() => onSuperOffset(1)}
-          tabIndex={-1}
-          className={clsx(superNextBtnCls, disabledSuperOffsetNext && `${superNextBtnCls}-disabled`)}
-          disabled={disabledSuperOffsetNext}
-          style={hideNext ? HIDDEN_STYLE : {}}
-        >
-          {superNextIcon}
-        </button>
-      )}
-    </div>
-  );
-}
+      return (
+        <div class={clsx(headerPrefixCls.value, classNames.header)} style={styles.header}>
+          <button
+            v-if={superOffset}
+            type="button"
+            aria-label={locale.previousYear}
+            onClick={() => onSuperOffset(-1)}
+            tabindex={-1}
+            class={clsx(superPrevBtnCls, disabledSuperOffsetPrev.value && `${superPrevBtnCls}-disabled`)}
+            disabled={disabledSuperOffsetPrev.value}
+            style={hidePrev ? HIDDEN_STYLE : {}}
+          >
+            {superPrevIcon}
+          </button>
+          <button
+            v-if={offset}
+            type="button"
+            aria-label={locale.previousMonth}
+            onClick={() => onOffset(-1)}
+            tabindex={-1}
+            class={clsx(prevBtnCls, disabledOffsetPrev.value && `${prevBtnCls}-disabled`)}
+            disabled={disabledOffsetPrev.value}
+            style={hidePrev ? HIDDEN_STYLE : {}}
+          >
+            {prevIcon}
+          </button>
+          <div class={`${headerPrefixCls.value}-view`}>
+            <slot></slot>
+          </div>
+          <button
+            v-if={offset}
+            type="button"
+            aria-label={locale.nextMonth}
+            onClick={() => onOffset(1)}
+            tabindex={-1}
+            class={clsx(nextBtnCls, disabledOffsetNext.value && `${nextBtnCls}-disabled`)}
+            disabled={disabledOffsetNext.value}
+            style={hideNext ? HIDDEN_STYLE : {}}
+          >
+            {nextIcon}
+          </button>
+          <button
+            v-if={superOffset}
+            type="button"
+            aria-label={locale.nextYear}
+            onClick={() => onSuperOffset(1)}
+            tabindex={-1}
+            class={clsx(superNextBtnCls, disabledSuperOffsetNext.value && `${superNextBtnCls}-disabled`)}
+            disabled={disabledSuperOffsetNext.value}
+            style={hideNext ? HIDDEN_STYLE : {}}
+          >
+            {superNextIcon}
+          </button>
+        </div>
+      );
+    };
+  },
+  { inheritAttrs: false },
+);
 
 export default PanelHeader;

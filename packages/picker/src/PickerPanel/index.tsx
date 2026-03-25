@@ -1,12 +1,17 @@
+import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
+import { computed, defineComponent, watch, type CSSProperties } from 'vue';
+import { useFullProps, useRef, type HTMLAttributes } from 'vue-jsx-vapor';
+import useControlledState from '../../../util/src/hooks/useControlledState';
+import { warning } from '../../../util/src/warning';
 import useLocale from '../hooks/useLocale';
 import { fillShowTimeConfig, getTimeProps } from '../hooks/useTimeConfig';
 import useToggleDates from '../hooks/useToggleDates';
 import type {
   CellRender,
   Components,
+  DateType,
   InternalMode,
-  Locale,
   OnPanelChange,
   PanelMode,
   PanelSemanticName,
@@ -14,10 +19,11 @@ import type {
   SharedPanelProps,
   SharedTimeProps,
 } from '../interface';
+import { usePickerContextInject } from '../PickerInput/context';
 import useCellRender from '../PickerInput/hooks/useCellRender';
 import { isSame } from '../utils/dateUtil';
 import { pickProps, toArray } from '../utils/miscUtil';
-import { PickerHackContext, SharedPanelContext } from './context';
+import { PickerHackContextProvider, usePickerHackContextInject, useSharedPanelContextProvider } from './context';
 import DatePanel from './DatePanel';
 import DateTimePanel from './DateTimePanel';
 import DecadePanel from './DecadePanel';
@@ -42,10 +48,10 @@ export interface PickerPanelRef {
   nativeElement: HTMLDivElement;
 }
 
-export interface BasePickerPanelProps<DateType extends object = any>
+export interface BasePickerPanelProps
   extends
     Pick<
-      SharedPanelProps<DateType>,
+      SharedPanelProps,
       // MISC
       | 'locale'
       | 'generateConfig'
@@ -61,8 +67,8 @@ export interface BasePickerPanelProps<DateType extends object = any>
       | 'superPrevIcon'
       | 'superNextIcon'
     >,
-    SharedTimeProps<DateType>,
-    Pick<React.HTMLAttributes<HTMLDivElement>, 'tabIndex'> {
+    SharedTimeProps,
+    Pick<HTMLAttributes<HTMLDivElement>, 'tabindex'> {
   // Style
   prefixCls?: string;
 
@@ -82,25 +88,20 @@ export interface BasePickerPanelProps<DateType extends object = any>
    * Compatible with origin API.
    * Not mean the PickerPanel `onChange` event.
    */
-  onPanelChange?: OnPanelChange<DateType>;
+  onPanelChange?: OnPanelChange;
   picker?: PickerMode;
 
   // Time
-  showTime?: true | SharedTimeProps<DateType>;
+  showTime?: true | SharedTimeProps;
 
   // Week
   /**
-   * Only worked in `date` mode. Show the current week
+   * Only worked in `date` mode. Show the value week
    */
   showWeek?: boolean;
 
   // Cell
-  cellRender?: CellRender<DateType>;
-
-  /** @deprecated use cellRender instead of dateRender */
-  dateRender?: (currentDate: DateType, today: DateType) => React.ReactNode;
-  /** @deprecated use cellRender instead of monthCellRender */
-  monthCellRender?: (currentDate: DateType, locale: Locale) => React.ReactNode;
+  cellRender?: CellRender;
 
   // Hover
   /** @private Used for Picker passing */
@@ -117,7 +118,7 @@ export interface BasePickerPanelProps<DateType extends object = any>
   hideHeader?: boolean;
 }
 
-export interface SinglePickerPanelProps<DateType extends object = any> extends BasePickerPanelProps<DateType> {
+export interface SinglePickerPanelProps<DateType extends object = any> extends BasePickerPanelProps {
   multiple?: false;
 
   defaultValue?: DateType | null;
@@ -125,19 +126,19 @@ export interface SinglePickerPanelProps<DateType extends object = any> extends B
   onChange?: (date: DateType) => void;
 }
 
-export type PickerPanelProps<DateType extends object = any> = BasePickerPanelProps<DateType> & {
+export type PickerPanelProps<DateType extends object = any> = BasePickerPanelProps & {
   /** multiple selection. Not support time or datetime picker */
   multiple?: boolean;
 
   defaultValue?: DateType | DateType[] | null;
   value?: DateType | DateType[] | null;
   onChange?: (date: DateType | DateType[]) => void;
-  styles?: Partial<Record<PanelSemanticName, React.CSSProperties>>;
+  styles?: Partial<Record<PanelSemanticName, CSSProperties>>;
   classNames?: Partial<Record<PanelSemanticName, string>>;
 };
 
-function PickerPanel<DateType extends object = any>(props: PickerPanelProps<DateType>, ref: React.Ref<PickerPanelRef>) {
-  const {
+const PickerPanel = defineComponent(
+  ({
     classNames: panelClassNames,
     styles: panelStyles,
 
@@ -148,7 +149,7 @@ function PickerPanel<DateType extends object = any>(props: PickerPanelProps<Date
 
     // Style
     prefixCls,
-    tabIndex = 0,
+    tabindex = 0,
 
     // Value
     multiple,
@@ -174,280 +175,283 @@ function PickerPanel<DateType extends object = any>(props: PickerPanelProps<Date
 
     // Cell
     cellRender,
-    dateRender,
-    monthCellRender,
 
     // Components
     components = {},
 
     hideHeader,
-  } = props;
+  }: PickerPanelProps) => {
+    const props = useFullProps() as PickerPanelProps;
+    // ======================== Context ========================
+    const { prefixCls: contextPrefixCls, classNames: pickerClassNames, styles: pickerStyles } = $(usePickerContextInject());
 
-  // ======================== Context ========================
-  const {
-    prefixCls: contextPrefixCls,
-    classNames: pickerClassNames,
-    styles: pickerStyles,
-  } = React.useContext(PickerContext) || {};
+    // ======================== prefixCls ========================
+    const mergedPrefixCls = computed(() => contextPrefixCls || prefixCls || 'rc-picker');
 
-  // ======================== prefixCls ========================
-  const mergedPrefixCls = contextPrefixCls || prefixCls || 'rc-picker';
+    // ========================== Refs ==========================
+    const rootRef = useRef<HTMLDivElement>();
 
-  // ========================== Refs ==========================
-  const rootRef = React.useRef<HTMLDivElement>();
+    defineExpose({
+      get nativeElement() {
+        return rootRef.value;
+      },
+    });
 
-  React.useImperativeHandle(ref, () => ({
-    nativeElement: rootRef.current,
-  }));
+    // ========================== Time ==========================
+    // Auto `format` need to check `showTime.showXXX` first.
+    // And then merge the `locale` into `mergedShowTime`.
+    const { timeProps, localeTimeProps, showTimeFormat, propFormat } = $(reactiveComputed(() => getTimeProps(props)));
 
-  // ========================== Time ==========================
-  // Auto `format` need to check `showTime.showXXX` first.
-  // And then merge the `locale` into `mergedShowTime`.
-  const [timeProps, localeTimeProps, showTimeFormat, propFormat] = getTimeProps(props);
+    // ========================= Locale =========================
+    const filledLocale = useLocale(
+      computed(() => locale),
+      localeTimeProps,
+    );
 
-  // ========================= Locale =========================
-  const filledLocale = useLocale(locale, localeTimeProps);
+    // ========================= Picker =========================
+    const internalPicker = computed<InternalMode>(() => (picker === 'date' && showTime ? 'datetime' : picker));
 
-  // ========================= Picker =========================
-  const internalPicker: InternalMode = picker === 'date' && showTime ? 'datetime' : picker;
+    // ======================== ShowTime ========================
+    const mergedShowTime = computed(() =>
+      fillShowTimeConfig(internalPicker.value, showTimeFormat, propFormat, timeProps, filledLocale.value),
+    );
 
-  // ======================== ShowTime ========================
-  const mergedShowTime = React.useMemo(
-    () => fillShowTimeConfig(internalPicker, showTimeFormat, propFormat, timeProps, filledLocale),
-    [internalPicker, showTimeFormat, propFormat, timeProps, filledLocale],
-  );
+    // ========================== Now ===========================
+    const now = computed(() => generateConfig.getNow());
 
-  // ========================== Now ===========================
-  const now = generateConfig.getNow();
+    // ========================== Mode ==========================
+    const [mergedMode, setMergedMode] = useControlledState<PanelMode>(
+      picker || 'date',
+      computed(() => mode),
+    );
 
-  // ========================== Mode ==========================
-  const [mergedMode, setMergedMode] = useControlledState<PanelMode>(picker || 'date', mode);
+    const internalMode = computed<InternalMode>(() =>
+      mergedMode.value === 'date' && mergedShowTime.value ? 'datetime' : mergedMode.value,
+    );
 
-  const internalMode: InternalMode = mergedMode === 'date' && mergedShowTime ? 'datetime' : mergedMode;
+    // ========================= Toggle =========================
+    const toggleDates = useToggleDates(
+      computed(() => generateConfig),
+      computed(() => locale),
+      internalPicker,
+    );
 
-  // ========================= Toggle =========================
-  const toggleDates = useToggleDates(generateConfig, locale, internalPicker);
+    // ========================= Value ==========================
+    // >>> Real value
+    // Interactive with `onChange` event which only trigger when the `mode` is `picker`
+    const [innerValue, setMergedValue] = useControlledState(
+      defaultValue,
+      computed(() => value),
+    );
 
-  // ========================= Value ==========================
-  // >>> Real value
-  // Interactive with `onChange` event which only trigger when the `mode` is `picker`
-  const [innerValue, setMergedValue] = useControlledState(defaultValue, value);
+    const mergedValue = computed(() => {
+      // Clean up `[null]`
+      const values = toArray(innerValue.value).filter((val) => val);
+      return multiple ? values : values.slice(0, 1);
+    });
 
-  const mergedValue = React.useMemo(() => {
-    // Clean up `[null]`
-    const values = toArray(innerValue).filter((val) => val);
-    return multiple ? values : values.slice(0, 1);
-  }, [innerValue, multiple]);
+    // Sync value and only trigger onChange event when changed
+    const triggerChange = (nextValue: DateType[] | null) => {
+      setMergedValue(nextValue);
 
-  // Sync value and only trigger onChange event when changed
-  const triggerChange = useEvent((nextValue: DateType[] | null) => {
-    setMergedValue(nextValue);
-
-    if (
-      onChange &&
-      (nextValue === null ||
-        mergedValue.length !== nextValue.length ||
-        mergedValue.some((ori, index) => !isSame(generateConfig, locale, ori, nextValue[index], internalPicker)))
-    ) {
-      onChange?.(multiple ? nextValue : nextValue[0]);
-    }
-  });
-
-  // >>> CalendarValue
-  // CalendarValue is a temp value for user operation
-  // which will only trigger `onCalendarChange` but not `onChange`
-  const onInternalSelect = useEvent((newDate: DateType) => {
-    onSelect?.(newDate);
-
-    if (mergedMode === picker) {
-      const nextValues = multiple ? toggleDates(mergedValue, newDate) : [newDate];
-
-      triggerChange(nextValues);
-    }
-  });
-
-  // >>> PickerValue
-  // PickerValue is used to control the current displaying panel
-  const [mergedPickerValue, setInternalPickerValue] = useControlledState(
-    defaultPickerValue || mergedValue[0] || now,
-    pickerValue,
-  );
-
-  React.useEffect(() => {
-    if (mergedValue[0] && !pickerValue) {
-      setInternalPickerValue(mergedValue[0]);
-    }
-  }, [mergedValue[0]]);
-
-  // Both trigger when manually pickerValue or mode change
-  const triggerPanelChange = (viewDate?: DateType, nextMode?: PanelMode) => {
-    onPanelChange?.(viewDate || pickerValue, nextMode || mergedMode);
-  };
-
-  const setPickerValue = (nextPickerValue: DateType, triggerPanelEvent = false) => {
-    setInternalPickerValue(nextPickerValue);
-
-    onPickerValueChange?.(nextPickerValue);
-
-    if (triggerPanelEvent) {
-      triggerPanelChange(nextPickerValue);
-    }
-  };
-
-  const triggerModeChange = (nextMode: PanelMode, viewDate?: DateType) => {
-    setMergedMode(nextMode);
-
-    if (viewDate) {
-      setPickerValue(viewDate);
-    }
-
-    triggerPanelChange(viewDate, nextMode);
-  };
-
-  const onPanelValueSelect = (nextValue: DateType) => {
-    onInternalSelect(nextValue);
-    setPickerValue(nextValue);
-
-    // Update mode if needed
-    if (mergedMode !== picker) {
-      const decadeYearQueue: PanelMode[] = ['decade', 'year'];
-      const decadeYearMonthQueue: PanelMode[] = [...decadeYearQueue, 'month'];
-
-      const pickerQueue: Partial<Record<PickerMode, PanelMode[]>> = {
-        quarter: [...decadeYearQueue, 'quarter'],
-        week: [...decadeYearMonthQueue, 'week'],
-        date: [...decadeYearMonthQueue, 'date'],
-      };
-
-      const queue = pickerQueue[picker] || decadeYearMonthQueue;
-      const index = queue.indexOf(mergedMode);
-      const nextMode = queue[index + 1];
-
-      if (nextMode) {
-        triggerModeChange(nextMode, nextValue);
+      if (
+        onChange &&
+        (nextValue === null ||
+          mergedValue.value.length !== nextValue.length ||
+          mergedValue.value.some((ori, index) => !isSame(generateConfig, locale, ori, nextValue[index], internalPicker.value)))
+      ) {
+        onChange?.(multiple ? nextValue : nextValue[0]);
       }
-    }
-  };
+    };
 
-  // ======================= Hover Date =======================
-  const hoverRangeDate = React.useMemo<[DateType, DateType] | null>(() => {
-    let start: DateType;
-    let end: DateType;
+    // >>> CalendarValue
+    // CalendarValue is a temp value for user operation
+    // which will only trigger `onCalendarChange` but not `onChange`
+    const onInternalSelect = (newDate: DateType) => {
+      onSelect?.(newDate);
 
-    if (Array.isArray(hoverRangeValue)) {
-      [start, end] = hoverRangeValue;
-    } else {
-      start = hoverRangeValue;
-    }
+      if (mergedMode.value === picker) {
+        const nextValues = multiple ? toggleDates(mergedValue.value, newDate) : [newDate];
 
-    // Return for not exist
-    if (!start && !end) {
-      return null;
-    }
+        triggerChange(nextValues);
+      }
+    };
 
-    // Fill if has empty
-    start = start || end;
-    end = end || start;
+    // >>> PickerValue
+    // PickerValue is used to control the value displaying panel
+    const [mergedPickerValue, setInternalPickerValue] = useControlledState(
+      defaultPickerValue || mergedValue.value[0] || now.value,
+      computed(() => pickerValue),
+    );
+    watch(
+      () => mergedValue.value[0],
+      () => {
+        if (mergedValue.value[0] && !pickerValue) {
+          setInternalPickerValue(mergedValue.value[0]);
+        }
+      },
+      { immediate: true, deep: true },
+    );
 
-    return generateConfig.isAfter(start, end) ? [end, start] : [start, end];
-  }, [hoverRangeValue, generateConfig]);
+    // Both trigger when manually pickerValue or mode change
+    const triggerPanelChange = (viewDate?: DateType, nextMode?: PanelMode) => {
+      onPanelChange?.(viewDate || pickerValue, nextMode || mergedMode.value);
+    };
 
-  // ======================= Components =======================
-  // >>> cellRender
-  const onInternalCellRender = useCellRender(cellRender, dateRender, monthCellRender);
+    const setPickerValue = (nextPickerValue: DateType, triggerPanelEvent = false) => {
+      setInternalPickerValue(nextPickerValue);
 
-  // ======================= Components =======================
-  const PanelComponent = (components[internalMode] || DefaultComponents[internalMode] || DatePanel) as typeof DatePanel;
+      onPickerValueChange?.(nextPickerValue);
 
-  // ======================== Context =========================
-  const sharedPanelContext = React.useMemo(
-    () => ({
+      if (triggerPanelEvent) {
+        triggerPanelChange(nextPickerValue);
+      }
+    };
+
+    const triggerModeChange = (nextMode: PanelMode, viewDate?: DateType) => {
+      setMergedMode(nextMode);
+
+      if (viewDate) {
+        setPickerValue(viewDate);
+      }
+
+      triggerPanelChange(viewDate, nextMode);
+    };
+
+    const onPanelValueSelect = (nextValue: DateType) => {
+      onInternalSelect(nextValue);
+      setPickerValue(nextValue);
+
+      // Update mode if needed
+      if (mergedMode.value !== picker) {
+        const decadeYearQueue: PanelMode[] = ['decade', 'year'];
+        const decadeYearMonthQueue: PanelMode[] = [...decadeYearQueue, 'month'];
+
+        const pickerQueue: Partial<Record<PickerMode, PanelMode[]>> = {
+          quarter: [...decadeYearQueue, 'quarter'],
+          week: [...decadeYearMonthQueue, 'week'],
+          date: [...decadeYearMonthQueue, 'date'],
+        };
+
+        const queue = pickerQueue[picker] || decadeYearMonthQueue;
+        const index = queue.indexOf(mergedMode.value);
+        const nextMode = queue[index + 1];
+
+        if (nextMode) {
+          triggerModeChange(nextMode, nextValue);
+        }
+      }
+    };
+
+    // ======================= Hover Date =======================
+    const hoverRangeDate = computed<[DateType, DateType] | null>(() => {
+      let start: DateType;
+      let end: DateType;
+
+      if (Array.isArray(hoverRangeValue)) {
+        [start, end] = hoverRangeValue;
+      } else {
+        start = hoverRangeValue;
+      }
+
+      // Return for not exist
+      if (!start && !end) {
+        return null;
+      }
+
+      // Fill if has empty
+      start = start || end;
+      end = end || start;
+
+      return generateConfig.isAfter(start, end) ? [end, start] : [start, end];
+    });
+
+    // ======================= Components =======================
+    // >>> cellRender
+    const onInternalCellRender = useCellRender(computed(() => cellRender));
+
+    // ======================= Components =======================
+    const PanelComponent = computed(
+      () => (components[internalMode.value] || DefaultComponents[internalMode.value] || DatePanel) as typeof DatePanel,
+    );
+
+    // ======================== Context =========================
+    const sharedPanelContext = computed(() => ({
       classNames: pickerClassNames?.popup ?? panelClassNames ?? {},
       styles: pickerStyles?.popup ?? panelStyles ?? {},
-    }),
-    [pickerClassNames, panelClassNames, pickerStyles, panelStyles],
-  );
+    }));
 
-  const parentHackContext = React.useContext(PickerHackContext);
-  const pickerPanelContext = React.useMemo(
-    () => ({
+    const parentHackContext = usePickerHackContextInject();
+    const pickerPanelContext = computed(() => ({
       ...parentHackContext,
       hideHeader,
-    }),
-    [parentHackContext, hideHeader],
-  );
+    }));
 
-  // ======================== Warnings ========================
-  if (process.env.NODE_ENV !== 'production') {
-    warning(
-      !mergedValue || mergedValue.every((val) => generateConfig.isValidate(val)),
-      'Invalidate date pass to `value` or `defaultValue`.',
+    // ======================== Warnings ========================
+    if (process.env.NODE_ENV !== 'production') {
+      warning(
+        !mergedValue.value || mergedValue.value.every((val) => generateConfig.isValidate(val)),
+        'Invalidate date pass to `value` or `defaultValue`.',
+      );
+    }
+
+    // ========================= Render =========================
+    const panelCls = computed(() => `${mergedPrefixCls.value}-panel`);
+
+    const panelProps = computed(() =>
+      pickProps(props, [
+        // Week
+        'showWeek',
+
+        // Icons
+        'prevIcon',
+        'nextIcon',
+        'superPrevIcon',
+        'superNextIcon',
+
+        // Disabled
+        'disabledDate',
+        'minDate',
+        'maxDate',
+
+        // Hover
+        'onHover',
+      ]),
     );
-  }
-
-  // ========================= Render =========================
-  const panelCls = `${mergedPrefixCls}-panel`;
-
-  const panelProps = pickProps(props, [
-    // Week
-    'showWeek',
-
-    // Icons
-    'prevIcon',
-    'nextIcon',
-    'superPrevIcon',
-    'superNextIcon',
-
-    // Disabled
-    'disabledDate',
-    'minDate',
-    'maxDate',
-
-    // Hover
-    'onHover',
-  ]);
-
-  return (
-    <SharedPanelContext.Provider value={sharedPanelContext}>
-      <PickerHackContext.Provider value={pickerPanelContext}>
-        <div ref={rootRef} tabIndex={tabIndex} className={clsx(panelCls, { [`${panelCls}-rtl`]: direction === 'rtl' })}>
-          <PanelComponent
+    useSharedPanelContextProvider(reactiveComputed(() => sharedPanelContext.value));
+    return () => (
+      <PickerHackContextProvider value={pickerPanelContext.value}>
+        <div ref={rootRef} tabindex={tabindex} class={clsx(panelCls, { [`${panelCls}-rtl`]: direction === 'rtl' })}>
+          <PanelComponent.value
             {...panelProps}
             // Time
-            showTime={mergedShowTime}
+            showTime={mergedShowTime.value}
             // MISC
-            prefixCls={mergedPrefixCls}
-            locale={filledLocale}
+            prefixCls={mergedPrefixCls.value}
+            locale={filledLocale.value}
             generateConfig={generateConfig}
             // Mode
             onModeChange={triggerModeChange}
             // Value
-            pickerValue={mergedPickerValue}
+            pickerValue={mergedPickerValue.value}
             onPickerValueChange={(nextPickerValue) => {
               setPickerValue(nextPickerValue, true);
             }}
-            value={mergedValue[0]}
+            value={mergedValue.value[0]}
             onSelect={onPanelValueSelect}
-            values={mergedValue}
+            values={mergedValue.value}
             // Render
-            cellRender={onInternalCellRender}
+            cellRender={onInternalCellRender.value}
             // Hover
-            hoverRangeValue={hoverRangeDate}
+            hoverRangeValue={hoverRangeDate.value}
             hoverValue={hoverValue}
           />
         </div>
-      </PickerHackContext.Provider>
-    </SharedPanelContext.Provider>
-  );
-}
-
-const RefPanelPicker = React.memo(React.forwardRef(PickerPanel));
-
-if (process.env.NODE_ENV !== 'production') {
-  RefPanelPicker.displayName = 'PanelPicker';
-}
+      </PickerHackContextProvider>
+    );
+  },
+  { inheritAttrs: false, name: process.env.NODE_ENV !== 'production' ? 'PanelPicker' : undefined },
+);
 
 // Make support generic
-export default RefPanelPicker as <DateType extends object = any>(
-  props: PickerPanelProps<DateType> & React.RefAttributes<PickerPanelRef>,
-) => React.ReactElement;
+export default PickerPanel;
