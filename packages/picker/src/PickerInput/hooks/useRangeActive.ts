@@ -59,7 +59,7 @@ export default function useRangeActive(
     const filledActiveSet = new Set(list.filter((index) => nextValue[index] || empty[index]));
     const nextIndex = list[list.length - 1] === 0 ? 1 : 0;
 
-    if (filledActiveSet.size >= 2 || disabled[nextIndex]) {
+    if (filledActiveSet.size >= 2 || disabled.value[nextIndex]) {
       return null;
     }
 
