@@ -5,6 +5,7 @@ import { useRef } from 'vue-jsx-vapor';
 import Picker, { type PickerRef } from '../src';
 import momentGenerateConfig from '../src/generate/dayjs';
 import enUS from '../src/locale/en_US';
+import zhCN from '../src/locale/zh_CN';
 import './assets/index.less';
 
 // const defaultValue = moment('2019-09-03 05:02:03');
@@ -74,7 +75,7 @@ export default defineComponent(() => {
           /> */}
           <Picker {...sharedProps.value} locale={enUS} />
         </div>
-        {/* <div style={{ margin: '0 8px' }}>
+        <div style={{ margin: '0 8px' }}>
           <h3>Uncontrolled</h3>
           <Picker generateConfig={momentGenerateConfig} locale={zhCN} allowClear renderExtraFooter={() => 'extra'} />
         </div>
@@ -101,8 +102,8 @@ export default defineComponent(() => {
         <div style={{ margin: '0 8px' }}>
           <h3>Uncontrolled Datetime</h3>
           <Picker format="YYYY-MM-DD HH:mm:ss" generateConfig={momentGenerateConfig} locale={enUS} showTime />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>Week</h3>
           <Picker
             {...sharedProps.value}
@@ -155,7 +156,7 @@ export default defineComponent(() => {
         <div style={{ margin: '0 8px' }}>
           <h3>PreviewValue is false</h3>
           <Picker {...sharedProps.value} locale={enUS} onKeydown={keyDown} previewValue={false} />
-        </div> */}
+        </div>
       </div>
     </div>
   );

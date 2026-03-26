@@ -88,7 +88,7 @@ export default defineComponent(() => {
           <RangePicker {...sharedProps.value} value={undefined} locale={zhCN} allowClear picker="time" style={{ width: 280 }} />
         </div>
 
-        {/* <div style={{ margin: '0 8px' }}>
+        <div style={{ margin: '0 8px' }}>
           <h3>Focus</h3>
           <RangePicker
             {...sharedProps.value}
@@ -105,43 +105,43 @@ export default defineComponent(() => {
           >
             Focus!
           </button>
-        </div> */}
+        </div>
 
-        {/* <div style={{ margin: '0 8px' }}>
+        <div style={{ margin: '0 8px' }}>
           <h3>Year</h3>
-          <RangePicker {...sharedProps.value} value={undefined} locale={zhCN} picker="year" />
-        </div> */}
+          <RangePicker {...sharedProps.value} locale={zhCN} picker="year" />
+        </div>
 
-        {/* <div style={{ margin: '0 8px' }}>
+        <div style={{ margin: '0 8px' }}>
           <h3>Quarter</h3>
           <RangePicker {...sharedProps.value} locale={zhCN} picker="quarter" />
-        </div> */}
+        </div>
 
-        {/* <div style={{ margin: '0 8px' }}>
+        <div style={{ margin: '0 8px' }}>
           <h3>Month</h3>
           <RangePicker {...sharedProps.value} locale={zhCN} picker="month" />
-        </div> */}
+        </div>
 
-        {/* <div style={{ margin: '0 8px' }}>
+        <div style={{ margin: '0 8px' }}>
           <h3>Week</h3>
           <RangePicker {...sharedProps.value} locale={zhCN} picker="week" />
-        </div> */}
+        </div>
 
-        {/* <div style={{ margin: '0 8px' }}>
+        <div style={{ margin: '0 8px' }}>
           <h3>Allow Empty</h3>
           <RangePicker {...sharedProps.value} locale={zhCN} allowClear allowEmpty={[true, true]} />
-        </div> */}
+        </div>
 
-        {/* <div style={{ margin: '0 8px' }}>
+        <div style={{ margin: '0 8px' }}>
           <h3>Start disabled</h3>
           <RangePicker {...sharedProps.value} locale={zhCN} allowClear disabled={[true, false]} />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>End disabled</h3>
           <RangePicker {...sharedProps.value} locale={zhCN} allowClear disabled={[false, true]} />
-        </div> */}
+        </div>
 
-        {/* <div style={{ margin: '0 8px' }}>
+        <div style={{ margin: '0 8px' }}>
           <h3>Uncontrolled</h3>
           <RangePicker
             {...sharedProps.value}
@@ -152,12 +152,12 @@ export default defineComponent(() => {
             allowEmpty={[false, true]}
             renderExtraFooter={() => <div>extra footer</div>}
           />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>Uncontrolled2</h3>
           <RangePicker {...sharedProps.value} value={undefined} locale={zhCN} placeholder={['start...', 'end...']} />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>DisabledDate</h3>
           <RangePicker
             {...sharedProps.value}
@@ -166,16 +166,16 @@ export default defineComponent(() => {
             placeholder={['start...', 'end...']}
             disabledDate={disabledDate}
           />
-        </div> */}
+        </div>
         <div style={{ margin: '0 8px' }}>
           <h3>PreviewValue is false</h3>
           <RangePicker
             {...sharedProps.value}
             previewValue={false}
-            // value={undefined}
+            value={undefined}
             locale={zhCN}
             placeholder={['start...', 'end...']}
-            // disabledDate={disabledDate}
+            disabledDate={disabledDate}
           />
         </div>
       </div>
