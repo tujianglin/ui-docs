@@ -5,9 +5,7 @@ import { useRef } from 'vue-jsx-vapor';
 import Picker, { type PickerRef } from '../src';
 import momentGenerateConfig from '../src/generate/dayjs';
 import enUS from '../src/locale/en_US';
-import zhCN from '../src/locale/zh_CN';
 import './assets/index.less';
-import './calendar.less';
 
 // const defaultValue = moment('2019-09-03 05:02:03');
 const defaultValue = moment('2019-11-28 01:02:03');
@@ -48,7 +46,7 @@ export default defineComponent(() => {
 
   return () => (
     <div>
-      <h1>Value: {value.value ? value.value.format('YYYY-MM-DD HH:mm:ss') : 'null'}</h1>
+      <h1>Value: {value.value ? value.value.format('YYYY-MM-DD HH:mm:ss') : null}</h1>
 
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         <div style={{ margin: '0 8px' }}>
@@ -74,13 +72,13 @@ export default defineComponent(() => {
               },
             }}
           /> */}
-          {/* <Picker {...sharedProps.value} locale={enUS} /> */}
+          <Picker {...sharedProps.value} locale={enUS} />
         </div>
         {/* <div style={{ margin: '0 8px' }}>
           <h3>Uncontrolled</h3>
           <Picker generateConfig={momentGenerateConfig} locale={zhCN} allowClear renderExtraFooter={() => 'extra'} />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>Datetime</h3>
           <Picker
             {...sharedProps.value}
@@ -99,12 +97,12 @@ export default defineComponent(() => {
               return {};
             }}
           />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>Uncontrolled Datetime</h3>
           <Picker format="YYYY-MM-DD HH:mm:ss" generateConfig={momentGenerateConfig} locale={enUS} showTime />
         </div> */}
-        <div style={{ margin: '0 8px' }}>
+        {/* <div style={{ margin: '0 8px' }}>
           <h3>Week</h3>
           <Picker
             {...sharedProps.value}
@@ -126,38 +124,38 @@ export default defineComponent(() => {
             Focus
           </button>
         </div>
-        {/* <div style={{ margin: '0 8px' }}>
+        <div style={{ margin: '0 8px' }}>
           <h3>Week</h3>
           <Picker generateConfig={momentGenerateConfig} locale={enUS} picker="week" />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>Quarter</h3>
           <Picker generateConfig={momentGenerateConfig} locale={enUS} picker="quarter" />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>Time</h3>
           <Picker {...sharedProps.value} locale={zhCN} picker="time" />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>Time 12</h3>
           <Picker {...sharedProps.value} locale={zhCN} picker="time" use12Hours />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>Year</h3>
           <Picker {...sharedProps.value} locale={zhCN} picker="year" />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>Keyboard navigation (Tab key) disabled</h3>
           <Picker {...sharedProps.value} locale={enUS} tabindex={-1} />
-        </div> */}
-        {/* <div style={{ margin: '0 8px' }}>
+        </div>
+        <div style={{ margin: '0 8px' }}>
           <h3>Keyboard event with prevent default behaviors</h3>
           <Picker {...sharedProps.value} locale={enUS} onKeydown={keyDown} />
-        </div> */}
+        </div>
         <div style={{ margin: '0 8px' }}>
           <h3>PreviewValue is false</h3>
           <Picker {...sharedProps.value} locale={enUS} onKeydown={keyDown} previewValue={false} />
-        </div>
+        </div> */}
       </div>
     </div>
   );

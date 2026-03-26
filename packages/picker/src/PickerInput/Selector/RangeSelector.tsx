@@ -223,7 +223,7 @@ const RefRangeSelector = defineComponent(
               [`${prefixCls}-focused`]: focused,
               [`${prefixCls}-disabled`]: disabled.every((i) => i),
               [`${prefixCls}-invalid`]: invalid.some((i) => i),
-              [`${prefixCls}-rtl`]: rtl,
+              [`${prefixCls}-rtl`]: rtl.value,
             },
             className,
           )}
@@ -264,7 +264,7 @@ const RefRangeSelector = defineComponent(
           />
           <div class={`${prefixCls}-active-bar`} style={activeBarStyle.value} />
           <Icon type="suffix" icon={suffixIcon} />
-          <ClearIcon v-if={showClear} icon={clearIcon} onClear={onClear} />
+          <ClearIcon v-if={showClear.value} icon={clearIcon} onClear={onClear} />
         </div>
       </ResizeObserver>
     );

@@ -300,7 +300,6 @@ const PickerPanel = defineComponent(
 
     const setPickerValue = (nextPickerValue: DateType, triggerPanelEvent = false) => {
       setInternalPickerValue(nextPickerValue);
-
       onPickerValueChange?.(nextPickerValue);
 
       if (triggerPanelEvent) {

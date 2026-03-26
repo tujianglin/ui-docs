@@ -1,3 +1,4 @@
+import { omit } from 'es-toolkit';
 import { computed, defineComponent } from 'vue';
 import { useFullProps } from 'vue-jsx-vapor';
 import type { DateType } from '../../interface';
@@ -83,7 +84,7 @@ const PopupPanel = defineComponent(
               }}
             >
               <PickerPanel
-                {...pickerProps.value}
+                {...omit(pickerProps.value, ['onPickerValueChange'])}
                 pickerValue={nextPickerValue.value}
                 onPickerValueChange={onSecondPickerValueChange}
               />

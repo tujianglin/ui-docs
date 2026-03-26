@@ -69,7 +69,6 @@ const Footer = defineComponent(
 
     const nowPrefixCls = computed(() => `${prefixCls}-now`);
     const nowBtnPrefixCls = computed(() => `${nowPrefixCls.value}-btn`);
-
     return () => {
       const presetNode = (
         <li v-if={showNow} class={nowPrefixCls.value}>

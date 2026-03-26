@@ -25,15 +25,15 @@ const MultipleDates = defineComponent(
     // ========================= Item =========================
     function renderSelector(content: RenderNode, onClose?: MouseEventHandler<HTMLSpanElement>) {
       return (
-        <span class={clsx(`${selectionCls}-item`)} title={typeof content === 'string' ? content : null}>
-          <span class={`${selectionCls}-item-content`}>{content}</span>
+        <span class={clsx(`${selectionCls.value}-item`)} title={typeof content === 'string' ? content : null}>
+          <span class={`${selectionCls.value}-item-content`}>{content}</span>
           <span
             v-if={!disabled && onClose}
             onMousedown={(e) => {
               e.preventDefault();
             }}
             onClick={onClose}
-            class={`${selectionCls}-item-remove`}
+            class={`${selectionCls.value}-item-remove`}
           >
             {removeIcon}
           </span>

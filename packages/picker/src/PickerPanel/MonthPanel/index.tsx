@@ -12,6 +12,7 @@ const MonthPanel = defineComponent(
     const panelPrefixCls = computed(() => `${prefixCls}-month-panel`);
 
     // ========================== Base ==========================
+    // @ts-ignore
     const [info] = useInfo(
       props,
       computed(() => 'month'),
@@ -38,7 +39,7 @@ const MonthPanel = defineComponent(
             format: locale.monthFormat,
             generateConfig,
           })
-        : monthsLocale[month];
+        : monthsLocale.value[month];
     };
 
     const getCellClassName = () => ({

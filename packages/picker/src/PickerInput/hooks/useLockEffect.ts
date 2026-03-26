@@ -12,7 +12,7 @@ export default function useLockEffect(condition: Ref<boolean>, callback: (next: 
   watch(
     condition,
     () => {
-      if (condition) {
+      if (condition.value) {
         callbackRef.value(condition.value);
       } else {
         id = raf(() => {

@@ -76,7 +76,7 @@ export default function useRangePickerValue(
     const value = [mergedStartPickerValue.value, mergedEndPickerValue.value][mergedActiveIndex.value];
 
     // Merge the `showTime.defaultValue` into `pickerValue`
-    return isTimePicker.value ? value : fillTime(generateConfig.value, value, timeDefaultValue.value[mergedActiveIndex.value]);
+    return isTimePicker.value ? value : fillTime(generateConfig.value, value, timeDefaultValue.value?.[mergedActiveIndex.value]);
   });
 
   const setCurrentPickerValue = (nextPickerValue: DateType, source: 'reset' | 'panel' = 'panel') => {

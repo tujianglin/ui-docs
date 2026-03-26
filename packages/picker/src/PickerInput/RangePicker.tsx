@@ -124,20 +124,17 @@ const RefRangePicker = defineComponent(
   (props: RangePickerProps) => {
     // ========================= Prop =========================
     // @ts-ignore
-    const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(
-      reactiveComputed(() => props),
-      () => {
-        const { disabled, allowEmpty } = props;
+    const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(props, () => {
+      const { disabled, allowEmpty } = props;
 
-        const mergedDisabled = separateConfig(disabled, false);
-        const mergedAllowEmpty = separateConfig(allowEmpty, false);
+      const mergedDisabled = separateConfig(disabled, false);
+      const mergedAllowEmpty = separateConfig(allowEmpty, false);
 
-        return {
-          disabled: mergedDisabled,
-          allowEmpty: mergedAllowEmpty,
-        };
-      },
-    );
+      return {
+        disabled: mergedDisabled,
+        allowEmpty: mergedAllowEmpty,
+      };
+    });
 
     const {
       // Style
@@ -569,6 +566,9 @@ const RefRangePicker = defineComponent(
         ...(Object.keys(domProps) as (keyof SharedHTMLAttrs)[]),
         'onChange',
         'onCalendarChange',
+        'onPickerValueChange',
+        'onSubmit',
+        'onOk',
         'style',
         'class',
         'onPanelChange',

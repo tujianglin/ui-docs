@@ -37,7 +37,7 @@ const TimePanel = defineComponent(
     // ========================= Render =========================
     return () => (
       <div class={clsx(panelPrefixCls.value)}>
-        <PanelHeader>{value ? formatValue(value, { locale, format, generateConfig }) : '\u00A0'}</PanelHeader>
+        <PanelHeader>{value ? formatValue(value, { locale, format, generateConfig }) : null}</PanelHeader>
         <TimePanelBody {...showTime} />
       </div>
     );

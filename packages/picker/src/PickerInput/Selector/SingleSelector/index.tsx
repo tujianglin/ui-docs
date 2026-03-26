@@ -184,7 +184,7 @@ const SingleSelector = defineComponent(
             tabindex={tabindex}
           />
           <Icon type="suffix" icon={suffixIcon} />
-          {showClear.value && <ClearIcon icon={clearIcon} onClear={onClear} />}
+          <ClearIcon v-if={showClear.value} icon={clearIcon} onClear={onClear} />
         </>
       ) : (
         <Input

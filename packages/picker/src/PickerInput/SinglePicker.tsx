@@ -495,6 +495,8 @@ const Picker = defineComponent(
         ...(Object.keys(domProps) as (keyof SharedHTMLAttrs)[]),
         'onChange',
         'onCalendarChange',
+        'onPickerValueChange',
+        'onOk',
         'style',
         'class',
         'onPanelChange',
@@ -593,6 +595,7 @@ const Picker = defineComponent(
       { immediate: true, flush: 'post' },
     );
     usePickerContextProvider(context);
+
     return () => {
       // >>> Render
       const panel = (

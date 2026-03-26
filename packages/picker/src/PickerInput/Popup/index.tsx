@@ -1,5 +1,6 @@
 import ResizeObserver, { type ResizeObserverProps } from '@vc-com/resize-observer';
 import { clsx } from 'clsx';
+import { omit } from 'es-toolkit';
 import { computed, defineComponent, ref, watch } from 'vue';
 import { useFullProps, useRef, type InputHTMLAttributes, type MouseEventHandler } from 'vue-jsx-vapor';
 import type { DateType, RangeTimeProps, SharedPickerProps, SharedTimeProps, ValueDate } from '../../interface';
@@ -184,7 +185,12 @@ const Popup = defineComponent(
           <PresetPanel prefixCls={prefixCls} presets={presets} onClick={onPresetSubmit} onHover={onPresetHover} />
           <div>
             <PopupPanel {...props} value={popupPanelValue.value} />
-            <Footer {...props} showNow={multiple ? false : showNow} invalid={disableSubmit.value} onSubmit={onFooterSubmit} />
+            <Footer
+              {...omit(props, ['onSubmit'])}
+              showNow={multiple ? false : showNow}
+              invalid={disableSubmit.value}
+              onSubmit={onFooterSubmit}
+            />
           </div>
         </div>
       );
@@ -230,7 +236,7 @@ const Popup = defineComponent(
       );
 
       if (range) {
-        renderNode = (
+        return (
           <div
             ref={wrapperRef}
             class={clsx(`${prefixCls}-range-wrapper`, `${prefixCls}-${picker}-range-wrapper`)}
