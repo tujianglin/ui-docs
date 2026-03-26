@@ -1,8 +1,8 @@
 import type { CSSMotionProps } from '@vc-com/motion';
 import { CSSMotionList } from '@vc-com/motion';
+import type { Key } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent, nextTick, ref, shallowRef, watch, type CSSProperties } from 'vue';
-import type { Key } from '../../util/src/types';
 import useStack from './hooks/useStack';
 import type { InnerOpenConfig, NoticeConfig, OpenConfig, Placement, StackConfig } from './interface';
 import Notice from './Notice';

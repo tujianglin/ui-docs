@@ -1,7 +1,7 @@
 import Menu, { MenuItem, type MenuRef } from '@vc-com/menu';
+import { getDOM } from '@vc-com/util/lib/Dom/findDOMNode';
 import { computed, defineComponent, watch } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
-import { getDOM } from '../../util/src/Dom/findDOMNode';
 import type { DataDrivenOptionProps } from './Mentions';
 import { useMentionsContextInject } from './MentionsContext';
 

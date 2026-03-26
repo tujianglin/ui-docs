@@ -1,5 +1,5 @@
 import type { Key, SafeKey, DataNode as TreeDataNode } from '@vc-com/tree/interface';
-import type { VueNode } from '../../util/src/types';
+import type { VueNode } from '@vc-com/util/lib/types';
 
 export type { Key, SafeKey };
 

@@ -1,7 +1,7 @@
 import type { CSSMotionProps } from '@vc-com/motion';
+import type { Key, VueNode } from '@vc-com/util/lib/types';
 import { computed, defineComponent, ref, Teleport, watch, type CSSProperties } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
-import type { Key, VueNode } from '../../util/src/types';
 import type { InnerOpenConfig, OpenConfig, Placement, Placements, StackConfig } from './interface';
 import NoticeList from './NoticeList';
 

@@ -1,11 +1,11 @@
 import type { CSSMotionProps } from '@vc-com/motion';
 import CSSMotion from '@vc-com/motion';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
+import type { VueNode } from '@vc-com/util/lib/types';
 import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
 import { computed, defineComponent, onBeforeUnmount, ref, watch, type CSSProperties } from 'vue';
 import { useFullProps, useRef, type FocusEvent } from 'vue-jsx-vapor';
-import type { VueNode } from '../../util/src/types';
 import { useDrawerContextInject, useDrawerContextProvide, type DrawerContextProps } from './context';
 import type { DrawerPanelAccessibility, DrawerPanelEvents } from './DrawerPanel';
 import DrawerPanel from './DrawerPanel';

@@ -1,4 +1,4 @@
-import { filterEmpty } from '@vc-com/util/src/props-util';
+import { filterEmpty } from '@vc-com/util/lib/props-util';
 import { defineComponent, shallowRef } from 'vue';
 
 export interface PopupContentProps {

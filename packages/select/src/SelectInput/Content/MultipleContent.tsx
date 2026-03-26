@@ -1,11 +1,11 @@
 import Overflow from '@vc-com/overflow';
 import Render from '@vc-com/render';
+import { useComposeRef } from '@vc-com/util/lib/ref';
 import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent } from 'vue';
 import { type MouseEvent, type MouseEventHandler } from 'vue-jsx-vapor';
 import type { SharedContentProps } from '.';
-import { useComposeRef } from '../../../../util/src';
 import type { CustomTagProps } from '../../BaseSelect';
 import TransBtn from '../../TransBtn';
 import { useBaseSelectContextInject } from '../../hooks/useBaseProps';

@@ -1,6 +1,6 @@
+import isVisible from '@vc-com/util/lib/Dom/isVisible';
 import raf from '@vc-com/util/lib/raf';
 import { shallowRef, type Ref } from 'vue';
-import isVisible from '../../../../../util/src/Dom/isVisible';
 
 const SPEED_PTG = 1 / 3;
 

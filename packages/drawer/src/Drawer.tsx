@@ -1,9 +1,9 @@
 import type { PortalProps } from '@vc-com/portal';
 import Portal from '@vc-com/portal';
+import { getDOM } from '@vc-com/util/lib/Dom/findDOMNode';
 import { reactiveComputed } from '@vueuse/core';
 import { computed, defineComponent, nextTick, onMounted, ref, watch, type Ref } from 'vue';
 import { useFullProps, useRef } from 'vue-jsx-vapor';
-import { getDOM } from '../../util/src/Dom/findDOMNode';
 import { useRefContextProvide } from './context';
 import type { DrawerPanelAccessibility, DrawerPanelEvents } from './DrawerPanel';
 import type { DrawerPopupProps } from './DrawerPopup';

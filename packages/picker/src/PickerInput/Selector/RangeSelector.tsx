@@ -1,10 +1,10 @@
 // oxlint-disable no-unused-vars
 import ResizeObserver from '@vc-com/resize-observer';
+import type { RenderNode } from '@vc-com/util/lib/types';
 import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
 import { computed, defineComponent, ref, watch, type CSSProperties } from 'vue';
 import { useFullProps, useRef } from 'vue-jsx-vapor';
-import type { RenderNode } from '../../../../util/src/types';
 import type { DateType, SelectorProps } from '../../interface';
 import { usePickerContextInject } from '../context';
 import useInputProps from './hooks/useInputProps';

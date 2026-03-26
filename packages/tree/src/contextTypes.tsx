@@ -2,9 +2,9 @@
  * Webpack has bug for import loop, which is not the same behavior as ES module.
  * When util.js imports the TreeNode for tree generate will cause treeContextTypes be empty.
  */
+import type { RenderNode, VueNode } from '@vc-com/util/lib/types';
 import { reactiveComputed } from '@vueuse/core';
 import { defineComponent, inject, provide, reactive, type CSSProperties, type InjectionKey, type Reactive } from 'vue';
-import type { RenderNode, VueNode } from '../../util/src/types';
 import type { BasicDataNode, DataNode, Direction, EventDataNode, IconType, Key, KeyEntities, TreeNodeProps } from './interface';
 import type { DraggableConfig, SemanticName } from './Tree';
 

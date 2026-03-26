@@ -1,8 +1,8 @@
 import type { CSSMotionProps } from '@vc-com/motion';
+import type { Key, RenderNode } from '@vc-com/util/lib/types';
 import { reactiveComputed } from '@vueuse/core';
 import { ref, watch, watchEffect, type CSSProperties, type Reactive } from 'vue';
 import { useRef, type AriaAttributes } from 'vue-jsx-vapor';
-import type { Key, RenderNode } from '../../../util/src/types';
 import type { NotificationsProps, NotificationsRef } from '../Notifications';
 import Notifications from '../Notifications';
 import type { OpenConfig, Placement, StackConfig } from '../interface';

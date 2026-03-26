@@ -1,9 +1,9 @@
+import useControlledState from '@vc-com/util/lib/hooks/useControlledState';
 import KeyCode from '@vc-com/util/lib/KeyCode';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
 import { clsx } from 'clsx';
 import { computed, createVNode, defineComponent, ref, watchEffect } from 'vue';
 import { useFullProps, useRef, type FocusEvent, type KeyboardEvent } from 'vue-jsx-vapor';
-import useControlledState from '../../util/src/hooks/useControlledState';
 import type { PaginationProps } from './interface';
 import zhCN from './locale/zh_CN';
 import Options from './Options';

@@ -1,9 +1,9 @@
 import KeyCode from '@vc-com/util/lib/KeyCode';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
+import type { Key } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent, getCurrentInstance, ref, watch, type CSSProperties } from 'vue';
 import type { KeyboardEventHandler, MouseEventHandler } from 'vue-jsx-vapor';
-import type { Key } from '../../util/src/types';
 import type { NoticeConfig } from './interface';
 
 export interface NoticeProps extends Omit<NoticeConfig, 'onClose'> {

@@ -1,4 +1,4 @@
-import type { RenderNode } from '../../util/src/types';
+import type { RenderNode } from '@vc-com/util/lib/types';
 
 export interface Option {
   code?: string;

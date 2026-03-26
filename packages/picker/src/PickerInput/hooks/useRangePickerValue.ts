@@ -1,5 +1,5 @@
+import useControlledState from '@vc-com/util/lib/hooks/useControlledState';
 import { computed, nextTick, ref, type Ref, shallowRef, watch } from 'vue';
-import useControlledState from '../../../../util/src/hooks/useControlledState';
 import type { GenerateConfig } from '../../generate';
 import type { DateType, InternalMode, Locale, PanelMode } from '../../interface';
 import { fillTime, isSame } from '../../utils/dateUtil';

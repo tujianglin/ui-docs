@@ -1,6 +1,6 @@
+import type { RenderNode } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent } from 'vue';
-import type { RenderNode } from '../../../util/src/types';
 import type { DateType, DisabledDate } from '../interface';
 import { formatValue, isInRange, isSame } from '../utils/dateUtil';
 import { usePanelContextInject, usePickerHackContextInject } from './context';

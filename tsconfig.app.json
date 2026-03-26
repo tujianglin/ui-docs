@@ -53,7 +53,9 @@
       "@vc-com/mentions/*": ["packages/mentions/src/*"],
       "@vc-com/dialog/*": ["packages/dialog/src/*"],
       "@vc-com/drawer/*": ["packages/drawer/src/*"],
-      "@vc-com/notification/*": ["packages/notification/src/*"]
+      "@vc-com/notification/*": ["packages/notification/src/*"],
+      "@vc-com/picker/*": ["packages/picker/src/*"],
+      "@vc-com/progress/*": ["packages/progress/src/*"]
     }
   },
   "include": [

@@ -1,5 +1,5 @@
+import type { VueNode } from '@vc-com/util/lib/types';
 import { computed, shallowRef, type Ref } from 'vue';
-import type { VueNode } from '../../../util/src/types';
 import type { LabeledValueType, SafeKey } from '../interface';
 
 /**

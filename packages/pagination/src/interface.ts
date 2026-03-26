@@ -1,6 +1,6 @@
+import type { VueNode } from '@vc-com/util/lib/types';
 import type { CSSProperties } from 'vue';
 import type { AriaAttributes } from 'vue-jsx-vapor';
-import type { VueNode } from '../../util/src/types';
 import type { SizeChangerRender } from './Options';
 
 export interface PaginationLocale {

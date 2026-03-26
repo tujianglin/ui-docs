@@ -1,5 +1,5 @@
+import { useLockFocus } from '@vc-com/util/lib/Dom/focus';
 import { computed, watch, type Ref } from 'vue';
-import { useLockFocus } from '../../../util/src/Dom/focus';
 
 export default function useFocusable(
   getContainer: () => HTMLElement,

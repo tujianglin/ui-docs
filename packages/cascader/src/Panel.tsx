@@ -1,5 +1,5 @@
-import useControlledState from '@vc-com/util/src/hooks/useControlledState';
-import type { RenderNode } from '@vc-com/util/src/types';
+import useControlledState from '@vc-com/util/lib/hooks/useControlledState';
+import type { RenderNode } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent } from 'vue';
 import type { CascaderProps, DefaultOptionType, InternalValueType, SingleValueType } from './Cascader';

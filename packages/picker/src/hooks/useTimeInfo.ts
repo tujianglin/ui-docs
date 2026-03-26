@@ -1,6 +1,6 @@
+import { warning } from '@vc-com/util/lib/warning';
 import { reactiveComputed } from '@vueuse/core';
 import { computed, type Reactive, type Ref } from 'vue';
-import { warning } from '../../../util/src/warning';
 import type { GenerateConfig } from '../generate';
 import type { DateType, DisabledTimes, SharedTimeProps } from '../interface';
 import { findValidateTime } from '../PickerPanel/TimePanel/TimePanelBody/util';

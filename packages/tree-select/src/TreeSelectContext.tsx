@@ -1,8 +1,8 @@
 import type { ExpandAction } from '@vc-com/tree/Tree';
+import type { VueNode } from '@vc-com/util/lib/types';
 import { reactiveComputed } from '@vueuse/core';
 import { defineComponent, inject, provide, reactive, type InjectionKey, type Reactive } from 'vue';
 import type { UIEventHandler } from 'vue-jsx-vapor';
-import type { VueNode } from '../../util/src/types';
 import type useDataEntities from './hooks/useDataEntities';
 import type { DataNode, FieldNames, Key } from './interface';
 import type { TreeSelectProps } from './TreeSelect';

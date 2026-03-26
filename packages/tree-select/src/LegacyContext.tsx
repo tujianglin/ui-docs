@@ -1,7 +1,7 @@
 import type { DataEntity, IconType } from '@vc-com/tree/interface';
+import type { VueNode } from '@vc-com/util/lib/types';
 import { reactiveComputed } from '@vueuse/core';
 import { defineComponent, inject, provide, reactive, type InjectionKey, type Reactive } from 'vue';
-import type { VueNode } from '../../util/src/types';
 import type { Key, LegacyDataNode, SafeKey } from './interface';
 
 interface LegacyContextProps {

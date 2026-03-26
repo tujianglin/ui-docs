@@ -1,5 +1,5 @@
+import { filterEmpty } from '@vc-com/util/lib/props-util';
 import { defineComponent } from 'vue';
-import { filterEmpty } from '../../util/src/props-util';
 import type { RenderIconInfo, RenderIconType } from './interface';
 
 export interface IconProps {

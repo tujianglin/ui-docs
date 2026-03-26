@@ -1,7 +1,7 @@
 import KEYCODE from '@vc-com/util/lib/KeyCode';
+import type { VueNode } from '@vc-com/util/lib/types';
 import { computed, defineComponent, ref } from 'vue';
 import type { FocusEvent } from 'vue-jsx-vapor';
-import type { VueNode } from '../../util/src/types';
 import type { PaginationLocale } from './interface';
 
 export type SizeChangerRender = (info: {

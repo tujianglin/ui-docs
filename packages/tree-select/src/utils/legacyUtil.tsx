@@ -1,7 +1,7 @@
+import toArray from '@vc-com/util/lib/Children/toArray';
+import type { VueNode } from '@vc-com/util/lib/types';
+import { warning } from '@vc-com/util/lib/warning';
 import { isVNode } from 'vue';
-import toArray from '../../../util/src/Children/toArray';
-import type { VueNode } from '../../../util/src/types';
-import { warning } from '../../../util/src/warning';
 import type { ChangeEventExtra, DataNode, FieldNames, SafeKey } from '../interface';
 
 export function convertChildrenToData(nodes: VueNode[]): DataNode[] {

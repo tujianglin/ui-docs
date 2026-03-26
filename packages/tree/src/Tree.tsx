@@ -1,6 +1,7 @@
 // TODO: Fully accessibility support
 // Reference: https://www.w3.org/WAI/ARIA/apg/patterns/treeview
 
+import KeyCode from '@vc-com/util/lib/KeyCode';
 import pickAttrs from '@vc-com/util/lib/pickAttrs';
 import type { VueNode } from '@vc-com/util/lib/types';
 import { warning } from '@vc-com/util/lib/warning';
@@ -24,7 +25,6 @@ import {
   type MouseEventHandler,
   type UIEventHandler,
 } from 'vue-jsx-vapor';
-import KeyCode from '../../util/src/KeyCode';
 import type { ScrollTo } from '../../virtual-list/src';
 import {
   TreeContextProvider,

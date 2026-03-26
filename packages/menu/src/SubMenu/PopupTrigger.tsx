@@ -1,9 +1,9 @@
 import type { CSSMotionProps } from '@vc-com/motion';
 import Trigger from '@vc-com/trigger';
 import raf from '@vc-com/util/lib/raf';
+import type { VueNode } from '@vc-com/util/lib/types';
 import { clsx } from 'clsx';
 import { computed, defineComponent, ref, shallowRef, watch, watchEffect, type CSSProperties } from 'vue';
-import type { VueNode } from '../../../util/src/types';
 import { useMenuContextInject } from '../context/MenuContext';
 import type { MenuMode } from '../interface';
 import { placements, placementsRtl } from '../placements';

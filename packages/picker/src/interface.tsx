@@ -1,8 +1,8 @@
 import type { AlignType, BuildInPlacements } from '@vc-com/trigger';
+import type { VueNode } from '@vc-com/util/lib/types';
 import type { Dayjs } from 'dayjs';
 import type { CSSProperties } from 'vue';
 import type { FocusEvent, InputHTMLAttributes, KeyboardEvent, MouseEventHandler } from 'vue-jsx-vapor';
-import type { VueNode } from '../../util/src/types';
 import type { GenerateConfig } from './generate';
 
 export type DateType = Dayjs;

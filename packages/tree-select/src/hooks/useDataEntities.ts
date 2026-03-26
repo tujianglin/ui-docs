@@ -1,8 +1,8 @@
+import { warning } from '@vc-com/util/lib/warning';
 import { reactiveComputed } from '@vueuse/core';
 import { type Ref } from 'vue';
 import type { DataEntity } from '../../../tree/src/interface';
 import { convertDataToEntities } from '../../../tree/src/utils/treeUtil';
-import { warning } from '../../../util/src/warning';
 import type { FieldNames, SafeKey } from '../interface';
 import { isNil } from '../utils/valueUtil';
 

@@ -1,6 +1,6 @@
+import useControlledState from '@vc-com/util/lib/hooks/useControlledState';
+import raf from '@vc-com/util/lib/raf';
 import { onBeforeUnmount, ref, shallowRef, type Ref } from 'vue';
-import useControlledState from '../../../../util/src/hooks/useControlledState';
-import raf from '../../../../util/src/raf';
 
 /**
  * Will be `true` immediately for next effect.

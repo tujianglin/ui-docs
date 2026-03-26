@@ -1,6 +1,6 @@
+import type { Key, RenderNode } from '@vc-com/util/lib/types';
 import type { CSSProperties } from 'vue';
 import type { AriaAttributes, HTMLAttributes, MouseEventHandler } from 'vue-jsx-vapor';
-import type { Key, RenderNode } from '../../util/src/types';
 
 export type Placement = 'top' | 'topLeft' | 'topRight' | 'bottom' | 'bottomLeft' | 'bottomRight';
 
