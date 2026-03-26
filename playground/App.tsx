@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue';
 // import Cascader from '../packages/cascader/docs/cascader.story.vue';
-import Select from '../packages/progress/docs/progress.story.vue';
+import Select from '../packages/qrcode/docs/qrcode.story.vue';
 const App = defineComponent(() => {
   return () => (
     <>

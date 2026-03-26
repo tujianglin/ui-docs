@@ -55,7 +55,8 @@
       "@vc-com/drawer/*": ["packages/drawer/src/*"],
       "@vc-com/notification/*": ["packages/notification/src/*"],
       "@vc-com/picker/*": ["packages/picker/src/*"],
-      "@vc-com/progress/*": ["packages/progress/src/*"]
+      "@vc-com/progress/*": ["packages/progress/src/*"],
+      "@vc-com/qrcode/*": ["packages/qrcode/src/*"]
     }
   },
   "include": [

@@ -1,7 +1,7 @@
 {
-  "name": "@vc-com/picker",
+  "name": "@vc-com/qrcode",
   "version": "1.0.0",
-  "description": "Vue 3 Picker 组件",
+  "description": "Vue 3 Qrcode 组件",
   "files": [
     "dist",
     "package.json"
@@ -19,14 +19,8 @@
     "bump": "bumpp --release patch"
   },
   "dependencies": {
-    "@vc-com/overflow": "workspace:*",
-    "@vc-com/resize-observer": "workspace:*",
-    "@vc-com/trigger": "workspace:*",
     "@vc-com/util": "workspace:*",
     "clsx": "catalog:"
-  },
-  "devDependencies": {
-    "dayjs": "^1.11.20"
   },
   "peerDependencies": {
     "vue": "catalog:"
