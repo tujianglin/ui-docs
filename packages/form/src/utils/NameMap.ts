@@ -13,7 +13,7 @@ const SPLIT = '__@field_split__';
 function normalize(namePath: InternalNamePath): string {
   return (
     namePath
-      .map(cell => `${typeof cell}:${cell}`)
+      .map((cell) => `${typeof cell}:${cell}`)
       // Magic split
       .join(SPLIT)
   );
@@ -73,7 +73,7 @@ class NameMap<T> {
       const cells = key.split(SPLIT);
 
       return callback({
-        key: cells.map(cell => {
+        key: cells.map((cell) => {
           const [, type, unit] = cell.match(/^([^:]*):(.*)$/);
           return type === 'number' ? Number(unit) : unit;
         }),

@@ -13,7 +13,8 @@ export type DeepNamePath<Store = any, ParentNamePath extends any[] = []> = Paren
         ? [...ParentNamePath, number] // Connect path
         : never
     : Store extends any[] // Check if `Store` is `any[]`
-      ? // Connect path. e.g. { a: { b: string }[] }
+      ?
+          // Connect path. e.g. { a: { b: string }[] }
           // Get: [a] | [ a,number] | [ a ,number , b]
           [...ParentNamePath, number] | DeepNamePath<Store[number], [...ParentNamePath, number]>
       : keyof Store extends never // unknown
