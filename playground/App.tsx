@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue';
 // import Cascader from '../packages/cascader/docs/cascader.story.vue';
-import Select from '../packages/segmented/docs/segmented.story.vue';
+import Select from '../packages/picker/docs/picker.story.vue';
 const App = defineComponent(() => {
   return () => (
     <>
