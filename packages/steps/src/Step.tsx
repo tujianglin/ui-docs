@@ -68,6 +68,7 @@ const Step = defineComponent(
     // ========================== Data ==========================
     const {
       onClick: onItemClick,
+      // @ts-ignore
       title,
       subTitle,
       content,
@@ -80,8 +81,6 @@ const Step = defineComponent(
       style,
       classNames: itemClassNames = {},
       styles: itemStyles = {},
-
-      ...restItemProps
     } = $(reactiveComputed(() => data || {}));
 
     const renderInfo = computed(() => ({
@@ -112,13 +111,13 @@ const Step = defineComponent(
         accessibilityProps.tabindex = 0;
         accessibilityProps.onClick = (e) => {
           onItemClick?.(e);
-          onClick(index);
+          onClick?.(index);
         };
 
         accessibilityProps.onKeydown = (e) => {
           const { which } = e;
           if (which === KeyCode.ENTER || which === KeyCode.SPACE) {
-            onClick(index);
+            onClick?.(index);
           }
         };
       }
@@ -206,7 +205,6 @@ const Step = defineComponent(
 
       let stepNode = (
         <ItemComponent
-          {...restItemProps}
           {...accessibilityProps}
           class={classString}
           style={{

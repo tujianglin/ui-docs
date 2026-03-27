@@ -58,7 +58,8 @@
       "@vc-com/progress/*": ["packages/progress/src/*"],
       "@vc-com/qrcode/*": ["packages/qrcode/src/*"],
       "@vc-com/rate/*": ["packages/rate/src/*"],
-      "@vc-com/segmented/*": ["packages/segmented/src/*"]
+      "@vc-com/segmented/*": ["packages/segmented/src/*"],
+      "@vc-com/steps/*": ["packages/steps/src/*"]
     }
   },
   "include": [

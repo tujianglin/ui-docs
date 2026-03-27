@@ -199,8 +199,8 @@ const Steps = defineComponent(
       );
     };
     // =========================== components ===========================
-    const RootComponent = computed(() => components.root ?? 'div');
-    const ItemComponent = computed(() => components.item ?? 'div');
+    const RootComponent = computed(() => components?.root ?? 'div');
+    const ItemComponent = computed(() => components?.item ?? 'div');
 
     // ============================ contexts ============================
     const stepIconContext = reactiveComputed(() => ({
