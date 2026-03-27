@@ -62,7 +62,8 @@
       "@vc-com/steps/*": ["packages/steps/src/*"],
       "@vc-com/switch/*": ["packages/switch/src/*"],
       "@vc-com/tabs/*": ["packages/tabs/src/*"],
-      "@vc-com/upload/*": ["packages/upload/src/*"]
+      "@vc-com/upload/*": ["packages/upload/src/*"],
+      "@vc-com/form/*": ["packages/form/src/*"]
     }
   },
   "include": [

@@ -1,0 +1,29 @@
+{
+  "name": "@vc-com/dropdown",
+  "version": "1.0.0",
+  "description": "Vue 3 Dropdown 组件",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build && pnpm build:types",
+    "build:types": "tsmc -p tsconfig.build.json",
+    "prepublish": "pnpm build",
+    "bump": "bumpp --release patch"
+  },
+  "dependencies": {
+    "@vc-com/async-validator": "^5.1.0",
+    "@vc-com/util": "workspace:*",
+    "clsx": "catalog:"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  }
+}

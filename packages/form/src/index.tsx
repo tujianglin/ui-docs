@@ -1,0 +1,32 @@
+import Field from './Field';
+import { useFieldContextInject } from './FieldContext';
+import InternalForm, { type FormProps } from './Form';
+import { FormProvider } from './FormContext';
+import List from './List';
+import { useListContextInject } from './ListContext';
+import useForm from './hooks/useForm';
+import useWatch from './hooks/useWatch';
+import type { FormInstance, FormRef } from './interface';
+
+type InternalFormType = typeof InternalForm;
+interface RefFormType extends InternalFormType {
+  FormProvider: typeof FormProvider;
+  Field: typeof Field;
+  List: typeof List;
+  useForm: typeof useForm;
+  useWatch: typeof useWatch;
+}
+
+const RefForm: RefFormType = InternalForm as RefFormType;
+
+RefForm.FormProvider = FormProvider;
+RefForm.Field = Field;
+RefForm.List = List;
+RefForm.useForm = useForm;
+RefForm.useWatch = useWatch;
+
+export { Field, FormProvider, List, useFieldContextInject, useForm, useListContextInject, useWatch };
+
+export type { FormInstance, FormProps, FormRef };
+
+export default RefForm;
