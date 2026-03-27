@@ -225,6 +225,7 @@ const Step = defineComponent(
       return stepNode;
     };
   },
+  { inheritAttrs: false },
 );
 
 export default Step;

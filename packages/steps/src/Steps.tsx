@@ -227,6 +227,7 @@ const Steps = defineComponent(
       );
     };
   },
+  { inheritAttrs: false },
 );
 
 export default Steps;
