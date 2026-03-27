@@ -40,7 +40,7 @@ const DrawerPanel = defineComponent(
   ({ prefixCls, class: className, containerRef, ...restProps }: DrawerPanelProps) => {
     const props = useFullProps() as DrawerPanelProps;
     const { panel: panelRef } = $(useRefContextInject());
-    const mergedRef = useComposeRef(panelRef, containerRef);
+    const mergedRef = useComposeRef([containerRef, panelRef]);
 
     // =============================== Render ===============================
 

@@ -74,16 +74,13 @@ export function composeRef(...refs) {
  * @description
  * 使用 useMemo 缓存 composeRef 的结果，避免不必要的重新创建。
  */
-export const useComposeRef = (expose?: Record<string, any>, ref?: any, ref1?: any) => {
+export const useComposeRef = (refs?: any[], expose?: Record<string, any>) => {
   const vm = getCurrentInstance();
 
   const changeRef = (instacne) => {
-    if (ref) {
-      ref.value = instacne;
-    }
-    if (ref1) {
-      ref1.value = instacne;
-    }
+    refs?.map((i) => {
+      i.value = instacne;
+    });
     vm.exposed = assign(instacne || {}, expose);
     vm.exposeProxy = assign(instacne || {}, expose);
   };
