@@ -1,5 +1,5 @@
 import { reactiveComputed } from '@vueuse/core';
-import { defineComponent, onBeforeUnmount, ref, shallowRef, watch, watchEffect } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, ref, shallowRef, watch, watchEffect } from 'vue';
 import { useRef, type FormEvent, type FormHTMLAttributes } from 'vue-jsx-vapor';
 import { HOOK_MARK, useFieldContextProvider } from './FieldContext';
 import { useFormContextInject } from './FormContext';
@@ -34,7 +34,7 @@ const Form = defineComponent(
     fields,
     form,
     preserve,
-    component: Component = 'form',
+    component,
     validateMessages,
     validateTrigger = 'onChange',
     onValuesChange,
@@ -44,6 +44,7 @@ const Form = defineComponent(
     clearOnDestroy,
     ...restProps
   }: FormProps) => {
+    const Component = computed(() => component ?? 'form');
     const nativeElementRef = useRef<HTMLFormElement>(null);
     const formContext = useFormContextInject();
 
@@ -147,12 +148,12 @@ const Form = defineComponent(
     useFieldContextProvider(formContextValue);
 
     return () => {
-      if (Component === false) {
+      if (Component.value === false) {
         return <slot></slot>;
       }
 
       return (
-        <Component
+        <Component.value
           {...restProps}
           ref={nativeElementRef}
           onSubmit={(event: FormEvent<HTMLFormElement>) => {
@@ -169,7 +170,7 @@ const Form = defineComponent(
           }}
         >
           <slot></slot>
-        </Component>
+        </Component.value>
       );
     };
   },

@@ -1,6 +1,6 @@
 import isEqual from '@vc-com/util/lib/isEqual';
 import { warning } from '@vc-com/util/lib/warning';
-import { computed, createVNode, defineComponent, Fragment, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, defineComponent, Fragment, onBeforeUnmount, onMounted, ref } from 'vue';
 import { filterEmpty } from '../../util/src/props-util';
 import { HOOK_MARK, useFieldContextInject } from './FieldContext';
 import type {
@@ -621,9 +621,11 @@ const Field = defineComponent(
       const control = getControlled();
       // Call slot function - always pass control, meta, form
       // The slot will decide whether to use them (render function) or ignore them (component)
-      const childrenResult = createVNode(children, { ...control, meta, form: fieldContext.value });
-      // Clone child with controlled props
-      return <Fragment key={resetCount.value}>{childrenResult}</Fragment>;
+      return (
+        <Fragment key={resetCount.value}>
+          <slot {...{ ...control, meta, form: fieldContext.value }}></slot>
+        </Fragment>
+      );
     };
   },
   { inheritAttrs: false },
@@ -664,7 +666,7 @@ const WrapperField = defineComponent(
         {...restProps}
         fieldContext={fieldContext}
       >
-        <slot></slot>
+        {(props) => <slot key={key.value} {...props}></slot>}
       </Field>
     );
   },

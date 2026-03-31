@@ -19,7 +19,7 @@
     "bump": "bumpp --release patch"
   },
   "dependencies": {
-    "@vc-com/async-validator": "^5.1.0",
+    "@vc-com/async-validator": "workspace:*",
     "@vc-com/util": "workspace:*",
     "clsx": "catalog:"
   },

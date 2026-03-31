@@ -1,12 +1,12 @@
 <script lang="tsx" setup>
 // import animated from './animated';
-import basic from './basic';
+// import basic from './basic';
 import dynamicExtra from './dynamic-extra';
-import editable from './editable';
+// import editable from './editable';
 </script>
 <template>
   <!-- <animated /> -->
-  <basic />
+  <!-- <basic /> -->
   <dynamic-extra />
-  <editable />
+  <!-- <editable /> -->
 </template>

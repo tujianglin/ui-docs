@@ -1,5 +1,5 @@
 import { reactiveComputed } from '@vueuse/core';
-import { inject, provide, reactive, type InjectionKey, type Reactive } from 'vue';
+import { defineComponent, inject, provide, reactive, type InjectionKey, type Reactive } from 'vue';
 import { useRef } from 'vue-jsx-vapor';
 import type { FieldData, FormInstance, Store, ValidateMessages } from './interface';
 
@@ -45,7 +45,7 @@ export const useFormContextInject = (): FormContextProps => {
 export const useFormContextProvider = (form: Reactive<FormContextProps>) => {
   provide(FormContext, form);
 };
-const FormProvider = ({ validateMessages, onFormChange, onFormFinish }: FormProviderProps) => {
+const FormProvider = defineComponent(({ validateMessages, onFormChange, onFormFinish }: FormProviderProps) => {
   const formContext = useFormContextInject();
 
   const formsRef = useRef<Forms>({});
@@ -100,7 +100,7 @@ const FormProvider = ({ validateMessages, onFormChange, onFormFinish }: FormProv
       },
     })),
   );
-  return <slot></slot>;
-};
+  return () => <slot></slot>;
+});
 
 export { FormProvider };

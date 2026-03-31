@@ -43,31 +43,24 @@ interface LabelFieldProps extends FieldProps {
   label?: any;
 }
 
-const LabelField = defineComponent(({ name, label, ...restProps }: LabelFieldProps) => {
+const LabelField = defineComponent(({ name, label: _label, ...restProps }: LabelFieldProps) => {
   const slots = defineSlots();
   return () => {
-    const children = filterEmpty(slots.default?.());
+    const children = filterEmpty(slots.default?.())?.[0];
     return (
       <Field name={name} {...restProps}>
-        {(control, meta, form) => {
-          const childNode =
-            typeof children === 'function'
-              ? children(control, meta, form)
-              : createVNode(children, {
-                  ...control,
-                });
-
+        {({ meta, form, ...control }) => {
           return (
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <label style={{ flex: 'none', width: 100 }}>{label || name}</label>
+                <label style={{ flex: 'none', width: '100px' }}>{_label || name}</label>
 
-                {childNode}
+                {createVNode(children, { ...control, form })}
               </div>
 
               <FieldState {...meta} />
-              <Error>{meta.errors}</Error>
-              <Error warning>{meta.warnings}</Error>
+              <Error>{meta?.errors}</Error>
+              <Error warning>{meta?.warnings}</Error>
             </div>
           );
         }}
