@@ -1,11 +1,11 @@
 packages:
   - 'packages/*'
 catalog:
-  'vue': ^3.6.0-beta.8
+  'vue': 3.6.0-beta.16
   'vite': ^8.0.1
   '@ts-macro/tsc': ^0.3.7
   '@typescript/native-preview': 7.0.0-dev.20260318.1
   '@vueuse/core': ^14.1.0
-  'vue-jsx-vapor': 3.2.8
+  'vue-jsx-vapor': 3.2.18
   'vue-tsc': ^3.2.6
   'clsx': ^2.1.1
